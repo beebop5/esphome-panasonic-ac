@@ -346,15 +346,15 @@ std::string PanasonicACWLAN::determine_preset(uint8_t preset) {
 std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Down
-      return "down";
+      return "Down";
     case 0x45:  // Down center
-      return "down_center";
+      return "Mid Down";
     case 0x43:  // Center
-      return "center";
+      return "Mid";
     case 0x44:  // Up Center
-      return "up_center";
+      return "Mid Up";
     case 0x41:  // Up
-      return "up";
+      return "Up";
     default:
       ESP_LOGW(TAG, "Received unknown vertical swing position");
       return "Unknown";
@@ -364,15 +364,15 @@ std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
 std::string PanasonicACWLAN::determine_swing_horizontal(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Left
-      return "left";
+      return "Left";
     case 0x5C:  // Left center
-      return "left_center";
+      return "Centre Left";
     case 0x43:  // Center
-      return "center";
+      return "Centre";
     case 0x56:  // Right center
-      return "right_center";
+      return "Centre Right";
     case 0x41:  // Right
-      return "right";
+      return "Right";
     default:
       ESP_LOGW(TAG, "Received unknown horizontal swing position");
       return "Unknown";
