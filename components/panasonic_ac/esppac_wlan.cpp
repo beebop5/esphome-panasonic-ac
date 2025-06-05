@@ -110,7 +110,7 @@ void PanasonicACWLAN::control(const climate::ClimateCall &call) {
 
     std::string fanMode = *call.get_custom_fan_mode();
 
-    if (fanMode == "Automatic") {
+    if (fanMode == "Auto") {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x41);
     } else if (fanMode == "1") {
@@ -347,11 +347,11 @@ std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Down
       return "Down";
-    case 0x45:  // Down center
+    case 0x45:  // Down centre
       return "Mid Down";
-    case 0x43:  // Center
+    case 0x43:  // centre
       return "Mid";
-    case 0x44:  // Up Center
+    case 0x44:  // Up centre
       return "Mid Up";
     case 0x41:  // Up
       return "Up";
@@ -365,11 +365,11 @@ std::string PanasonicACWLAN::determine_swing_horizontal(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Left
       return "Left";
-    case 0x5C:  // Left center
+    case 0x5C:  // Left centre
       return "Centre Left";
-    case 0x43:  // Center
+    case 0x43:  // centre
       return "Centre";
-    case 0x56:  // Right center
+    case 0x56:  // Right centre
       return "Centre Right";
     case 0x41:  // Right
       return "Right";
@@ -745,15 +745,15 @@ void PanasonicACWLAN::on_vertical_swing_change(const std::string &swing) {
 
   ESP_LOGD(TAG, "Setting vertical swing position");
 
-  if (swing == "down")
+  if (swing == "Down")
     set_value(0xA4, 0x42);
-  else if (swing == "down_center")
+  else if (swing == "Mid Down")
     set_value(0xA4, 0x45);
-  else if (swing == "center")
+  else if (swing == "Mid")
     set_value(0xA4, 0x43);
-  else if (swing == "up_center")
+  else if (swing == "Mid Up")
     set_value(0xA4, 0x44);
-  else if (swing == "up")
+  else if (swing == "Up")
     set_value(0xA4, 0x41);
 
   send_set_command();
@@ -765,15 +765,15 @@ void PanasonicACWLAN::on_horizontal_swing_change(const std::string &swing) {
 
   ESP_LOGD(TAG, "Setting horizontal swing position");
 
-  if (swing == "left")
+  if (swing == "Left")
     set_value(0xA5, 0x42);
-  else if (swing == "left_center")
+  else if (swing == "Centre Left")
     set_value(0xA5, 0x5C);
-  else if (swing == "center")
+  else if (swing == "Centre")
     set_value(0xA5, 0x43);
-  else if (swing == "right_center")
+  else if (swing == "Centre Right")
     set_value(0xA5, 0x56);
-  else if (swing == "right")
+  else if (swing == "Right")
     set_value(0xA5, 0x41);
 
   send_set_command();
