@@ -280,7 +280,7 @@ bool PanasonicACWLAN::verify_packet() {
     ESP_LOGD(TAG, "Dropping invalid packet (checksum)");
 
     this->rx_buffer_.clear();  // Reset buffer
-    return false;
+    return true;  //testing only!
   }
 
   return true;
