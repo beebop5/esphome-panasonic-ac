@@ -233,7 +233,7 @@ bool PanasonicACWLAN::verify_packet() {
   {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
     //this->rx_buffer_.clear();  // Reset buffer - TEST
-    return true; //TEST
+    //return false; //TEST
   }
 
   if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A
@@ -248,7 +248,7 @@ bool PanasonicACWLAN::verify_packet() {
   {
     ESP_LOGW(TAG, "Dropping invalid packet (header)");
     // this->rx_buffer_.clear();  // Reset buffer TEST
-    return true; //TEST
+    // return false; //TEST
   }
 
   if (this->state_ == ACState::Ready && this->waiting_for_response_)  // If we were waiting for a response, check if the
@@ -280,7 +280,7 @@ bool PanasonicACWLAN::verify_packet() {
     ESP_LOGD(TAG, "Dropping invalid packet (checksum)");
 
     // this->rx_buffer_.clear();  // Reset buffer <-- put this back later
-    return true;  //testing only!
+    //return false;  //testing only!
   }
 
   return true;
