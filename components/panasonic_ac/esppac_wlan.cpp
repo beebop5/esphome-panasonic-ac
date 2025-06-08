@@ -247,8 +247,8 @@ bool PanasonicACWLAN::verify_packet() {
   if (this->rx_buffer_[0] != HEADER)  // Check if header matches
   {
     ESP_LOGW(TAG, "Dropping invalid packet (header)");
-    this->rx_buffer_.clear();  // Reset buffer
-    return false;
+    // this->rx_buffer_.clear();  // Reset buffer TEST
+    return true; //TEST
   }
 
   if (this->state_ == ACState::Ready && this->waiting_for_response_)  // If we were waiting for a response, check if the
