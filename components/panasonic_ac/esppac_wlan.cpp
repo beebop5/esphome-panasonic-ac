@@ -232,8 +232,8 @@ bool PanasonicACWLAN::verify_packet() {
   if (this->rx_buffer_.size() < 5)  // Drop packets that are too short
   {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
-    this->rx_buffer_.clear();  // Reset buffer
-    return false;
+    //this->rx_buffer_.clear();  // Reset buffer - TEST
+    return true; //TEST
   }
 
   if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A
