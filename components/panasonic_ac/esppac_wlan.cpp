@@ -413,6 +413,10 @@ void PanasonicACWLAN::handle_packet() {
   {
     ESP_LOGD(TAG, "Answering ping");
     send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
+  } else if (this->rx_buffer_[2] == 0x11 && this->rx_buffer_[3] == 0x01) //is this a new ping?
+  {
+    ESP_LOGD(TAG, "Answering ping 2");
+    send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x89)  // Received query response
   {
     ESP_LOGD(TAG, "Received query response");
