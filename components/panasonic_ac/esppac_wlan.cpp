@@ -13,6 +13,15 @@ void PanasonicACWLAN::setup() {
   ESP_LOGD(TAG, "Using DNSK-P11 protocol via CN-WLAN");
 }
 
+void PanasonicACWLAN::combine_packets() {
+  // Combine the two parts of the packet
+  std::vector<uint8_t> complete_packet = this->fragmented_packet_buffer_;
+  complete_packet.insert(complete_packet.end(), this->rx_buffer_.begin(), this->rx_buffer_.end());
+
+  // Process the complete packet
+  this->process_packet(complete_packet);
+}
+
 void PanasonicACWLAN::loop() {
   if (this->state_ != ACState::Ready) {
     handle_init_packets();  // Handle initialization packets separate from normal packets
@@ -27,6 +36,7 @@ void PanasonicACWLAN::loop() {
   if (millis() - this->last_read_ > READ_TIMEOUT &&
       !this->rx_buffer_.empty())  // Check if our read timed out and we received something
   {
+    
     log_packet(this->rx_buffer_);
 
     if (!verify_packet())  // Verify length, header, counter and checksum
@@ -53,6 +63,19 @@ void PanasonicACWLAN::loop() {
   handle_resend();  // Handle packets that need to be resent
 
   handle_poll();  // Handle sending poll packets
+  
+  if (this->waiting_for_second_part_) {
+    // Read the next packet from the UART
+    this->read_packet();
+
+    // Check if the second part is received
+    if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82) {
+      // Combine the two parts and process the complete packet
+      this->combine_packets();
+      this->waiting_for_second_part_ = false;
+    }
+  }
+
 }
 
 /*
@@ -110,7 +133,7 @@ void PanasonicACWLAN::control(const climate::ClimateCall &call) {
 
     std::string fanMode = *call.get_custom_fan_mode();
 
-    if (fanMode == "Auto") {
+    if (fanMode == "Automatic") {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x41);
     } else if (fanMode == "1") {
@@ -229,11 +252,20 @@ void PanasonicACWLAN::handle_init_packets() {
 }
 
 bool PanasonicACWLAN::verify_packet() {
+  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09) 
+  {
+    // this packet comes in 2 parts
+    ESP_LOGW(TAG, "Received first part of 5A.09 packet, waiting for second part");
+    this->fragmented_packet_buffer_ = this->rx_buffer_;
+    this->waiting_for_second_part_ = true;
+    return false;
+  }
+  
   if (this->rx_buffer_.size() < 5)  // Drop packets that are too short
   {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
-    //this->rx_buffer_.clear();  // Reset buffer - TEST
-    //return false; //TEST
+    this->rx_buffer_.clear();  // Reset buffer
+    return false;
   }
 
   if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A
@@ -247,8 +279,8 @@ bool PanasonicACWLAN::verify_packet() {
   if (this->rx_buffer_[0] != HEADER)  // Check if header matches
   {
     ESP_LOGW(TAG, "Dropping invalid packet (header)");
-    // this->rx_buffer_.clear();  // Reset buffer TEST
-    // return false; //TEST
+    this->rx_buffer_.clear();  // Reset buffer
+    return false;
   }
 
   if (this->state_ == ACState::Ready && this->waiting_for_response_)  // If we were waiting for a response, check if the
@@ -279,8 +311,8 @@ bool PanasonicACWLAN::verify_packet() {
   {
     ESP_LOGD(TAG, "Dropping invalid packet (checksum)");
 
-    // this->rx_buffer_.clear();  // Reset buffer <-- put this back later
-    //return false;  //testing only!
+    this->rx_buffer_.clear();  // Reset buffer
+    return false;
   }
 
   return true;
@@ -346,15 +378,15 @@ std::string PanasonicACWLAN::determine_preset(uint8_t preset) {
 std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Down
-      return "Down";
-    case 0x45:  // Down centre
-      return "Mid Down";
-    case 0x43:  // centre
-      return "Mid";
-    case 0x44:  // Up centre
-      return "Mid Up";
+      return "down";
+    case 0x45:  // Down center
+      return "down_center";
+    case 0x43:  // Center
+      return "center";
+    case 0x44:  // Up Center
+      return "up_center";
     case 0x41:  // Up
-      return "Up";
+      return "up";
     default:
       ESP_LOGW(TAG, "Received unknown vertical swing position");
       return "Unknown";
@@ -364,15 +396,15 @@ std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
 std::string PanasonicACWLAN::determine_swing_horizontal(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Left
-      return "Left";
-    case 0x5C:  // Left centre
-      return "Centre Left";
-    case 0x43:  // centre
-      return "Centre";
-    case 0x56:  // Right centre
-      return "Centre Right";
+      return "left";
+    case 0x5C:  // Left center
+      return "left_center";
+    case 0x43:  // Center
+      return "center";
+    case 0x56:  // Right center
+      return "right_center";
     case 0x41:  // Right
-      return "Right";
+      return "right";
     default:
       ESP_LOGW(TAG, "Received unknown horizontal swing position");
       return "Unknown";
@@ -412,10 +444,6 @@ void PanasonicACWLAN::handle_packet() {
   if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x01)  // Ping
   {
     ESP_LOGD(TAG, "Answering ping");
-    send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
-  } else if (this->rx_buffer_[2] == 0x11 && this->rx_buffer_[3] == 0x01) //is this a new ping?
-  {
-    ESP_LOGD(TAG, "Answering ping 2");
     send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x89)  // Received query response
   {
@@ -554,7 +582,6 @@ void PanasonicACWLAN::handle_packet() {
 }
 
 void PanasonicACWLAN::handle_handshake_packet() {
-  ESP_LOGV(TAG, "Handling RX packet: : %s", format_hex_pretty(rx_buffer_).c_str());
   if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x89)  // Answer for handshake 2
   {
     ESP_LOGD(TAG, "Answering handshake [2/16]");
@@ -587,14 +614,10 @@ void PanasonicACWLAN::handle_handshake_packet() {
   {
     ESP_LOGD(TAG, "Answering handshake [9/16]");
     send_command(CMD_HANDSHAKE_10, sizeof(CMD_HANDSHAKE_10));
-   } else if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82 && this->rx_buffer_[2] == 0x42)  // Answer for handshake 10 - TEST
-  {
-    ESP_LOGD(TAG, "Answering handshake [10/16] (alt)");
-    send_command(CMD_HANDSHAKE_11, sizeof(CMD_HANDSHAKE_11));  
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x81)  // Answer for handshake 10
   {
     ESP_LOGD(TAG, "Answering handshake [10/16]");
-    send_command(CMD_HANDSHAKE_11, sizeof(CMD_HANDSHAKE_11));  
+    send_command(CMD_HANDSHAKE_11, sizeof(CMD_HANDSHAKE_11));
   } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x98)  // Answer for handshake 11
   {
     ESP_LOGD(TAG, "Answering handshake [11/16]");
@@ -603,10 +626,6 @@ void PanasonicACWLAN::handle_handshake_packet() {
   {
     ESP_LOGD(TAG, "Answering handshake [12/16]");
     send_command(CMD_HANDSHAKE_13, sizeof(CMD_HANDSHAKE_13));
-  } else if (this->rx_buffer_[14] == 0x83 && this->rx_buffer_[15] == 0x5A)  // Ethera generation devices handshake failureAdd commentMore actions
-  {
-    ESP_LOGD(TAG, "Received 83 5A packet, Initialization failed, restarting init");
-    this->state_ = ACState::Initializing;  // Restart Initialization, otherwise hangs here on ethera. Likely to succeed on 2nd attempt.
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88)  // Answer for handshake 13
   {
     // Ignore
@@ -660,10 +679,6 @@ void PanasonicACWLAN::send_set_command() {
         0x00;  // Unknown, either 0x00 or 0x01 or 0x02; overwritten by checksum on last key value pair
   }
 
-  if (packet[12] == 0x31) {
-    packet[11] = 0x02;
-  }
-  
   send_packet(packet, CommandType::Normal);
   this->set_queue_index_ = 0;
 }
@@ -762,15 +777,15 @@ void PanasonicACWLAN::on_vertical_swing_change(const std::string &swing) {
 
   ESP_LOGD(TAG, "Setting vertical swing position");
 
-  if (swing == "Down")
+  if (swing == "down")
     set_value(0xA4, 0x42);
-  else if (swing == "Mid Down")
+  else if (swing == "down_center")
     set_value(0xA4, 0x45);
-  else if (swing == "Mid")
+  else if (swing == "center")
     set_value(0xA4, 0x43);
-  else if (swing == "Mid Up")
+  else if (swing == "up_center")
     set_value(0xA4, 0x44);
-  else if (swing == "Up")
+  else if (swing == "up")
     set_value(0xA4, 0x41);
 
   send_set_command();
@@ -782,15 +797,15 @@ void PanasonicACWLAN::on_horizontal_swing_change(const std::string &swing) {
 
   ESP_LOGD(TAG, "Setting horizontal swing position");
 
-  if (swing == "Left")
+  if (swing == "left")
     set_value(0xA5, 0x42);
-  else if (swing == "Centre Left")
+  else if (swing == "left_center")
     set_value(0xA5, 0x5C);
-  else if (swing == "Centre")
+  else if (swing == "center")
     set_value(0xA5, 0x43);
-  else if (swing == "Centre Right")
+  else if (swing == "right_center")
     set_value(0xA5, 0x56);
-  else if (swing == "Right")
+  else if (swing == "right")
     set_value(0xA5, 0x41);
 
   send_set_command();
