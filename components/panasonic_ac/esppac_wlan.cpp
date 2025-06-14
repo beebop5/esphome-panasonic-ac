@@ -66,17 +66,17 @@ void PanasonicACWLAN::loop() {
 
   handle_poll();  // Handle sending poll packets
   
-  if (this->waiting_for_second_part_) {
+  //if (this->waiting_for_second_part_) {
     // Read the next packet from the UART
-     PanasonicAC::read_data();
+  //   PanasonicAC::read_data();
 
     // Check if the second part is received
-    if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82) {
+  //  if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82) {
       // Combine the two parts and process the complete packet
-      this->combine_packets();
-      this->waiting_for_second_part_ = false;
-    }
-  }
+  //    this->combine_packets();
+  //    this->waiting_for_second_part_ = false;
+  //  }
+  //}
 
 }
 
@@ -254,12 +254,10 @@ void PanasonicACWLAN::handle_init_packets() {
 }
 
 bool PanasonicACWLAN::verify_packet() {
-  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09 && this->waiting_for_second_part_) 
+  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09 && this->_rx_buffer_size == 120) 
   {
     // this packet comes in 2 parts
-    ESP_LOGW(TAG, "Received first part of 5A.09 packet, waiting for second part");
-    this->fragmented_packet_buffer_ = this->rx_buffer_;
-    this->waiting_for_second_part_ = true;
+    ESP_LOGW(TAG, "Received first part of 5A.09 packet, ignoring validation"); //TODO: receive second part of packet and combine them
     return true;
   }
   
