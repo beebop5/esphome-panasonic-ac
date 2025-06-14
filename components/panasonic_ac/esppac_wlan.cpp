@@ -19,7 +19,9 @@ void PanasonicACWLAN::combine_packets() {
   complete_packet.insert(complete_packet.end(), this->rx_buffer_.begin(), this->rx_buffer_.end());
 
   // Process the complete packet
-  this->process_packet(complete_packet);
+  rx_buffer_ = complete_packet;
+  handle_handshake_packet();
+  
 }
 
 void PanasonicACWLAN::loop() {
