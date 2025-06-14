@@ -41,6 +41,8 @@ class PanasonicACWLAN : public PanasonicAC {
  protected:
   ACState state_ = ACState::Initializing;  // Stores the internal state of the AC, used during initialization
 
+  bool waiting_for_second_part_ = false;  // True if we are waiting for the second part of a fragmented packet
+
   uint8_t transmit_packet_count_ = 0;  // Counter used in packet (2nd byte) when we are sending packets
   uint8_t receive_packet_count_ = 0;   // Counter used in packet (2nd byte) when AC is sending us packets
 
