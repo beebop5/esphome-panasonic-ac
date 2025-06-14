@@ -51,7 +51,7 @@ class PanasonicACWLAN : public PanasonicAC {
   uint8_t set_queue_index_ = 0;  // Stores the index of the next key/value set
 
   void combine_packets();
-  std::vector<uint8_t> fragmented_packet_buffer_;  // Add this line to declare the variable
+  std::vector<uint8_t> fragmented_packet_buffer_; // Buffer to store the two parts of the packet
 
   void handle_init_packets();
   void handle_handshake_packet();
