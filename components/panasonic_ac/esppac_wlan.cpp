@@ -622,6 +622,8 @@ void PanasonicACWLAN::handle_handshake_packet() {
   {
     ESP_LOGD(TAG, "Answering handshake [10/16]");
     send_command(CMD_HANDSHAKE_11, sizeof(CMD_HANDSHAKE_11));
+  } else if ((this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82 && this->rx_buffer_[2] == 0x42)) {
+    ESP_LOGD(TAG, "Ignoring second part of  [10/16]"); //TODO: need to combine the two parts and do a checksum
   } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x98)  // Answer for handshake 11
   {
     ESP_LOGD(TAG, "Answering handshake [11/16]");
