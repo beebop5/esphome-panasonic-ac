@@ -254,7 +254,7 @@ void PanasonicACWLAN::handle_init_packets() {
 }
 
 bool PanasonicACWLAN::verify_packet() {
-  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09 && this->_rx_buffer_size == 120) 
+  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09 && this->rx_buffer_.size() == 120) 
   {
     // this packet comes in 2 parts
     ESP_LOGW(TAG, "Received first part of 5A.09 packet, ignoring validation"); //TODO: receive second part of packet and combine them
