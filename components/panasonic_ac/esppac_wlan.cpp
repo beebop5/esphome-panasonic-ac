@@ -257,7 +257,11 @@ bool PanasonicACWLAN::verify_packet() {
   if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09 && this->rx_buffer_.size() == 120) 
   {
     // this packet comes in 2 parts
-    ESP_LOGW(TAG, "Received first part of 5A.09 packet, ignoring validation"); //TODO: receive second part of packet and combine them
+    ESP_LOGI(TAG, "Received first part of 5A.09 packet, ignoring validation"); //TODO: receive second part of packet and combine them
+    return true;
+  }
+  if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82 && this->rx_buffer_[2] == 0x42) {
+    ESP_LOGI(TAG, "Received second part of the 5A.09 handshake packet. Ignore");
     return true;
   }
   
