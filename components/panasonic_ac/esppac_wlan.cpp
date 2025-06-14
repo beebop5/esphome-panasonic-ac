@@ -21,7 +21,7 @@ void PanasonicACWLAN::combine_packets() {
   // Process the complete packet
   rx_buffer_ = complete_packet;
   handle_handshake_packet();
-  
+
 }
 
 void PanasonicACWLAN::loop() {
@@ -68,7 +68,7 @@ void PanasonicACWLAN::loop() {
   
   if (this->waiting_for_second_part_) {
     // Read the next packet from the UART
-    this->read_packet();
+    //this->read_packet();
 
     // Check if the second part is received
     if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82) {
