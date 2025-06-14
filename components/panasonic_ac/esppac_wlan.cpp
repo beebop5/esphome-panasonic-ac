@@ -254,13 +254,13 @@ void PanasonicACWLAN::handle_init_packets() {
 }
 
 bool PanasonicACWLAN::verify_packet() {
-  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09) 
+  if (this->rx_buffer_[0] == 0x5A && this->rx_buffer_[1] == 0x09 && this->waiting_for_second_part_) 
   {
     // this packet comes in 2 parts
     ESP_LOGW(TAG, "Received first part of 5A.09 packet, waiting for second part");
     this->fragmented_packet_buffer_ = this->rx_buffer_;
     this->waiting_for_second_part_ = true;
-    return false;
+    return true;
   }
   
   if (this->rx_buffer_.size() < 5)  // Drop packets that are too short
