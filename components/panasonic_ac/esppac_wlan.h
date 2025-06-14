@@ -50,7 +50,7 @@ class PanasonicACWLAN : public PanasonicAC {
   uint8_t set_queue_[16][2];     // Queue to store the key/value for the set commands
   uint8_t set_queue_index_ = 0;  // Stores the index of the next key/value set
 
-  void combine_packet();
+  void combine_packets();
 
   void handle_init_packets();
   void handle_handshake_packet();
