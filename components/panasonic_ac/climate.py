@@ -48,9 +48,12 @@ VERTICAL_SWING_OPTIONS = ["Swing", "Auto", "Up", "Mid Up", "Mid", "Mid Down", "D
 SWITCH_SCHEMA = switch.SWITCH_SCHEMA.extend(cv.COMPONENT_SCHEMA).extend(
     {cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}
 )
-SELECT_SCHEMA = select.SELECT_SCHEMA.extend(
+SELECT_SCHEMA = select.select_schema(
     {cv.GenerateID(CONF_ID): cv.declare_id(PanasonicACSelect)}
 )
+#SELECT_SCHEMA = select.SELECT_SCHEMA.extend(
+#    {cv.GenerateID(CONF_ID): cv.declare_id(PanasonicACSelect)}
+#)
 
 SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
