@@ -29,7 +29,6 @@ PanasonicACSelect = panasonic_ac_ns.class_(
     "PanasonicACSelect", select.Select, cg.Component
 )
 
-
 CONF_HORIZONTAL_SWING_SELECT = "horizontal_swing_select"
 CONF_VERTICAL_SWING_SELECT = "vertical_swing_select"
 CONF_OUTSIDE_TEMPERATURE = "outside_temperature"
@@ -45,18 +44,18 @@ CONF_CNT = "cnt"
 HORIZONTAL_SWING_OPTIONS = ["Auto", "Left", "Centre Left", "Centre", "Centre Right", "Right"]
 VERTICAL_SWING_OPTIONS = ["Swing", "Auto", "Up", "Mid Up", "Mid", "Mid Down", "Down"]
 
-SWITCH_SCHEMA = switch.SWITCH_SCHEMA.extend(cv.COMPONENT_SCHEMA).extend(
-    {cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}
-)
-#SELECT_SCHEMA = select.select_schema(
-#    {cv.GenerateID(CONF_ID): cv.declare_id(PanasonicACSelect)}
-#)
+SWITCH_SCHEMA = switch.switch_schema(
+    {
+        cv.GenerateID(): cv.declare_id(PanasonicACSwitch)
+    }
+).extend(cv.COMPONENT_SCHEMA)
 
-SELECT_SCHEMA = select.SELECT_SCHEMA.extend(
-    {cv.GenerateID(CONF_ID): cv.declare_id(PanasonicACSelect)}
+SELECT_SCHEMA = select.select_schema(
+    {
+        cv.GenerateID(CONF_ID): cv.declare_id(PanasonicACSelect)
+    }
 )
 
-#SCHEMA = climate.CLIMATE_SCHEMA.extend(
 SCHEMA = climate.climate_schema(
     {
         cv.Optional(CONF_HORIZONTAL_SWING_SELECT): SELECT_SCHEMA,
@@ -86,11 +85,11 @@ CONFIG_SCHEMA = cv.typed_schema(
                 cv.Optional(CONF_MILD_DRY_SWITCH): SWITCH_SCHEMA,
                 cv.Optional(CONF_CURRENT_TEMPERATURE_SENSOR): cv.use_id(sensor.Sensor),
                 cv.Optional(CONF_CURRENT_POWER_CONSUMPTION): sensor.sensor_schema(
-                  unit_of_measurement=UNIT_WATT,
-                  accuracy_decimals=0,
-                  device_class=DEVICE_CLASS_POWER,
-                  state_class=STATE_CLASS_MEASUREMENT,
-              ),
+                    unit_of_measurement=UNIT_WATT,
+                    accuracy_decimals=0,
+                    device_class=DEVICE_CLASS_POWER,
+                    state_class=STATE_CLASS_MEASUREMENT,
+                ),
             }
         ),
     }
