@@ -30,5 +30,5 @@ async def to_code(config):
         options = VERTICAL_SWING_OPTIONS
     var = await select.new_select(config, options=options)
     await cg.register_component(var, config)
-    await select.register_select(var, config)
+    await select.register_select(var, config, options=options)
     cg.add(parent.register_select(var, config[CONF_TYPE]))
