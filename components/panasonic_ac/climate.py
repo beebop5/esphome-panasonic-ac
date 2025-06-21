@@ -41,32 +41,17 @@ CONF_CURRENT_POWER_CONSUMPTION = "current_power_consumption"
 CONF_WLAN = "wlan"
 CONF_CNT = "cnt"
 
-HORIZONTAL_SWING_OPTIONS = ["Auto", "Left", "Centre Left", "Centre", "Centre Right", "Right"]
-VERTICAL_SWING_OPTIONS = ["Swing", "Auto", "Up", "Mid Up", "Mid", "Mid Down", "Down"]
-
-SWITCH_SCHEMA = switch.switch_schema(
-    {
-        cv.GenerateID(): cv.declare_id(PanasonicACSwitch)
-    }
-).extend(cv.COMPONENT_SCHEMA)
-
-SELECT_SCHEMA = select.select_schema(
-    {
-        cv.GenerateID(CONF_ID): cv.declare_id(PanasonicACSelect)
-    }
-)
-
 SCHEMA = climate.climate_schema(
     {
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): SELECT_SCHEMA,
-        cv.Optional(CONF_VERTICAL_SWING_SELECT): SELECT_SCHEMA,
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
-        cv.Optional(CONF_NANOEX_SWITCH): SWITCH_SCHEMA,
+        cv.Optional(CONF_NANOEX_SWITCH): switch.SWITCH_SCHEMA.extend(
+            cv.COMPONENT_SCHEMA
+        ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
@@ -80,9 +65,15 @@ CONFIG_SCHEMA = cv.typed_schema(
         CONF_CNT: SCHEMA.extend(
             {
                 cv.GenerateID(): cv.declare_id(PanasonicACCNT),
-                cv.Optional(CONF_ECO_SWITCH): SWITCH_SCHEMA,
-                cv.Optional(CONF_ECONAVI_SWITCH): SWITCH_SCHEMA,
-                cv.Optional(CONF_MILD_DRY_SWITCH): SWITCH_SCHEMA,
+                cv.Optional(CONF_ECO_SWITCH): switch.SWITCH_SCHEMA.extend(
+                    cv.COMPONENT_SCHEMA
+                ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
+                cv.Optional(CONF_ECONAVI_SWITCH): switch.SWITCH_SCHEMA.extend(
+                    cv.COMPONENT_SCHEMA
+                ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
+                cv.Optional(CONF_MILD_DRY_SWITCH): switch.SWITCH_SCHEMA.extend(
+                    cv.COMPONENT_SCHEMA
+                ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
                 cv.Optional(CONF_CURRENT_TEMPERATURE_SENSOR): cv.use_id(sensor.Sensor),
                 cv.Optional(CONF_CURRENT_POWER_CONSUMPTION): sensor.sensor_schema(
                     unit_of_measurement=UNIT_WATT,
@@ -95,24 +86,11 @@ CONFIG_SCHEMA = cv.typed_schema(
     }
 )
 
-
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await climate.register_climate(var, config)
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
-
-    if CONF_HORIZONTAL_SWING_SELECT in config:
-        conf = config[CONF_HORIZONTAL_SWING_SELECT]
-        swing_select = await select.new_select(conf, options=HORIZONTAL_SWING_OPTIONS)
-        await cg.register_component(swing_select, conf)
-        cg.add(var.set_horizontal_swing_select(swing_select))
-
-    if CONF_VERTICAL_SWING_SELECT in config:
-        conf = config[CONF_VERTICAL_SWING_SELECT]
-        swing_select = await select.new_select(conf, options=VERTICAL_SWING_OPTIONS)
-        await cg.register_component(swing_select, conf)
-        cg.add(var.set_vertical_swing_select(swing_select))
 
     if CONF_OUTSIDE_TEMPERATURE in config:
         sens = await sensor.new_sensor(config[CONF_OUTSIDE_TEMPERATURE])
@@ -133,3 +111,10 @@ async def to_code(config):
     if CONF_CURRENT_POWER_CONSUMPTION in config:
         sens = await sensor.new_sensor(config[CONF_CURRENT_POWER_CONSUMPTION])
         cg.add(var.set_current_power_consumption_sensor(sens))
+
+# Add this method to PanasonicAC's C++/header implementation as appropriate!
+def register_select(self, select_obj, select_type):
+    if select_type == "horizontal_swing":
+        self.set_horizontal_swing_select(select_obj)
+    elif select_type == "vertical_swing":
+        self.set_vertical_swing_select(select_obj)

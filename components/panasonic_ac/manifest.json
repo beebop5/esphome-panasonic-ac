@@ -1,0 +1,9 @@
+{
+  "domain": "panasonic_ac",
+  "name": "Panasonic AC",
+  "documentation": "https://github.com/beebop5/esphome-panasonic-ac",
+  "requirements": [],
+  "dependencies": ["climate", "uart", "select"],
+  "codeowners": ["@beebop5"],
+  "platforms": ["climate", "select"]
+}
