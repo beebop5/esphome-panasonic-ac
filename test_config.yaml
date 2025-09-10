@@ -1,6 +1,5 @@
 esphome:
   name: test-panasonic-ac
-  platform: ESP32
   board: nodemcu-32s
 
 wifi:
