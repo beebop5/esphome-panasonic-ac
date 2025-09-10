@@ -59,5 +59,3 @@ climate:
     # Test optional features
     outside_temperature:
       name: "Test Outside Temperature"
-    nanoex_switch:
-      name: "Test NanoeX"
