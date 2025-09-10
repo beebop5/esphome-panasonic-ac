@@ -55,14 +55,14 @@ async def to_code(config):
 
     if CONF_HORIZONTAL_SWING_SELECT in config:
         conf = config[CONF_HORIZONTAL_SWING_SELECT]
-        swing_select = cg.new_Pvariable(cg.ID(conf["name"]), Select)
+        swing_select = cg.new_Pvariable(cg.ID(conf["name"].replace(" ", "_").lower()), Select)
         cg.add(swing_select.set_name(conf["name"]))
         cg.add(swing_select.set_options(HORIZONTAL_SWING_OPTIONS))
         cg.add(var.set_horizontal_swing_select(swing_select))
 
     if CONF_VERTICAL_SWING_SELECT in config:
         conf = config[CONF_VERTICAL_SWING_SELECT]
-        swing_select = cg.new_Pvariable(cg.ID(conf["name"]), Select)
+        swing_select = cg.new_Pvariable(cg.ID(conf["name"].replace(" ", "_").lower()), Select)
         cg.add(swing_select.set_name(conf["name"]))
         cg.add(swing_select.set_options(VERTICAL_SWING_OPTIONS))
         cg.add(var.set_vertical_swing_select(swing_select))
