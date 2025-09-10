@@ -1,7 +1,8 @@
 esphome:
   name: panasonic-ac
-  platform: esp32
   board: nodemcu-32s
+
+esp32:
 
 wifi:
   networks:
