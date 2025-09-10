@@ -15,7 +15,8 @@ panasonic_ac_ns = cg.esphome_ns.namespace("panasonic_ac")
 PanasonicAC = panasonic_ac_ns.class_(
     "PanasonicAC", cg.Component, uart.UARTDevice, climate.Climate
 )
-PanasonicACWLAN = panasonic_ac_ns.class_("PanasonicACWLAN", PanasonicAC)
+panasonic_ac_wlan_ns = panasonic_ac_ns.namespace("WLAN")
+PanasonicACWLAN = panasonic_ac_wlan_ns.class_("PanasonicACWLAN", PanasonicAC)
 
 CONF_HORIZONTAL_SWING_SELECT = "horizontal_swing_select"
 CONF_VERTICAL_SWING_SELECT = "vertical_swing_select"
