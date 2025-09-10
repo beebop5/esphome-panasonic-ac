@@ -50,7 +50,7 @@ echo "🔨 Testing compilation..."
 
 # Test ESP32 compilation
 echo "Testing ESP32 compilation..."
-if esphome compile test_config.yaml --board esp32dev; then
+if esphome compile test_config.yaml; then
     echo "✅ ESP32 compilation successful"
 else
     echo "❌ ESP32 compilation failed"
@@ -59,10 +59,13 @@ fi
 
 # Test ESP8266 compilation
 echo "Testing ESP8266 compilation..."
-if esphome compile test_config.yaml --board nodemcuv2; then
+sed 's/board: nodemcu-32s/board: nodemcuv2/' test_config.yaml > test_config_esp8266.yaml
+if esphome compile test_config_esp8266.yaml; then
     echo "✅ ESP8266 compilation successful"
+    rm test_config_esp8266.yaml
 else
     echo "❌ ESP8266 compilation failed"
+    rm test_config_esp8266.yaml
     exit 1
 fi
 
