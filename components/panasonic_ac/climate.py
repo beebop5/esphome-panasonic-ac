@@ -30,12 +30,14 @@ VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_ce
 CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicACWLAN),
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): select.SELECT_SCHEMA.extend(
-            {cv.GenerateID(): cv.declare_id(Select)}
-        ),
-        cv.Optional(CONF_VERTICAL_SWING_SELECT): select.SELECT_SCHEMA.extend(
-            {cv.GenerateID(): cv.declare_id(Select)}
-        ),
+        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
+            cv.GenerateID(): cv.declare_id(Select),
+            cv.Required("name"): cv.string,
+        }),
+        cv.Optional(CONF_VERTICAL_SWING_SELECT): cv.Schema({
+            cv.GenerateID(): cv.declare_id(Select),
+            cv.Required("name"): cv.string,
+        }),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             accuracy_decimals=0,
