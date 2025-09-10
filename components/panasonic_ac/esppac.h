@@ -27,7 +27,6 @@ enum class CommandType { Normal, Response, Resend };
 
 enum class ACType {
   DNSKP11,  // New module (via CN-WLAN)
-  CZTACG1   // Old module (via CN-CNT)
 };
 
 class PanasonicAC : public Component, public uart::UARTDevice, public climate::Climate {

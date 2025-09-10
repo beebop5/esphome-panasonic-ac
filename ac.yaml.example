@@ -29,11 +29,8 @@ external_components:
 
 climate:
   - platform: panasonic_ac
-    # For CZ-TACG1
-    # type: cnt
-
     # For DNSK-P11
-    # type: wlan
+    type: wlan
 
     name: Panasonic AC
     horizontal_swing_select:
@@ -44,16 +41,5 @@ climate:
       name: Panasonic AC Outside Temperature
 
     # Enable as needed
-    # eco_switch:
-    #   name: Panasonic AC Eco Switch
-    # econavi_switch:
-    #   name: Panasonic AC Econavi Switch
     # nanoex_switch:
     #   name: Panasonic AC NanoeX Switch
-    # mild_dry_switch:
-    #   name: Panasonic AC Mild Dry Switch
-    # current_power_consumption:
-    #   name: Panasonic AC Power Consumption
-
-    # Useful when the ac does not report a current temperature (CZ-TACG1 only)
-    # current_temperature_sensor: temperature_sensor_id

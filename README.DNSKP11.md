@@ -1,3 +1,7 @@
+# Descrioption
+
+This ESP external component will work only with the WLAN interface, to replace the 
+
 # Hardware installation
 
 This hardware installation guide assumes you already have a Panasonic DNSK-P11 installed and want to replace it. If you do not have a DNSK-P11 installed but your AC has the CN-WLAN connector you will have to find a fitting connector and route a cable from the mainboard yourself.
@@ -35,3 +39,6 @@ Note: RX/TX is from the direction of the ESP, not the AC.
 ![wifi adapter](images/installed_controller.jpg)
 
 Reconnect the AC mains supply and turn wifi back on. You should see a flashing wifi LED, followed by a faster flashing wifi LED and a solid wifi LED after about a minute. You can now connect this ESP to Home Assistant and control it from there.
+
+# Known Issues
+* The controller occaisionally loses its connection with the AC unit. A reboot will fix this, but I need to get the logic analyser out to understand exactly what is happening which I haven't had time to do recently. 
