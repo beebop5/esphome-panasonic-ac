@@ -1,33 +1,56 @@
+substitutions:
+  device_name: test
+  device_name_short: test
+  wifi_ssid: "testwifi"
+  wifi_pass: "test-password"
+
 esphome:
-  name: test-panasonic-ac
-  board: nodemcu-32s
+  name: $device_name
+  comment: $device_name
 
 esp32:
+  board: esp32dev
 
 wifi:
-  ssid: "test"
-  password: "test"
-
-logger:
-  level: DEBUG
+  networks:
+  - ssid: $wifi_ssid
+    password: $wifi_pass
 
 api:
-
+  
 ota:
 
-# Test UART configuration
+logger:
+  level: VERBOSE
+
+# Configure a time source (SNTP is common)
+time:
+  - platform: sntp
+    id: my_time
+    servers:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
+
+# Requires ESPHome 1.15.0+ for the even parity option
 uart:
   tx_pin: GPIO17
   rx_pin: GPIO16
   baud_rate: 9600
   parity: EVEN
+  rx_buffer_size: 1024
 
-# Test external component
 external_components:
-  source: github://beebop5/esphome-panasonic-ac
+  source:
+    type: git
+    url: https://github.com/beebop5/esphome-panasonic-ac
+    ref: test3
   components: [panasonic_ac]
+  refresh: 60s
 
-# Test climate component
+switch:
+  - platform: restart
+    name: "Restart"
+
 climate:
   - platform: panasonic_ac
     type: wlan
