@@ -38,8 +38,8 @@ Works on the ESP8266 but ESP32 is preferred for the multiple hardware serial por
 
 This software installation guide assumes some familiarity with ESPHome.
 
-* Pull this repository or copy the `ac.yaml.example` from the root folder
-* Rename the `ac.yaml.example` to `ac.yaml`
+* Pull this repository or copy the `panasonic_ac_wlan.yaml.example` from the root folder
+* Rename the `panasonic_ac_wlan.yaml.example` to `ac.yaml`
 * The `type` field should be set to `wlan` for DNSK-P11 compatibility
 * Adjust the `ac.yaml` to your needs
 * Connect your ESP
@@ -76,4 +76,4 @@ In order to find out which features are supported by your AC, check the remote t
 
 # Hardware installation
 
-[Hardware installation for DNSK-P11](README.DNSKP11.md)
+[Hardware installation for WLAN interface](README.WLAN_INSTALLATION.md)

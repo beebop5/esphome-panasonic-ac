@@ -1,4 +1,4 @@
-#include "esppac.h"
+#include "panasonic_ac_base.h"
 
 #include "esphome/core/log.h"
 
