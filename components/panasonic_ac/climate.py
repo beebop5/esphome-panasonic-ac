@@ -56,13 +56,11 @@ async def to_code(config):
     if CONF_HORIZONTAL_SWING_SELECT in config:
         conf = config[CONF_HORIZONTAL_SWING_SELECT]
         swing_select = await select.new_select(conf, options=HORIZONTAL_SWING_OPTIONS)
-        await cg.register_component(swing_select, conf)
         cg.add(var.set_horizontal_swing_select(swing_select))
 
     if CONF_VERTICAL_SWING_SELECT in config:
         conf = config[CONF_VERTICAL_SWING_SELECT]
         swing_select = await select.new_select(conf, options=VERTICAL_SWING_OPTIONS)
-        await cg.register_component(swing_select, conf)
         cg.add(var.set_vertical_swing_select(swing_select))
 
     if CONF_OUTSIDE_TEMPERATURE in config:
@@ -72,5 +70,4 @@ async def to_code(config):
     if CONF_NANOEX_SWITCH in config:
         conf = config[CONF_NANOEX_SWITCH]
         nanoex_switch = await switch.new_switch(conf)
-        await cg.register_component(nanoex_switch, conf)
         cg.add(var.set_nanoex_switch(nanoex_switch))
