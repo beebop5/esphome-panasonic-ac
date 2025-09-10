@@ -1,0 +1,43 @@
+esphome:
+  name: test-panasonic-ac
+  platform: ESP32
+  board: nodemcu-32s
+
+wifi:
+  ssid: "test"
+  password: "test"
+
+logger:
+  level: DEBUG
+
+api:
+
+ota:
+
+# Test UART configuration
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+
+# Test external component
+external_components:
+  source: github://beebop5/esphome-panasonic-ac
+  components: [panasonic_ac]
+
+# Test climate component
+climate:
+  - platform: panasonic_ac
+    type: wlan
+    name: "Test Panasonic AC"
+    
+    # Test optional features
+    horizontal_swing_select:
+      name: "Test Horizontal Swing"
+    vertical_swing_select:
+      name: "Test Vertical Swing"
+    outside_temperature:
+      name: "Test Outside Temperature"
+    nanoex_switch:
+      name: "Test NanoeX"
