@@ -7,6 +7,7 @@ from esphome.const import (
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import uart, climate, sensor, select, switch
+from esphome.components.select import Select
 
 AUTO_LOAD = ["switch", "sensor", "select"]
 DEPENDENCIES = ["uart"]
@@ -29,8 +30,12 @@ VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_ce
 CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicACWLAN),
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): select.SELECT_SCHEMA,
-        cv.Optional(CONF_VERTICAL_SWING_SELECT): select.SELECT_SCHEMA,
+        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): select.SELECT_SCHEMA.extend(
+            {cv.GenerateID(): cv.declare_id(Select)}
+        ),
+        cv.Optional(CONF_VERTICAL_SWING_SELECT): select.SELECT_SCHEMA.extend(
+            {cv.GenerateID(): cv.declare_id(Select)}
+        ),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             accuracy_decimals=0,
