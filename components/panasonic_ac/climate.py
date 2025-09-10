@@ -31,14 +31,10 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicACWLAN),
         cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
-            cv.GenerateID(): cv.declare_id(Select),
             cv.Required("name"): cv.string,
-            cv.Optional("disabled_by_default", default=False): cv.boolean,
         }),
         cv.Optional(CONF_VERTICAL_SWING_SELECT): cv.Schema({
-            cv.GenerateID(): cv.declare_id(Select),
             cv.Required("name"): cv.string,
-            cv.Optional("disabled_by_default", default=False): cv.boolean,
         }),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
@@ -59,12 +55,16 @@ async def to_code(config):
 
     if CONF_HORIZONTAL_SWING_SELECT in config:
         conf = config[CONF_HORIZONTAL_SWING_SELECT]
-        swing_select = await select.new_select(conf, options=HORIZONTAL_SWING_OPTIONS)
+        swing_select = cg.new_Pvariable(cg.ID(conf["name"]), Select)
+        cg.add(swing_select.set_name(conf["name"]))
+        cg.add(swing_select.set_options(HORIZONTAL_SWING_OPTIONS))
         cg.add(var.set_horizontal_swing_select(swing_select))
 
     if CONF_VERTICAL_SWING_SELECT in config:
         conf = config[CONF_VERTICAL_SWING_SELECT]
-        swing_select = await select.new_select(conf, options=VERTICAL_SWING_OPTIONS)
+        swing_select = cg.new_Pvariable(cg.ID(conf["name"]), Select)
+        cg.add(swing_select.set_name(conf["name"]))
+        cg.add(swing_select.set_options(VERTICAL_SWING_OPTIONS))
         cg.add(var.set_vertical_swing_select(swing_select))
 
     if CONF_OUTSIDE_TEMPERATURE in config:
