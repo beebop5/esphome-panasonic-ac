@@ -30,9 +30,6 @@ external_components:
 
 climate:
   - platform: panasonic_ac
-    # For DNSK-P11
-    type: wlan
-
     name: Panasonic AC
     horizontal_swing_select:
       name: Panasonic AC Horizontal Swing Mode
