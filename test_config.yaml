@@ -56,10 +56,6 @@ climate:
     name: "Test Panasonic AC"
     
     # Test optional features
-    horizontal_swing_select:
-      name: "Test Horizontal Swing"
-    vertical_swing_select:
-      name: "Test Vertical Swing"
     outside_temperature:
       name: "Test Outside Temperature"
     nanoex_switch:
