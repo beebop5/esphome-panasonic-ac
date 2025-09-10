@@ -33,10 +33,12 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
         cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
             cv.GenerateID(): cv.declare_id(Select),
             cv.Required("name"): cv.string,
+            cv.Optional("disabled_by_default", default=False): cv.boolean,
         }),
         cv.Optional(CONF_VERTICAL_SWING_SELECT): cv.Schema({
             cv.GenerateID(): cv.declare_id(Select),
             cv.Required("name"): cv.string,
+            cv.Optional("disabled_by_default", default=False): cv.boolean,
         }),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
