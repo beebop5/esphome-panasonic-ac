@@ -29,21 +29,15 @@ VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_ce
 CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicACWLAN),
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): select.SELECT_SCHEMA.extend(
-            {cv.GenerateID(): cv.declare_id(select.Select)}
-        ),
-        cv.Optional(CONF_VERTICAL_SWING_SELECT): select.SELECT_SCHEMA.extend(
-            {cv.GenerateID(): cv.declare_id(select.Select)}
-        ),
+        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): select.SELECT_SCHEMA,
+        cv.Optional(CONF_VERTICAL_SWING_SELECT): select.SELECT_SCHEMA,
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
-        cv.Optional(CONF_NANOEX_SWITCH): switch.SWITCH_SCHEMA.extend(
-            {cv.GenerateID(): cv.declare_id(switch.Switch)}
-        ),
+        cv.Optional(CONF_NANOEX_SWITCH): switch.SWITCH_SCHEMA,
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
