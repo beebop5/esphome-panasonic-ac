@@ -810,62 +810,8 @@ void PanasonicACWLAN::on_nanoex_change(bool state) {
   send_set_command();
 }
 
-void PanasonicACWLAN::on_eco_change(bool state) {
-  if (this->state_ != ACState::Ready)
-    return;
 
-  return;
 
-  // TODO: implement eco
-
-  // if (state) {
-  //   ESP_LOGV(TAG, "Turning eco on");
-  //   set_value(..., ...);  // eco on
-  // } else {
-  //   ESP_LOGV(TAG, "Turning eco off");
-  //   set_value(..., ...);  // eco off
-  // }
-
-  // send_set_command();
-}
-
-void PanasonicACWLAN::on_econavi_change(bool state) {
-  if (this->state_ != ACState::Ready)
-    return;
-
-  return;
-
-  // TODO: implement econavi
-
-  // if (state) {
-  //   ESP_LOGV(TAG, "Turning econavi on");
-  //   set_value(..., ...);  // econavi on
-  // } else {
-  //   ESP_LOGV(TAG, "Turning econavi off");
-  //   set_value(..., ...);  // econavi off
-  // }
-
-  // send_set_command();
-}
-
-void PanasonicACWLAN::on_mild_dry_change(bool state) {
-  if (this->state_ != ACState::Ready)
-    return;
-
-  return;
-
-  // TODO: implement mild_dry
-
-  // if (state) {
-  //   ESP_LOGV(TAG, "Turning mild_dry on");
-  //   set_value(..., ...);  // mild_dry on
-  // } else {
-  //   ESP_LOGV(TAG, "Turning mild_dry off");
-  //   set_value(..., ...);  // mild_dry off
-  // }
-
-  // send_set_command();
-}
 
 }  // namespace WLAN
 }  // namespace panasonic_ac
