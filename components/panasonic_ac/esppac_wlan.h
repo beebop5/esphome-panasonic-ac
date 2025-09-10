@@ -1,6 +1,6 @@
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/climate/climate_mode.h"
-#include "esppac.h"
+#include "panasonic_ac_base.h"
 
 namespace esphome {
 namespace panasonic_ac {

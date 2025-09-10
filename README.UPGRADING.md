@@ -3,7 +3,7 @@
 v2.0 introduces support for the CZ-TACG1 wifi module but also comes with many breaking changes. In order to update your existing config you will have to move your config over to the new external component format.
 
 The climate entity and all sensors and switches are now automatically exposed to Home Assistant.
-Take a look at [the new example file](ac.yaml.example) to see what has changed.
+Take a look at [the new example file](panasonic_ac_wlan.yaml.example) to see what has changed.
 
 ## Cleanup
 

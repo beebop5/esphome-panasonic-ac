@@ -1,81 +1,77 @@
-# Overview
+# ESPHome Panasonic AC Component
 
-An open source alternative for the Panasonic wi-fi adapter that works locally without the cloud.
+An ESPHome component for controlling Panasonic air conditioners via the WLAN interface. Drop-in replacement for the Panasonic DNSK-P11 WiFi module.
 
-# Features
+## Features
 
-* Control your AC locally via Home Assistant, MQTT or directly
-* Instantly control the AC without any delay like in the Comfort Cloud app
-* Receive live reports and state from the AC
-* Uses the UART interface on the AC instead of the IR interface
-* Provides a drop-in replacement for the Panasonic DNSK-P11 and the CZ-TACG1 wifi module
+- Local control via Home Assistant or MQTT
+- Real-time temperature and status updates
+- WLAN interface support (CN-WLAN port)
+- No cloud dependencies
 
-# Supported hardware
+## Requirements
 
-This library works with both the CN-CNT port and the CN-WLAN port. CN-WLAN is only available on newer units. Either port can be used on units that have both ports regardless of the usage of the other port (ie. it is possible to leave the DNSK-P11 connected to CN-WLAN and connect the ESP to CN-CNT). 
+- ESP32 or ESP8266
+- 5V to 3.3V logic level converter
+- ESPHome 2022.5.0+
+- Home Assistant 2021.8.0+
 
-Works on the ESP8266 but ESP32 is preferred for the multiple hardware serial ports.
+## Installation
 
-# Requirements
+1. **Copy the example config:**
+   ```bash
+   cp panasonic_ac_wlan.yaml.example ac.yaml
+   ```
 
-* ESP32 (or ESP8266) ([supported by ESPHome](https://esphome.io/#devices))
-* 5V to 3.3V bi-directional Logic Converter (minimum 2 channels, available as pre-soldered prototyping boards)
-* Female-Female Jumper cables
-* Soldering iron
-* Wires to solder from Logic converter to ESP
-* Heat shrink
-* ESPHome 2022.5.0 or newer
-* Home Assistant 2021.8.0 or newer
+2. **Update the config:**
+   ```yaml
+   external_components:
+     source: github://beebop5/esphome-panasonic-ac
+     components: [panasonic_ac]
+   
+   climate:
+     - platform: panasonic_ac
+       type: wlan
+       name: "Panasonic AC"
+   ```
 
-# Notes
+3. **Flash and test:**
+   ```bash
+   esphome ac.yaml run
+   ```
 
-* **Make sure to disconnect mains power before opening your AC, the mains contacts are exposed and can be touched by accident!**
-* **Do not connect your ESP32/ESP8266 directly to the AC, the AC uses 5V while the ESPs use 3.3V!**
-* **While installation is fairly straightforward I do not take any responsibility for any damage done to you or your AC during installation**
-* The DNSK-P11 and the CZ-TACG1 use different types of connectors, make sure to connect to the correct one
+4. **Install hardware:** See [WLAN Installation Guide](README.WLAN_INSTALLATION.md)
 
-# Software installation
+## Configuration
 
-This software installation guide assumes some familiarity with ESPHome.
+Basic configuration with optional features:
 
-* Pull this repository or copy the `ac.yaml.example` from the root folder
-* Rename the `ac.yaml.example` to `ac.yaml`
-* Uncomment the `type` field depending on which AC protocol you want to use
-* Adjust the `ac.yaml` to your needs
-* Connect your ESP
-* Run `esphome ac.yaml run` and choose your serial port (or do this via the Home Assistant UI)
-* If you see the handshake messages being sent (DNSK-P11) or polling requests being sent (CZ-TACG1) in the log you are good to go
-* Disconnect the ESP and continue with hardware installation
-
-## Setting supported features
-
-Since Panasonic ACs support different features you can comment out the lines at the bottom of your `ac.yaml`:
-
-```
-  # Enable as needed
-  # eco_switch:
-  #   name: Panasonic AC Eco Switch
-  # nanoex_switch:
-  #   name: Panasonic AC NanoeX Switch
-  # mild_dry_switch:
-  #   name: Panasonic AC Mild Dry Switch
-  # econavi_switch:
-  #   name: Econavi switch
-  # current_power_consumption:
-  #   name: Panasonic AC Power Consumption
+```yaml
+climate:
+  - platform: panasonic_ac
+    type: wlan
+    name: "Panasonic AC"
+    
+    # Optional features (enable only if supported by your AC)
+    horizontal_swing_select:
+      name: "AC Horizontal Swing"
+    vertical_swing_select:
+      name: "AC Vertical Swing"
+    outside_temperature:
+      name: "AC Outside Temperature"
+    nanoex_switch:
+      name: "AC NanoeX"
 ```
 
-In order to find out which features are supported by your AC, check the remote that came with it. Please note that eco switch and mild dry switch are not supported on DNSK-P11.
+## Safety Warning
 
-**Enabling unsupported features can lead to undefined behavior and may damage your AC. Make sure to check your remote or manual first.**
-**current_power_consumption is just as ESTIMATED value by the AC**
+⚠️ **Always disconnect mains power before opening your AC unit. Use a logic level converter - never connect ESP directly to AC (5V vs 3.3V).**
 
-## Upgrading from 1.x to 2.x
+## License
 
-[Upgrade instructions](README.UPGRADING.md)
+MIT License - see [LICENSE](LICENSE) for details.
 
-# Hardware installation
+## Support
 
-[Hardware installation for DNSK-P11](README.DNSKP11.md)
-
-[Hardware installation for CZ-TACG1](README.CZTACG1.md)
+- [Issues](https://github.com/beebop5/esphome-panasonic-ac/issues)
+- [Discussions](https://github.com/beebop5/esphome-panasonic-ac/discussions)

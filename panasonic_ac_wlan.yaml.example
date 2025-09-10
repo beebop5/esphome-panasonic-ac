@@ -23,17 +23,14 @@ uart:
   parity: EVEN
 
 external_components:
-  source: github://DomiStyle/esphome-panasonic-ac
+  source: github://beebop5/esphome-panasonic-ac
   components: [panasonic_ac]
 
 
 climate:
   - platform: panasonic_ac
-    # For CZ-TACG1
-    # type: cnt
-
     # For DNSK-P11
-    # type: wlan
+    type: wlan
 
     name: Panasonic AC
     horizontal_swing_select:
