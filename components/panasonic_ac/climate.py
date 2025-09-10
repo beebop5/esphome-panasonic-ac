@@ -54,14 +54,12 @@ async def to_code(config):
 
     if CONF_HORIZONTAL_SWING_SELECT in config:
         conf = config[CONF_HORIZONTAL_SWING_SELECT]
-        swing_select = await select.new_select(conf)
-        cg.add(swing_select.set_options(HORIZONTAL_SWING_OPTIONS))
+        swing_select = await select.new_select(conf, options=HORIZONTAL_SWING_OPTIONS)
         cg.add(var.set_horizontal_swing_select(swing_select))
 
     if CONF_VERTICAL_SWING_SELECT in config:
         conf = config[CONF_VERTICAL_SWING_SELECT]
-        swing_select = await select.new_select(conf)
-        cg.add(swing_select.set_options(VERTICAL_SWING_OPTIONS))
+        swing_select = await select.new_select(conf, options=VERTICAL_SWING_OPTIONS)
         cg.add(var.set_vertical_swing_select(swing_select))
 
     if CONF_OUTSIDE_TEMPERATURE in config:
