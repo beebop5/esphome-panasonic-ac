@@ -1,5 +1,4 @@
 #include "esppac_wlan.h"
-#include "panasonic_ac_wlan_commands.h"
 
 namespace esphome {
 namespace panasonic_ac {
