@@ -17,8 +17,6 @@ panasonic_ac_ns = cg.esphome_ns.namespace("panasonic_ac")
 PanasonicAC = panasonic_ac_ns.class_(
     "PanasonicAC", cg.Component, uart.UARTDevice, climate.Climate
 )
-panasonic_ac_cnt_ns = panasonic_ac_ns.namespace("CNT")
-PanasonicACCNT = panasonic_ac_cnt_ns.class_("PanasonicACCNT", PanasonicAC)
 panasonic_ac_wlan_ns = panasonic_ac_ns.namespace("WLAN")
 PanasonicACWLAN = panasonic_ac_wlan_ns.class_("PanasonicACWLAN", PanasonicAC)
 
@@ -39,7 +37,6 @@ CONF_ECONAVI_SWITCH = "econavi_switch"
 CONF_MILD_DRY_SWITCH = "mild_dry_switch"
 CONF_CURRENT_POWER_CONSUMPTION = "current_power_consumption"
 CONF_WLAN = "wlan"
-CONF_CNT = "cnt"
 
 SCHEMA = climate.climate_schema(
     {
@@ -60,27 +57,6 @@ CONFIG_SCHEMA = cv.typed_schema(
         CONF_WLAN: SCHEMA.extend(
             {
                 cv.GenerateID(): cv.declare_id(PanasonicACWLAN),
-            }
-        ),
-        CONF_CNT: SCHEMA.extend(
-            {
-                cv.GenerateID(): cv.declare_id(PanasonicACCNT),
-                cv.Optional(CONF_ECO_SWITCH): switch.SWITCH_SCHEMA.extend(
-                    cv.COMPONENT_SCHEMA
-                ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
-                cv.Optional(CONF_ECONAVI_SWITCH): switch.SWITCH_SCHEMA.extend(
-                    cv.COMPONENT_SCHEMA
-                ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
-                cv.Optional(CONF_MILD_DRY_SWITCH): switch.SWITCH_SCHEMA.extend(
-                    cv.COMPONENT_SCHEMA
-                ).extend({cv.GenerateID(): cv.declare_id(PanasonicACSwitch)}),
-                cv.Optional(CONF_CURRENT_TEMPERATURE_SENSOR): cv.use_id(sensor.Sensor),
-                cv.Optional(CONF_CURRENT_POWER_CONSUMPTION): sensor.sensor_schema(
-                    unit_of_measurement=UNIT_WATT,
-                    accuracy_decimals=0,
-                    device_class=DEVICE_CLASS_POWER,
-                    state_class=STATE_CLASS_MEASUREMENT,
-                ),
             }
         ),
     }
