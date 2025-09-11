@@ -60,6 +60,13 @@ void PanasonicAC::read_data() {
 }
 
 void PanasonicAC::update_outside_temperature(int8_t temperature) {
+  // Check for special sensor error values
+  if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
+      temperature == TEMP_SENSOR_INVALID) {
+    ESP_LOGD(TAG, "Outside temperature sensor not available (value: %d)", temperature);
+    return;
+  }
+  
   if (temperature > TEMPERATURE_THRESHOLD) {
     ESP_LOGW(TAG, "Received out of range outside temperature: %d", temperature);
     return;
@@ -71,6 +78,13 @@ void PanasonicAC::update_outside_temperature(int8_t temperature) {
 }
 
 void PanasonicAC::update_current_temperature(int8_t temperature) {
+  // Check for special sensor error values
+  if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
+      temperature == TEMP_SENSOR_INVALID) {
+    ESP_LOGD(TAG, "Inside temperature sensor not available (value: %d)", temperature);
+    return;
+  }
+  
   if (temperature > TEMPERATURE_THRESHOLD) {
     ESP_LOGW(TAG, "Received out of range inside temperature: %d", temperature);
     return;
@@ -80,6 +94,13 @@ void PanasonicAC::update_current_temperature(int8_t temperature) {
 }
 
 void PanasonicAC::update_target_temperature(uint8_t raw_value) {
+  // Check for special sensor error values
+  if (raw_value == TEMP_SENSOR_NOT_AVAILABLE || raw_value == TEMP_SENSOR_ERROR || 
+      raw_value == TEMP_SENSOR_INVALID) {
+    ESP_LOGD(TAG, "Target temperature sensor not available (value: %d)", raw_value);
+    return;
+  }
+  
   float temperature = raw_value * TEMPERATURE_STEP;
 
   if (temperature > TEMPERATURE_THRESHOLD) {

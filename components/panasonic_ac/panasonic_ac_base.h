@@ -23,6 +23,11 @@ static const float TEMPERATURE_TOLERANCE = 2;  // The tolerance to allow when ch
 static const uint8_t TEMPERATURE_THRESHOLD =
     100;  // Maximum temperature the AC can report before considering the temperature as invalid
 
+// Special values indicating sensor not available or error
+static const uint8_t TEMP_SENSOR_NOT_AVAILABLE = 0x7E;  // 126 - Sensor not available
+static const uint8_t TEMP_SENSOR_ERROR = 0x7F;          // 127 - Sensor error
+static const uint8_t TEMP_SENSOR_INVALID = 0xFF;        // 255 - Invalid reading
+
 enum class CommandType { Normal, Response, Resend };
 
 enum class ACType {

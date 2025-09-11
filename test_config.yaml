@@ -44,7 +44,7 @@ external_components:
   source:
     type: git
     url: https://github.com/beebop5/esphome-panasonic-ac
-    ref: fix-climate-schema-deprecation
+    ref: handle-sensor-error-values
   components: [panasonic_ac]
   refresh: 60s
 
