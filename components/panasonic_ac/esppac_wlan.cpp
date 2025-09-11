@@ -225,8 +225,12 @@ void PanasonicACWLAN::handle_init_packets() {
     if (millis() - this->init_time_ > INIT_TIMEOUT)  // Handle handshake initialization
     {
       ESP_LOGD(TAG, "Starting handshake [1/16]");
-      send_command(CMD_HANDSHAKE_1,
-                   sizeof(CMD_HANDSHAKE_1));  // Send first handshake packet, AC won't send a response
+      // Send handshake commands directly to avoid queuing delays during initialization
+      std::vector<uint8_t> packet(sizeof(CMD_HANDSHAKE_1) + 3);
+      for (int i = 0; i < sizeof(CMD_HANDSHAKE_1); i++) {
+        packet[i + 2] = CMD_HANDSHAKE_1[i];
+      }
+      send_packet(packet, CommandType::Normal);
       this->handshake_delay_start_ = millis(); // Start non-blocking delay
       this->state_ = ACState::HandshakeDelay;  // Set state to delay
       return;  // Exit early to avoid sending second packet immediately
@@ -235,9 +239,12 @@ void PanasonicACWLAN::handle_init_packets() {
     if (millis() - this->handshake_delay_start_ >= 3)  // Wait for 3ms delay
     {
       ESP_LOGD(TAG, "Sending second handshake packet [2/16]");
-      send_command(CMD_HANDSHAKE_2,
-                   sizeof(CMD_HANDSHAKE_2));  // Send second handshake packet, AC won't send a response
-                                              // but we will trigger a resend
+      // Send handshake commands directly to avoid queuing delays during initialization
+      std::vector<uint8_t> packet(sizeof(CMD_HANDSHAKE_2) + 3);
+      for (int i = 0; i < sizeof(CMD_HANDSHAKE_2); i++) {
+        packet[i + 2] = CMD_HANDSHAKE_2[i];
+      }
+      send_packet(packet, CommandType::Normal);
       this->state_ = ACState::Handshake;  // Update state to handshake started
     }
   } else if (this->state_ == ACState::FirstPoll &&
