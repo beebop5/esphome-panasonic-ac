@@ -230,6 +230,8 @@ void PanasonicACWLAN::handle_init_packets() {
       for (int i = 0; i < sizeof(CMD_HANDSHAKE_1); i++) {
         packet[i + 2] = CMD_HANDSHAKE_1[i];
       }
+      this->last_command_ = CMD_HANDSHAKE_1;               // Store the last command we sent
+      this->last_command_length_ = sizeof(CMD_HANDSHAKE_1);  // Store the length of the last command we sent
       send_packet(packet, CommandType::Normal);
       this->handshake_delay_start_ = millis(); // Start non-blocking delay
       this->state_ = ACState::HandshakeDelay;  // Set state to delay
@@ -244,6 +246,8 @@ void PanasonicACWLAN::handle_init_packets() {
       for (int i = 0; i < sizeof(CMD_HANDSHAKE_2); i++) {
         packet[i + 2] = CMD_HANDSHAKE_2[i];
       }
+      this->last_command_ = CMD_HANDSHAKE_2;               // Store the last command we sent
+      this->last_command_length_ = sizeof(CMD_HANDSHAKE_2);  // Store the length of the last command we sent
       send_packet(packet, CommandType::Normal);
       this->state_ = ACState::Handshake;  // Update state to handshake started
     }
