@@ -788,20 +788,22 @@ void PanasonicACWLAN::process_handshake_packet() {
       this->handshake_response_type_ = 9;  // handshake 9
     } else if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82 && this->rx_buffer_[2] == 0x42) {
       this->handshake_response_type_ = 10;  // handshake 10 (alt)
-    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x18) {
+    } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x81) {
       this->handshake_response_type_ = 10;  // handshake 10
     } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x19) {
       this->handshake_response_type_ = 11;  // handshake 11
-    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1A) {
-      this->handshake_response_type_ = 12;  // handshake 12
-    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1B) {
-      this->handshake_response_type_ = 13;  // handshake 13
-    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1C) {
-      this->handshake_response_type_ = 14;  // handshake 14
-    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1D) {
-      this->handshake_response_type_ = 15;  // handshake 15
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x98) {
+      this->handshake_response_type_ = 11;  // handshake 11
     } else if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x80) {
-      this->handshake_response_type_ = 16;  // handshake 16
+      this->handshake_response_type_ = 12;  // handshake 12
+    } else if (this->rx_buffer_[14] == 0x83 && this->rx_buffer_[15] == 0x5A) {
+      this->handshake_response_type_ = 99;  // Ethera generation devices handshake failure
+    } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88) {
+      this->handshake_response_type_ = 13;  // handshake 13 (ignore)
+    } else if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x09) {
+      this->handshake_response_type_ = 14;  // First unsolicited packet - handshake 14
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x20) {
+      this->handshake_response_type_ = 15;  // Second unsolicited packet - handshake 15
     } else {
       this->handshake_response_type_ = 0;  // unknown
     }
@@ -858,23 +860,25 @@ void PanasonicACWLAN::process_handshake_packet() {
         send_command(CMD_HANDSHAKE_13, sizeof(CMD_HANDSHAKE_13));
         break;
       case 13:
-        ESP_LOGD(TAG, "Answering handshake [13/16]");
-        send_command(CMD_HANDSHAKE_14, sizeof(CMD_HANDSHAKE_14));
+        ESP_LOGD(TAG, "Ignoring handshake [13/16]");
+        // Ignore this packet
         break;
       case 14:
-        ESP_LOGD(TAG, "Answering handshake [14/16]");
-        send_command(CMD_HANDSHAKE_15, sizeof(CMD_HANDSHAKE_15));
+        ESP_LOGD(TAG, "Received rx counter [14/16]");
+        this->receive_packet_count_ = this->rx_buffer_[1];  // Set rx packet counter
+        send_command(CMD_HANDSHAKE_14, sizeof(CMD_HANDSHAKE_14), CommandType::Response);
         break;
       case 15:
         ESP_LOGD(TAG, "Answering handshake [15/16]");
-        send_command(CMD_HANDSHAKE_16, sizeof(CMD_HANDSHAKE_16));
+        this->state_ = ACState::FirstPoll;  // Start delayed first poll
+        send_command(CMD_HANDSHAKE_15, sizeof(CMD_HANDSHAKE_15), CommandType::Response);
         break;
-      case 16:
-        ESP_LOGI(TAG, "Panasonic AC component v%s initialized", VERSION);
-        this->state_ = ACState::Ready;
+      case 99:
+        ESP_LOGD(TAG, "Received 83 5A packet, Initialization failed, restarting init");
+        this->state_ = ACState::Initializing;  // Restart Initialization
         break;
       default:
-        ESP_LOGW(TAG, "Received unknown packet");
+        ESP_LOGW(TAG, "Received unknown packet during initialization");
         break;
     }
     
