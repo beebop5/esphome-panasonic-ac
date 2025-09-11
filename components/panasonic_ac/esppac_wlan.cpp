@@ -823,6 +823,7 @@ void PanasonicACWLAN::process_handshake_packet() {
     } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x20) {
       this->handshake_response_type_ = 15;  // Second unsolicited packet - handshake 15
     } else {
+      ESP_LOGD(TAG, "Unknown handshake packet: [2]=0x%02X [3]=0x%02X", this->rx_buffer_[2], this->rx_buffer_[3]);
       this->handshake_response_type_ = 0;  // unknown
     }
     
