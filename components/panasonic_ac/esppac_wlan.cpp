@@ -23,28 +23,48 @@ void PanasonicACWLAN::loop() {
     }
   }
 
+  // Handle packet processing in stages to avoid blocking
   if (millis() - this->last_read_ > READ_TIMEOUT &&
       !this->rx_buffer_.empty())  // Check if our read timed out and we received something
   {
-    log_packet(this->rx_buffer_);
-
-    if (!verify_packet())  // Verify length, header, counter and checksum
-      return;
-
-    this->waiting_for_response_ =
-        false;  // Set that we are not waiting for a response anymore since we received a valid one
-    this->last_packet_received_ = millis();  // Set the time at which we received our last packet
-
-    if (this->state_ == ACState::Ready || this->state_ == ACState::FirstPoll ||
-        this->state_ == ACState::HandshakeEnding)  // Parse regular packets
-    {
-      handle_packet();  // Handle regular packet
-    } else              // Parse handshake packets
-    {
-      handle_handshake_packet();  // Not initialized yet, handle handshake packet
+    if (this->packet_process_state_ == PacketProcessState::None) {
+      // Start packet processing
+      this->packet_process_state_ = PacketProcessState::Logging;
     }
+    
+    if (this->packet_process_state_ == PacketProcessState::Logging) {
+      log_packet(this->rx_buffer_);
+      this->packet_process_state_ = PacketProcessState::Verifying;
+      return;  // Exit to avoid blocking
+    }
+    
+    if (this->packet_process_state_ == PacketProcessState::Verifying) {
+      if (!verify_packet()) {  // Verify length, header, counter and checksum
+        this->packet_process_state_ = PacketProcessState::None;
+        this->rx_buffer_.clear();
+        return;
+      }
+      this->packet_process_state_ = PacketProcessState::Handling;
+      return;  // Exit to avoid blocking
+    }
+    
+    if (this->packet_process_state_ == PacketProcessState::Handling) {
+      this->waiting_for_response_ =
+          false;  // Set that we are not waiting for a response anymore since we received a valid one
+      this->last_packet_received_ = millis();  // Set the time at which we received our last packet
 
-    this->rx_buffer_.clear();  // Reset buffer
+      if (this->state_ == ACState::Ready || this->state_ == ACState::FirstPoll ||
+          this->state_ == ACState::HandshakeEnding)  // Parse regular packets
+      {
+        handle_packet();  // Handle regular packet
+      } else              // Parse handshake packets
+      {
+        handle_handshake_packet();  // Not initialized yet, handle handshake packet
+      }
+
+      this->rx_buffer_.clear();  // Reset buffer
+      this->packet_process_state_ = PacketProcessState::None;  // Reset processing state
+    }
   }
 
   PanasonicAC::read_data();

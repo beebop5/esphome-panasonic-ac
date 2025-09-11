@@ -61,6 +61,13 @@ enum class ACState {
   Failed            // Initialization failed
 };
 
+enum class PacketProcessState {
+  None,             // No packet being processed
+  Logging,          // Logging the packet
+  Verifying,        // Verifying the packet
+  Handling          // Handling the packet
+};
+
 class PanasonicACWLAN : public PanasonicAC {
  public:
   void control(const climate::ClimateCall &call) override;
@@ -85,6 +92,8 @@ class PanasonicACWLAN : public PanasonicAC {
   uint8_t set_queue_index_ = 0;  // Stores the index of the next key/value set
 
   uint32_t handshake_delay_start_ = 0;  // Time when handshake delay started
+  
+  PacketProcessState packet_process_state_ = PacketProcessState::None;  // Current packet processing state
 
   void handle_init_packets();
   void handle_handshake_packet();
