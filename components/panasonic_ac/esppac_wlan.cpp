@@ -203,11 +203,17 @@ void PanasonicACWLAN::handle_init_packets() {
       ESP_LOGD(TAG, "Starting handshake [1/16]");
       send_command(CMD_HANDSHAKE_1,
                    sizeof(CMD_HANDSHAKE_1));  // Send first handshake packet, AC won't send a response
-      delay(3);                               // Add small delay to mimic real wifi adapter
+      this->handshake_delay_start_ = millis(); // Start non-blocking delay
+      this->state_ = ACState::HandshakeDelay;  // Set state to delay
+      return;  // Exit early to avoid sending second packet immediately
+    }
+  } else if (this->state_ == ACState::HandshakeDelay) {
+    if (millis() - this->handshake_delay_start_ >= 3)  // Wait for 3ms delay
+    {
+      ESP_LOGD(TAG, "Sending second handshake packet [2/16]");
       send_command(CMD_HANDSHAKE_2,
                    sizeof(CMD_HANDSHAKE_2));  // Send second handshake packet, AC won't send a response
                                               // but we will trigger a resend
-
       this->state_ = ACState::Handshake;  // Update state to handshake started
     }
   } else if (this->state_ == ACState::FirstPoll &&

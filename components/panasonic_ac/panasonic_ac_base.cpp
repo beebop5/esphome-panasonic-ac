@@ -44,7 +44,11 @@ void PanasonicAC::loop() {
 }
 
 void PanasonicAC::read_data() {
-  while (available())  // Read while data is available
+  // Limit reads to prevent blocking - read max 10 bytes per call
+  uint8_t bytes_read = 0;
+  const uint8_t MAX_BYTES_PER_CALL = 10;
+  
+  while (available() && bytes_read < MAX_BYTES_PER_CALL)  // Read while data is available, but limit per call
   {
     // if (this->receive_buffer_index >= BUFFER_SIZE) {
     //   ESP_LOGE(TAG, "Receive buffer overflow");
@@ -56,6 +60,7 @@ void PanasonicAC::read_data() {
     this->rx_buffer_.push_back(c);
 
     this->last_read_ = millis();  // Update lastRead timestamp
+    bytes_read++;
   }
 }
 

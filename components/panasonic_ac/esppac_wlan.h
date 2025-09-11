@@ -53,6 +53,7 @@ static const uint8_t CMD_REPORT_ACK[]{0x10, 0x8A, 0x00, 0x04, 0x00, 0x01, 0x30, 
 
 enum class ACState {
   Initializing,     // Before first handshake packet is sent
+  HandshakeDelay,   // Waiting for delay between handshake packets
   Handshake,        // During the initial handshake
   FirstPoll,        // After the handshake, before polling for the first time
   HandshakeEnding,  // After the first poll, waiting for the last handshake packet
@@ -82,6 +83,8 @@ class PanasonicACWLAN : public PanasonicAC {
 
   uint8_t set_queue_[16][2];     // Queue to store the key/value for the set commands
   uint8_t set_queue_index_ = 0;  // Stores the index of the next key/value set
+
+  uint32_t handshake_delay_start_ = 0;  // Time when handshake delay started
 
   void handle_init_packets();
   void handle_handshake_packet();
