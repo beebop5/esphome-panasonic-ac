@@ -58,7 +58,7 @@ void PanasonicACWLAN::loop() {
 
       this->rx_buffer_.clear();  // Reset buffer
       this->packet_process_state_ = PacketProcessState::None;  // Reset processing state
-      this->handshake_process_state_ = HandshakeProcessState::None;  // Reset handshake processing state
+      // Don't reset handshake_process_state_ here - let it be reset in process_handshake_packet() when done
     }
   }
 
