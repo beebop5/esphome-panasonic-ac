@@ -26,7 +26,7 @@ CONF_NANOEX_SWITCH = "nanoex_switch"
 HORIZONTAL_SWING_OPTIONS = ["auto", "left", "left_center", "center", "right_center", "right"]
 VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_center", "down"]
 
-CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
+CONFIG_SCHEMA = climate.climate_schema(PanasonicACWLAN).extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicACWLAN),
         cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
