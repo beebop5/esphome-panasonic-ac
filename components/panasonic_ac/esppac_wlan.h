@@ -94,9 +94,19 @@ class PanasonicACWLAN : public PanasonicAC {
   uint32_t handshake_delay_start_ = 0;  // Time when handshake delay started
   
   PacketProcessState packet_process_state_ = PacketProcessState::None;  // Current packet processing state
+  
+  // Command queuing for non-blocking operation
+  struct QueuedCommand {
+    std::vector<uint8_t> command;
+    CommandType type;
+  };
+  std::vector<QueuedCommand> command_queue_;
+  uint32_t last_command_send_time_ = 0;
+  static const uint32_t COMMAND_SEND_INTERVAL = 5;  // Minimum 5ms between command sends
 
   void handle_init_packets();
   void handle_handshake_packet();
+  void process_command_queue();
 
   void handle_poll();
   bool verify_packet();

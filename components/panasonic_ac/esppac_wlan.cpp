@@ -69,6 +69,8 @@ void PanasonicACWLAN::loop() {
 
   PanasonicAC::read_data();
 
+  process_command_queue();  // Process queued commands
+
   handle_resend();  // Handle packets that need to be resent
 
   handle_poll();  // Handle sending poll packets
@@ -704,7 +706,11 @@ void PanasonicACWLAN::send_command(const uint8_t *command, size_t commandLength,
   this->last_command_ = command;               // Store the last command we sent
   this->last_command_length_ = commandLength;  // Store the length of the last command we sent
 
-  send_packet(packet, type);  // Actually send the constructed packet
+  // Queue the command instead of sending immediately to avoid blocking
+  QueuedCommand queued_cmd;
+  queued_cmd.command = packet;
+  queued_cmd.type = type;
+  this->command_queue_.push_back(queued_cmd);
 }
 
 void PanasonicACWLAN::send_packet(std::vector<uint8_t> packet, CommandType type) {
@@ -751,6 +757,20 @@ void PanasonicACWLAN::send_packet(std::vector<uint8_t> packet, CommandType type)
 
   write_array(packet);       // Write to UART
   log_packet(packet, true);  // Write to log
+}
+
+void PanasonicACWLAN::process_command_queue() {
+  // Only send one command per loop iteration to avoid blocking
+  if (!this->command_queue_.empty() && 
+      millis() - this->last_command_send_time_ >= COMMAND_SEND_INTERVAL) {
+    
+    QueuedCommand cmd = this->command_queue_.front();
+    this->command_queue_.erase(this->command_queue_.begin());
+    
+    // Send the actual packet
+    send_packet(cmd.command, cmd.type);
+    this->last_command_send_time_ = millis();
+  }
 }
 
 /*
