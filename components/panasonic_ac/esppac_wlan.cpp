@@ -775,6 +775,7 @@ void PanasonicACWLAN::send_packet(std::vector<uint8_t> packet, CommandType type)
 void PanasonicACWLAN::process_handshake_packet() {
   if (this->handshake_process_state_ == HandshakeProcessState::None) {
     // Stage 1: Identify the handshake packet type
+    ESP_LOGD(TAG, "Starting handshake packet identification");
     this->handshake_process_state_ = HandshakeProcessState::Identifying;
     return;  // Exit to avoid blocking
   }
@@ -782,6 +783,7 @@ void PanasonicACWLAN::process_handshake_packet() {
   if (this->handshake_process_state_ == HandshakeProcessState::Identifying) {
     // Identify the handshake response type
     if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x89) {
+      ESP_LOGD(TAG, "Identified handshake 2 response");
       this->handshake_response_type_ = 2;  // handshake 2
     } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x8C) {
       this->handshake_response_type_ = 3;  // handshake 3
@@ -819,6 +821,7 @@ void PanasonicACWLAN::process_handshake_packet() {
       this->handshake_response_type_ = 0;  // unknown
     }
     
+    ESP_LOGD(TAG, "Moving to responding stage, handshake type: %d", this->handshake_response_type_);
     this->handshake_process_state_ = HandshakeProcessState::Responding;
     return;  // Exit to avoid blocking
   }
