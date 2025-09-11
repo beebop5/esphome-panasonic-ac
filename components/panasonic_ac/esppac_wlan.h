@@ -68,6 +68,12 @@ enum class PacketProcessState {
   Handling          // Handling the packet
 };
 
+enum class HandshakeProcessState {
+  None,             // No handshake packet being processed
+  Identifying,      // Identifying the handshake packet type
+  Responding        // Sending the response command
+};
+
 class PanasonicACWLAN : public PanasonicAC {
  public:
   void control(const climate::ClimateCall &call) override;
@@ -94,6 +100,8 @@ class PanasonicACWLAN : public PanasonicAC {
   uint32_t handshake_delay_start_ = 0;  // Time when handshake delay started
   
   PacketProcessState packet_process_state_ = PacketProcessState::None;  // Current packet processing state
+  HandshakeProcessState handshake_process_state_ = HandshakeProcessState::None;  // Current handshake processing state
+  uint8_t handshake_response_type_ = 0;  // Store the handshake response type for processing
   
   // Command queuing for non-blocking operation
   struct QueuedCommand {
@@ -106,6 +114,7 @@ class PanasonicACWLAN : public PanasonicAC {
 
   void handle_init_packets();
   void handle_handshake_packet();
+  void process_handshake_packet();
   void process_command_queue();
 
   void handle_poll();

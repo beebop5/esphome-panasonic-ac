@@ -59,11 +59,12 @@ void PanasonicACWLAN::loop() {
         handle_packet();  // Handle regular packet
       } else              // Parse handshake packets
       {
-        handle_handshake_packet();  // Not initialized yet, handle handshake packet
+        process_handshake_packet();  // Not initialized yet, handle handshake packet in stages
       }
 
       this->rx_buffer_.clear();  // Reset buffer
       this->packet_process_state_ = PacketProcessState::None;  // Reset processing state
+      this->handshake_process_state_ = HandshakeProcessState::None;  // Reset handshake processing state
     }
   }
 
@@ -757,6 +758,127 @@ void PanasonicACWLAN::send_packet(std::vector<uint8_t> packet, CommandType type)
 
   write_array(packet);       // Write to UART
   log_packet(packet, true);  // Write to log
+}
+
+void PanasonicACWLAN::process_handshake_packet() {
+  if (this->handshake_process_state_ == HandshakeProcessState::None) {
+    // Stage 1: Identify the handshake packet type
+    this->handshake_process_state_ = HandshakeProcessState::Identifying;
+    return;  // Exit to avoid blocking
+  }
+  
+  if (this->handshake_process_state_ == HandshakeProcessState::Identifying) {
+    // Identify the handshake response type
+    if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x89) {
+      this->handshake_response_type_ = 2;  // handshake 2
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x8C) {
+      this->handshake_response_type_ = 3;  // handshake 3
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x90) {
+      this->handshake_response_type_ = 4;  // handshake 4
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x91) {
+      this->handshake_response_type_ = 5;  // handshake 5
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x92) {
+      this->handshake_response_type_ = 6;  // handshake 6
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0xC1) {
+      this->handshake_response_type_ = 7;  // handshake 7
+    } else if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0xCC) {
+      this->handshake_response_type_ = 8;  // handshake 8
+    } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x80) {
+      this->handshake_response_type_ = 9;  // handshake 9
+    } else if (this->rx_buffer_[0] == 0x02 && this->rx_buffer_[1] == 0x82 && this->rx_buffer_[2] == 0x42) {
+      this->handshake_response_type_ = 10;  // handshake 10 (alt)
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x18) {
+      this->handshake_response_type_ = 10;  // handshake 10
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x19) {
+      this->handshake_response_type_ = 11;  // handshake 11
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1A) {
+      this->handshake_response_type_ = 12;  // handshake 12
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1B) {
+      this->handshake_response_type_ = 13;  // handshake 13
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1C) {
+      this->handshake_response_type_ = 14;  // handshake 14
+    } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x1D) {
+      this->handshake_response_type_ = 15;  // handshake 15
+    } else if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x80) {
+      this->handshake_response_type_ = 16;  // handshake 16
+    } else {
+      this->handshake_response_type_ = 0;  // unknown
+    }
+    
+    this->handshake_process_state_ = HandshakeProcessState::Responding;
+    return;  // Exit to avoid blocking
+  }
+  
+  if (this->handshake_process_state_ == HandshakeProcessState::Responding) {
+    // Stage 2: Send the appropriate response command
+    switch (this->handshake_response_type_) {
+      case 2:
+        ESP_LOGD(TAG, "Answering handshake [2/16]");
+        send_command(CMD_HANDSHAKE_3, sizeof(CMD_HANDSHAKE_3));
+        break;
+      case 3:
+        ESP_LOGD(TAG, "Answering handshake [3/16]");
+        send_command(CMD_HANDSHAKE_4, sizeof(CMD_HANDSHAKE_4));
+        break;
+      case 4:
+        ESP_LOGD(TAG, "Answering handshake [4/16]");
+        send_command(CMD_HANDSHAKE_5, sizeof(CMD_HANDSHAKE_5));
+        break;
+      case 5:
+        ESP_LOGD(TAG, "Answering handshake [5/16]");
+        send_command(CMD_HANDSHAKE_6, sizeof(CMD_HANDSHAKE_6));
+        break;
+      case 6:
+        ESP_LOGD(TAG, "Answering handshake [6/16]");
+        send_command(CMD_HANDSHAKE_7, sizeof(CMD_HANDSHAKE_7));
+        break;
+      case 7:
+        ESP_LOGD(TAG, "Answering handshake [7/16]");
+        send_command(CMD_HANDSHAKE_8, sizeof(CMD_HANDSHAKE_8));
+        break;
+      case 8:
+        ESP_LOGD(TAG, "Answering handshake [8/16]");
+        send_command(CMD_HANDSHAKE_9, sizeof(CMD_HANDSHAKE_9));
+        break;
+      case 9:
+        ESP_LOGD(TAG, "Answering handshake [9/16]");
+        send_command(CMD_HANDSHAKE_10, sizeof(CMD_HANDSHAKE_10));
+        break;
+      case 10:
+        ESP_LOGD(TAG, "Answering handshake [10/16]");
+        send_command(CMD_HANDSHAKE_11, sizeof(CMD_HANDSHAKE_11));
+        break;
+      case 11:
+        ESP_LOGD(TAG, "Answering handshake [11/16]");
+        send_command(CMD_HANDSHAKE_12, sizeof(CMD_HANDSHAKE_12));
+        break;
+      case 12:
+        ESP_LOGD(TAG, "Answering handshake [12/16]");
+        send_command(CMD_HANDSHAKE_13, sizeof(CMD_HANDSHAKE_13));
+        break;
+      case 13:
+        ESP_LOGD(TAG, "Answering handshake [13/16]");
+        send_command(CMD_HANDSHAKE_14, sizeof(CMD_HANDSHAKE_14));
+        break;
+      case 14:
+        ESP_LOGD(TAG, "Answering handshake [14/16]");
+        send_command(CMD_HANDSHAKE_15, sizeof(CMD_HANDSHAKE_15));
+        break;
+      case 15:
+        ESP_LOGD(TAG, "Answering handshake [15/16]");
+        send_command(CMD_HANDSHAKE_16, sizeof(CMD_HANDSHAKE_16));
+        break;
+      case 16:
+        ESP_LOGI(TAG, "Panasonic AC component v%s initialized", VERSION);
+        this->state_ = ACState::Ready;
+        break;
+      default:
+        ESP_LOGW(TAG, "Received unknown packet");
+        break;
+    }
+    
+    this->handshake_process_state_ = HandshakeProcessState::None;  // Reset state
+  }
 }
 
 void PanasonicACWLAN::process_command_queue() {
