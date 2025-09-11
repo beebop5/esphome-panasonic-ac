@@ -56,7 +56,11 @@ void PanasonicACWLAN::loop() {
         process_handshake_packet();  // Not initialized yet, handle handshake packet in stages
       }
 
-      this->rx_buffer_.clear();  // Reset buffer
+      // Don't clear rx_buffer_ here for handshake packets - let process_handshake_packet() handle it
+      if (this->state_ == ACState::Ready || this->state_ == ACState::FirstPoll ||
+          this->state_ == ACState::HandshakeEnding) {
+        this->rx_buffer_.clear();  // Only clear buffer for regular packets
+      }
       this->packet_process_state_ = PacketProcessState::None;  // Reset processing state
       // Don't reset handshake_process_state_ here - let it be reset in process_handshake_packet() when done
     }
@@ -897,6 +901,7 @@ void PanasonicACWLAN::process_handshake_packet() {
     }
     
     this->handshake_process_state_ = HandshakeProcessState::None;  // Reset state
+    this->rx_buffer_.clear();  // Clear buffer when handshake processing is complete
   }
 }
 
