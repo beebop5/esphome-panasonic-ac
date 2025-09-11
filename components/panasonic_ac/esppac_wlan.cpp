@@ -15,12 +15,6 @@ void PanasonicACWLAN::setup() {
 void PanasonicACWLAN::loop() {
   if (this->state_ != ACState::Ready) {
     handle_init_packets();  // Handle initialization packets separate from normal packets
-
-    if (millis() - this->init_time_ > INIT_FAIL_TIMEOUT) {
-      this->state_ = ACState::Failed;
-      mark_failed();
-      return;
-    }
   }
 
   // Handle packet processing in stages to avoid blocking
@@ -75,6 +69,13 @@ void PanasonicACWLAN::loop() {
   handle_resend();  // Handle packets that need to be resent
 
   handle_poll();  // Handle sending poll packets
+  
+  // Check initialization timeout after all processing is complete
+  if (this->state_ != ACState::Ready && millis() - this->init_time_ > INIT_FAIL_TIMEOUT) {
+    this->state_ = ACState::Failed;
+    mark_failed();
+    return;
+  }
 }
 
 /*
