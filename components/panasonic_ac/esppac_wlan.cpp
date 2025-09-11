@@ -786,6 +786,7 @@ void PanasonicACWLAN::process_handshake_packet() {
   
   if (this->handshake_process_state_ == HandshakeProcessState::Identifying) {
     // Identify the handshake response type
+    ESP_LOGD(TAG, "Identifying handshake packet: [2]=0x%02X [3]=0x%02X", this->rx_buffer_[2], this->rx_buffer_[3]);
     if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x89) {
       ESP_LOGD(TAG, "Identified handshake 2 response");
       this->handshake_response_type_ = 2;  // handshake 2
@@ -878,7 +879,7 @@ void PanasonicACWLAN::process_handshake_packet() {
         send_command(CMD_HANDSHAKE_13, sizeof(CMD_HANDSHAKE_13));
         break;
       case 13:
-        ESP_LOGD(TAG, "Ignoring handshake [13/16]");
+        ESP_LOGD(TAG, "Ignoring handshake [13/16] - waiting for handshake 14");
         // Ignore this packet
         break;
       case 14:
