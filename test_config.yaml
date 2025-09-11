@@ -44,7 +44,7 @@ external_components:
   source:
     type: git
     url: https://github.com/beebop5/esphome-panasonic-ac
-    ref: handle-sensor-error-values
+    ref: master
   components: [panasonic_ac]
   refresh: 60s
 
