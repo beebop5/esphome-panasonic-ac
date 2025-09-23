@@ -4,7 +4,6 @@
 
 namespace esphome {
 namespace panasonic_ac {
-namespace WLAN {
 
 static const uint8_t HEADER = 0x5A;  // The header of the protocol, every packet starts with this
 
@@ -74,7 +73,7 @@ enum class HandshakeProcessState {
   Responding        // Sending the response command
 };
 
-class PanasonicACWLAN : public PanasonicAC {
+class PanasonicAC : public PanasonicACBase {
  public:
   void control(const climate::ClimateCall &call) override;
 
@@ -138,6 +137,5 @@ class PanasonicACWLAN : public PanasonicAC {
   void set_value(uint8_t key, uint8_t value);
 };
 
-}  // namespace WLAN
 }  // namespace panasonic_ac
 }  // namespace esphome

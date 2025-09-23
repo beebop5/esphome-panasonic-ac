@@ -11,7 +11,7 @@ namespace esphome {
 
 namespace panasonic_ac {
 
-static const char *const VERSION = "2.4.0";
+static const char *const VERSION = "0.9";
 
 static const uint8_t BUFFER_SIZE = 255;  // The maximum size of a single packet (both receive and transmit)
 static const uint8_t READ_TIMEOUT = 100;  // The maximum time to wait before considering a packet complete
@@ -34,7 +34,7 @@ enum class ACType {
   DNSKP11,  // New module (via CN-WLAN)
 };
 
-class PanasonicAC : public Component, public uart::UARTDevice, public climate::Climate {
+class PanasonicACBase : public Component, public uart::UARTDevice, public climate::Climate {
  public:
   void set_outside_temperature_sensor(sensor::Sensor *outside_temperature_sensor);
   void set_vertical_swing_select(select::Select *vertical_swing_select);

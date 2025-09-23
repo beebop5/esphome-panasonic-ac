@@ -1,6 +1,6 @@
 {
   "name": "Panasonic AC",
-  "version": "2.4.0",
+  "version": "0.9",
   "homeassistant": "2021.8.0",
   "dependencies": ["uart"],
   "codeowners": ["@beebop5"],

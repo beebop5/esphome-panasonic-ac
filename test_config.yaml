@@ -10,6 +10,8 @@ esphome:
 
 esp32:
   board: esp32dev
+  framework:
+    type: arduino
 
 wifi:
   networks:
@@ -44,7 +46,7 @@ external_components:
   source:
     type: git
     url: https://github.com/beebop5/esphome-panasonic-ac
-    ref: master
+    ref: debug-handshake-14
   components: [panasonic_ac]
   refresh: 60s
 

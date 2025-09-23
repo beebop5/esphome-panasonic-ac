@@ -7,7 +7,7 @@ namespace panasonic_ac {
 
 static const char *const TAG = "panasonic_ac";
 
-climate::ClimateTraits PanasonicAC::traits() {
+climate::ClimateTraits PanasonicACBase::traits() {
   auto traits = climate::ClimateTraits();
 
   traits.set_supports_action(false);
@@ -31,7 +31,7 @@ climate::ClimateTraits PanasonicAC::traits() {
   return traits;
 }
 
-void PanasonicAC::setup() {
+void PanasonicACBase::setup() {
   // Initialize times
   this->init_time_ = millis();
   this->last_packet_sent_ = millis();
@@ -39,11 +39,11 @@ void PanasonicAC::setup() {
   ESP_LOGI(TAG, "Panasonic AC component v%s starting...", VERSION);
 }
 
-void PanasonicAC::loop() {
+void PanasonicACBase::loop() {
   read_data();  // Read data from UART (if there is any)
 }
 
-void PanasonicAC::read_data() {
+void PanasonicACBase::read_data() {
   // Limit reads to prevent blocking - read max 10 bytes per call
   uint8_t bytes_read = 0;
   const uint8_t MAX_BYTES_PER_CALL = 10;
@@ -64,7 +64,7 @@ void PanasonicAC::read_data() {
   }
 }
 
-void PanasonicAC::update_outside_temperature(int8_t temperature) {
+void PanasonicACBase::update_outside_temperature(int8_t temperature) {
   // Check for special sensor error values
   if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
       temperature == TEMP_SENSOR_INVALID) {
@@ -82,7 +82,7 @@ void PanasonicAC::update_outside_temperature(int8_t temperature) {
         temperature);  // Set current (outside) temperature; no temperature steps
 }
 
-void PanasonicAC::update_current_temperature(int8_t temperature) {
+void PanasonicACBase::update_current_temperature(int8_t temperature) {
   // Check for special sensor error values
   if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
       temperature == TEMP_SENSOR_INVALID) {
@@ -98,7 +98,7 @@ void PanasonicAC::update_current_temperature(int8_t temperature) {
   this->current_temperature = temperature;
 }
 
-void PanasonicAC::update_target_temperature(uint8_t raw_value) {
+void PanasonicACBase::update_target_temperature(uint8_t raw_value) {
   // Check for special sensor error values
   if (raw_value == TEMP_SENSOR_NOT_AVAILABLE || raw_value == TEMP_SENSOR_ERROR || 
       raw_value == TEMP_SENSOR_INVALID) {
@@ -116,7 +116,7 @@ void PanasonicAC::update_target_temperature(uint8_t raw_value) {
   this->target_temperature = temperature;
 }
 
-void PanasonicAC::update_swing_horizontal(const std::string &swing) {
+void PanasonicACBase::update_swing_horizontal(const std::string &swing) {
   this->horizontal_swing_state_ = swing;
 
   if (this->horizontal_swing_select_ != nullptr &&
@@ -126,14 +126,14 @@ void PanasonicAC::update_swing_horizontal(const std::string &swing) {
   }
 }
 
-void PanasonicAC::update_swing_vertical(const std::string &swing) {
+void PanasonicACBase::update_swing_vertical(const std::string &swing) {
   this->vertical_swing_state_ = swing;
 
   if (this->vertical_swing_select_ != nullptr && this->vertical_swing_select_->state != this->vertical_swing_state_)
     this->vertical_swing_select_->publish_state(this->vertical_swing_state_);  // Set current vertical swing position
 }
 
-void PanasonicAC::update_nanoex(bool nanoex) {
+void PanasonicACBase::update_nanoex(bool nanoex) {
   if (this->nanoex_switch_ != nullptr) {
     this->nanoex_state_ = nanoex;
     this->nanoex_switch_->publish_state(this->nanoex_state_);
@@ -143,7 +143,7 @@ void PanasonicAC::update_nanoex(bool nanoex) {
 
 
 
-climate::ClimateAction PanasonicAC::determine_action() {
+climate::ClimateAction PanasonicACBase::determine_action() {
   if (this->mode == climate::CLIMATE_MODE_OFF) {
     return climate::CLIMATE_ACTION_OFF;
   } else if (this->mode == climate::CLIMATE_MODE_FAN_ONLY) {
@@ -166,12 +166,12 @@ climate::ClimateAction PanasonicAC::determine_action() {
  * Sensor handling
  */
 
-void PanasonicAC::set_outside_temperature_sensor(sensor::Sensor *outside_temperature_sensor) {
+void PanasonicACBase::set_outside_temperature_sensor(sensor::Sensor *outside_temperature_sensor) {
   this->outside_temperature_sensor_ = outside_temperature_sensor;
 }
 
 
-void PanasonicAC::set_vertical_swing_select(select::Select *vertical_swing_select) {
+void PanasonicACBase::set_vertical_swing_select(select::Select *vertical_swing_select) {
   this->vertical_swing_select_ = vertical_swing_select;
   this->vertical_swing_select_->add_on_state_callback([this](const std::string &value, size_t index) {
     if (value == this->vertical_swing_state_)
@@ -180,7 +180,7 @@ void PanasonicAC::set_vertical_swing_select(select::Select *vertical_swing_selec
   });
 }
 
-void PanasonicAC::set_horizontal_swing_select(select::Select *horizontal_swing_select) {
+void PanasonicACBase::set_horizontal_swing_select(select::Select *horizontal_swing_select) {
   this->horizontal_swing_select_ = horizontal_swing_select;
   this->horizontal_swing_select_->add_on_state_callback([this](const std::string &value, size_t index) {
     if (value == this->horizontal_swing_state_)
@@ -189,7 +189,7 @@ void PanasonicAC::set_horizontal_swing_select(select::Select *horizontal_swing_s
   });
 }
 
-void PanasonicAC::set_nanoex_switch(switch_::Switch *nanoex_switch) {
+void PanasonicACBase::set_nanoex_switch(switch_::Switch *nanoex_switch) {
   this->nanoex_switch_ = nanoex_switch;
   this->nanoex_switch_->add_on_state_callback([this](bool state) {
     if (state == this->nanoex_state_)
@@ -206,7 +206,7 @@ void PanasonicAC::set_nanoex_switch(switch_::Switch *nanoex_switch) {
  * Debugging
  */
 
-void PanasonicAC::log_packet(std::vector<uint8_t> data, bool outgoing) {
+void PanasonicACBase::log_packet(std::vector<uint8_t> data, bool outgoing) {
   if (outgoing) {
     ESP_LOGV(TAG, "TX: %s", format_hex_pretty(data).c_str());
   } else {

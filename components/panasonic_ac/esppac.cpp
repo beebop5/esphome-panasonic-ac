@@ -1,72 +1,49 @@
-#include "esppac_wlan.h"
+#include "esppac.h"
 
 namespace esphome {
 namespace panasonic_ac {
-namespace WLAN {
 
 static const char *const TAG = "panasonic_ac.dnskp11";
 
-void PanasonicACWLAN::setup() {
-  PanasonicAC::setup();
+void PanasonicAC::setup() {
+  PanasonicACBase::setup();
 
   ESP_LOGD(TAG, "Using DNSK-P11 protocol via CN-WLAN");
 }
 
-void PanasonicACWLAN::loop() {
+void PanasonicAC::loop() {
   if (this->state_ != ACState::Ready) {
     handle_init_packets();  // Handle initialization packets separate from normal packets
   }
 
-  // Handle packet processing in stages to avoid blocking
+  // Handle packet processing
   if (millis() - this->last_read_ > READ_TIMEOUT &&
       !this->rx_buffer_.empty())  // Check if our read timed out and we received something
   {
-    if (this->packet_process_state_ == PacketProcessState::None) {
-      // Start packet processing
-      this->packet_process_state_ = PacketProcessState::Logging;
+    log_packet(this->rx_buffer_);
+    
+    if (!verify_packet()) {  // Verify length, header, counter and checksum
+      this->rx_buffer_.clear();
+      return;
     }
     
-    if (this->packet_process_state_ == PacketProcessState::Logging) {
-      log_packet(this->rx_buffer_);
-      this->packet_process_state_ = PacketProcessState::Verifying;
-      return;  // Exit to avoid blocking
-    }
-    
-    if (this->packet_process_state_ == PacketProcessState::Verifying) {
-      if (!verify_packet()) {  // Verify length, header, counter and checksum
-        this->packet_process_state_ = PacketProcessState::None;
-        this->rx_buffer_.clear();
-        return;
-      }
-      this->packet_process_state_ = PacketProcessState::Handling;
-      return;  // Exit to avoid blocking
-    }
-    
-    if (this->packet_process_state_ == PacketProcessState::Handling) {
-      this->waiting_for_response_ =
-          false;  // Set that we are not waiting for a response anymore since we received a valid one
-      this->last_packet_received_ = millis();  // Set the time at which we received our last packet
+    this->waiting_for_response_ =
+        false;  // Set that we are not waiting for a response anymore since we received a valid one
+    this->last_packet_received_ = millis();  // Set the time at which we received our last packet
 
-      if (this->state_ == ACState::Ready || this->state_ == ACState::FirstPoll ||
-          this->state_ == ACState::HandshakeEnding)  // Parse regular packets
-      {
-        handle_packet();  // Handle regular packet
-      } else              // Parse handshake packets
-      {
-        process_handshake_packet();  // Not initialized yet, handle handshake packet in stages
-      }
-
-      // Don't clear rx_buffer_ here for handshake packets - let process_handshake_packet() handle it
-      if (this->state_ == ACState::Ready || this->state_ == ACState::FirstPoll ||
-          this->state_ == ACState::HandshakeEnding) {
-        this->rx_buffer_.clear();  // Only clear buffer for regular packets
-      }
-      this->packet_process_state_ = PacketProcessState::None;  // Reset processing state
-      // Don't reset handshake_process_state_ here - let it be reset in process_handshake_packet() when done
+    if (this->state_ == ACState::Ready || this->state_ == ACState::FirstPoll ||
+        this->state_ == ACState::HandshakeEnding)  // Parse regular packets
+    {
+      handle_packet();  // Handle regular packet
+    } else              // Parse handshake packets
+    {
+      handle_handshake_packet();  // Not initialized yet, handle handshake packet
     }
+
+    this->rx_buffer_.clear();  // Clear buffer after processing
   }
 
-  PanasonicAC::read_data();
+  PanasonicACBase::read_data();
 
   process_command_queue();  // Process queued commands
 
@@ -76,6 +53,8 @@ void PanasonicACWLAN::loop() {
   
   // Check initialization timeout after all processing is complete
   if (this->state_ != ACState::Ready && millis() - this->init_time_ > INIT_FAIL_TIMEOUT) {
+    ESP_LOGD(TAG, "Initialization timeout - current state: %d, time since init: %lu ms", 
+             (int)this->state_, millis() - this->init_time_);
     this->state_ = ACState::Failed;
     mark_failed();
     return;
@@ -86,7 +65,7 @@ void PanasonicACWLAN::loop() {
  * ESPHome control request
  */
 
-void PanasonicACWLAN::control(const climate::ClimateCall &call) {
+void PanasonicAC::control(const climate::ClimateCall &call) {
   if (this->state_ != ACState::Ready)
     return;
 
@@ -217,14 +196,14 @@ void PanasonicACWLAN::control(const climate::ClimateCall &call) {
  * Loop handling
  */
 
-void PanasonicACWLAN::handle_poll() {
+void PanasonicAC::handle_poll() {
   if (this->state_ == ACState::Ready && millis() - this->last_packet_sent_ > POLL_INTERVAL) {
     ESP_LOGV(TAG, "Polling AC");
     send_command(CMD_POLL, sizeof(CMD_POLL));
   }
 }
 
-void PanasonicACWLAN::handle_init_packets() {
+void PanasonicAC::handle_init_packets() {
   if (this->state_ == ACState::Initializing) {
     if (millis() - this->init_time_ > INIT_TIMEOUT)  // Handle handshake initialization
     {
@@ -272,7 +251,7 @@ void PanasonicACWLAN::handle_init_packets() {
   }
 }
 
-bool PanasonicACWLAN::verify_packet() {
+bool PanasonicAC::verify_packet() {
   if (this->rx_buffer_.size() < 5)  // Drop packets that are too short
   {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
@@ -334,7 +313,7 @@ bool PanasonicACWLAN::verify_packet() {
  * Field handling
  */
 
-climate::ClimateMode PanasonicACWLAN::determine_mode(uint8_t mode) {
+climate::ClimateMode PanasonicAC::determine_mode(uint8_t mode) {
   switch (mode)  // Check mode
   {
     case 0x41:  // Auto
@@ -353,7 +332,7 @@ climate::ClimateMode PanasonicACWLAN::determine_mode(uint8_t mode) {
   }
 }
 
-std::string PanasonicACWLAN::determine_fan_speed(uint8_t speed) {
+std::string PanasonicAC::determine_fan_speed(uint8_t speed) {
   switch (speed) {
     case 0x32:  // 1
       return "1";
@@ -373,7 +352,7 @@ std::string PanasonicACWLAN::determine_fan_speed(uint8_t speed) {
   }
 }
 
-std::string PanasonicACWLAN::determine_preset(uint8_t preset) {
+std::string PanasonicAC::determine_preset(uint8_t preset) {
   switch (preset) {
     case 0x43:  // Quiet
       return "Quiet";
@@ -387,7 +366,7 @@ std::string PanasonicACWLAN::determine_preset(uint8_t preset) {
   }
 }
 
-std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
+std::string PanasonicAC::determine_swing_vertical(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Down
       return "Down";
@@ -405,7 +384,7 @@ std::string PanasonicACWLAN::determine_swing_vertical(uint8_t swing) {
   }
 }
 
-std::string PanasonicACWLAN::determine_swing_horizontal(uint8_t swing) {
+std::string PanasonicAC::determine_swing_horizontal(uint8_t swing) {
   switch (swing) {
     case 0x42:  // Left
       return "Left";
@@ -423,7 +402,7 @@ std::string PanasonicACWLAN::determine_swing_horizontal(uint8_t swing) {
   }
 }
 
-climate::ClimateSwingMode PanasonicACWLAN::determine_swing(uint8_t swing) {
+climate::ClimateSwingMode PanasonicAC::determine_swing(uint8_t swing) {
   switch (swing) {
     case 0x41:  // Both
       return climate::CLIMATE_SWING_BOTH;
@@ -439,7 +418,7 @@ climate::ClimateSwingMode PanasonicACWLAN::determine_swing(uint8_t swing) {
   }
 }
 
-bool PanasonicACWLAN::determine_nanoex(uint8_t nanoex) {
+bool PanasonicAC::determine_nanoex(uint8_t nanoex) {
   switch (nanoex) {
     case 0x42:
       return false;
@@ -452,7 +431,7 @@ bool PanasonicACWLAN::determine_nanoex(uint8_t nanoex) {
  * Packet handling
  */
 
-void PanasonicACWLAN::handle_packet() {
+void PanasonicAC::handle_packet() {
   if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x01)  // Ping
   {
     ESP_LOGD(TAG, "Answering ping");
@@ -597,7 +576,7 @@ void PanasonicACWLAN::handle_packet() {
   }
 }
 
-void PanasonicACWLAN::handle_handshake_packet() {
+void PanasonicAC::handle_handshake_packet() {
   ESP_LOGV(TAG, "Handling RX packet: : %s", format_hex_pretty(rx_buffer_).c_str());
   if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x89)  // Answer for handshake 2
   {
@@ -647,7 +626,7 @@ void PanasonicACWLAN::handle_handshake_packet() {
   {
     ESP_LOGD(TAG, "Answering handshake [12/16]");
     send_command(CMD_HANDSHAKE_13, sizeof(CMD_HANDSHAKE_13));
-  } else if (this->rx_buffer_[14] == 0x83 && this->rx_buffer_[15] == 0x5A)  // Ethera generation devices handshake failureAdd commentMore actions
+  } else if (this->rx_buffer_[14] == 0x83 && this->rx_buffer_[15] == 0x5A)  // Ethera generation devices handshake failure
   {
     ESP_LOGD(TAG, "Received 83 5A packet, Initialization failed, restarting init");
     this->state_ = ACState::Initializing;  // Restart Initialization, otherwise hangs here on ethera. Likely to succeed on 2nd attempt.
@@ -675,7 +654,7 @@ void PanasonicACWLAN::handle_handshake_packet() {
  * Packet sending
  */
 
-void PanasonicACWLAN::send_set_command() {
+void PanasonicAC::send_set_command() {
   // Size of packet is 3 * 4 (for the header, packet size, and key value pair counter)
   // setQueueIndex * 4 for the individual key value pairs
   int packetLength = (3 * 4) + (this->set_queue_index_ * 4);
@@ -712,7 +691,7 @@ void PanasonicACWLAN::send_set_command() {
   this->set_queue_index_ = 0;
 }
 
-void PanasonicACWLAN::send_command(const uint8_t *command, size_t commandLength, CommandType type) {
+void PanasonicAC::send_command(const uint8_t *command, size_t commandLength, CommandType type) {
   std::vector<uint8_t> packet(commandLength + 3);  // Reserve space for upcoming packet
 
   for (int i = 0; i < commandLength; i++)  // Loop through command
@@ -730,7 +709,7 @@ void PanasonicACWLAN::send_command(const uint8_t *command, size_t commandLength,
   this->command_queue_.push_back(queued_cmd);
 }
 
-void PanasonicACWLAN::send_packet(std::vector<uint8_t> packet, CommandType type) {
+void PanasonicAC::send_packet(std::vector<uint8_t> packet, CommandType type) {
   uint8_t length = packet.size();
 
   uint8_t checksum = 0;  // Checksum is calculated by adding all bytes together
@@ -776,7 +755,7 @@ void PanasonicACWLAN::send_packet(std::vector<uint8_t> packet, CommandType type)
   log_packet(packet, true);  // Write to log
 }
 
-void PanasonicACWLAN::process_handshake_packet() {
+void PanasonicAC::process_handshake_packet() {
   if (this->handshake_process_state_ == HandshakeProcessState::None) {
     // Stage 1: Identify the handshake packet type
     ESP_LOGD(TAG, "Starting handshake packet identification");
@@ -814,16 +793,17 @@ void PanasonicACWLAN::process_handshake_packet() {
       this->handshake_response_type_ = 11;  // handshake 11
     } else if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x80) {
       this->handshake_response_type_ = 12;  // handshake 12
-    } else if (this->rx_buffer_[14] == 0x83 && this->rx_buffer_[15] == 0x5A) {
-      this->handshake_response_type_ = 99;  // Ethera generation devices handshake failure
     } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88) {
       this->handshake_response_type_ = 13;  // handshake 13 (ignore)
+    } else if (this->rx_buffer_[14] == 0x83 && this->rx_buffer_[15] == 0x5A) {
+      this->handshake_response_type_ = 99;  // Ethera generation devices handshake failure
     } else if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x09) {
       this->handshake_response_type_ = 14;  // First unsolicited packet - handshake 14
     } else if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x20) {
       this->handshake_response_type_ = 15;  // Second unsolicited packet - handshake 15
     } else {
       ESP_LOGD(TAG, "Unknown handshake packet: [2]=0x%02X [3]=0x%02X", this->rx_buffer_[2], this->rx_buffer_[3]);
+      ESP_LOGD(TAG, "Full packet: %s", format_hex_pretty(this->rx_buffer_).c_str());
       this->handshake_response_type_ = 0;  // unknown
     }
     
@@ -881,7 +861,7 @@ void PanasonicACWLAN::process_handshake_packet() {
         break;
       case 13:
         ESP_LOGD(TAG, "Ignoring handshake [13/16] - waiting for handshake 14");
-        // Ignore this packet
+        // Ignore this packet - just like the original code
         break;
       case 14:
         ESP_LOGD(TAG, "Received rx counter [14/16]");
@@ -907,7 +887,7 @@ void PanasonicACWLAN::process_handshake_packet() {
   }
 }
 
-void PanasonicACWLAN::process_command_queue() {
+void PanasonicAC::process_command_queue() {
   // Only send one command per loop iteration to avoid blocking
   if (!this->command_queue_.empty() && 
       millis() - this->last_command_send_time_ >= COMMAND_SEND_INTERVAL) {
@@ -924,7 +904,7 @@ void PanasonicACWLAN::process_command_queue() {
 /*
  * Helpers
  */
-void PanasonicACWLAN::handle_resend() {
+void PanasonicAC::handle_resend() {
   if (this->waiting_for_response_ && millis() - this->last_packet_sent_ > RESPONSE_TIMEOUT &&
       this->rx_buffer_.empty())  // Check if AC failed to respond in time and resend packet, if nothing was received yet
   {
@@ -933,7 +913,7 @@ void PanasonicACWLAN::handle_resend() {
   }
 }
 
-void PanasonicACWLAN::set_value(uint8_t key, uint8_t value) {
+void PanasonicAC::set_value(uint8_t key, uint8_t value) {
   if (this->set_queue_index_ >= 15) {
     ESP_LOGE(TAG, "Set queue overflow");
     this->set_queue_index_ = 0;
@@ -949,7 +929,7 @@ void PanasonicACWLAN::set_value(uint8_t key, uint8_t value) {
  * Sensor handling
  */
 
-void PanasonicACWLAN::on_vertical_swing_change(const std::string &swing) {
+void PanasonicAC::on_vertical_swing_change(const std::string &swing) {
   if (this->state_ != ACState::Ready)
     return;
 
@@ -969,7 +949,7 @@ void PanasonicACWLAN::on_vertical_swing_change(const std::string &swing) {
   send_set_command();
 }
 
-void PanasonicACWLAN::on_horizontal_swing_change(const std::string &swing) {
+void PanasonicAC::on_horizontal_swing_change(const std::string &swing) {
   if (this->state_ != ACState::Ready)
     return;
 
@@ -989,7 +969,7 @@ void PanasonicACWLAN::on_horizontal_swing_change(const std::string &swing) {
   send_set_command();
 }
 
-void PanasonicACWLAN::on_nanoex_change(bool state) {
+void PanasonicAC::on_nanoex_change(bool state) {
   if (this->state_ != ACState::Ready)
     return;
 
@@ -1007,6 +987,5 @@ void PanasonicACWLAN::on_nanoex_change(bool state) {
 
 
 
-}  // namespace WLAN
 }  // namespace panasonic_ac
 }  // namespace esphome
