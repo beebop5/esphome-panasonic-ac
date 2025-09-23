@@ -21,8 +21,8 @@ CONF_VERTICAL_SWING_SELECT = "vertical_swing_select"
 CONF_OUTSIDE_TEMPERATURE = "outside_temperature"
 CONF_NANOEX_SWITCH = "nanoex_switch"
 
-HORIZONTAL_SWING_OPTIONS = ["auto", "left", "left_center", "center", "right_center", "right"]
-VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_center", "down"]
+HORIZONTAL_SWING_OPTIONS = ["Left", "Centre Left", "Centre", "Centre Right", "Right"]
+VERTICAL_SWING_OPTIONS = ["Up", "Mid Up", "Mid", "Mid Down", "Down"]
 
 CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
     {
@@ -59,14 +59,16 @@ async def to_code(config):
     # Create template select components for swing control
     if CONF_HORIZONTAL_SWING_SELECT in config:
         sel_config = config[CONF_HORIZONTAL_SWING_SELECT]
-        # Create a template select component
+        # Create a template select component with optimistic mode
+        sel_config["optimistic"] = True
         sel = await select.new_select(sel_config, options=HORIZONTAL_SWING_OPTIONS)
         await cg.register_parented(sel, config[CONF_ID])
         cg.add(var.set_horizontal_swing_select(sel))
 
     if CONF_VERTICAL_SWING_SELECT in config:
         sel_config = config[CONF_VERTICAL_SWING_SELECT]
-        # Create a template select component
+        # Create a template select component with optimistic mode
+        sel_config["optimistic"] = True
         sel = await select.new_select(sel_config, options=VERTICAL_SWING_OPTIONS)
         await cg.register_parented(sel, config[CONF_ID])
         cg.add(var.set_vertical_swing_select(sel))
