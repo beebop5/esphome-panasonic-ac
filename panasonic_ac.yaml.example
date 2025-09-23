@@ -1,20 +1,26 @@
 esphome:
   name: panasonic-ac
-  board: nodemcu-32s
 
 esp32:
+  board: esp32dev
+  framework:
+    type: arduino
 
 wifi:
   networks:
-  ap: {}
+    - ssid: "YourWiFiSSID"
+      password: "YourWiFiPassword"
+  ap:
+    ssid: "Panasonic AC Fallback"
+    password: "fallback123"
 
 logger:
   level: DEBUG
-#  baud_rate: 0 # ESP8266 only
 
 api:
 
 ota:
+  platform: esphome
 
 # Requires ESPHome 1.15.0+ for the even parity option
 uart:

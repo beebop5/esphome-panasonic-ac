@@ -31,7 +31,6 @@ An ESPHome component for controlling Panasonic air conditioners via the CN inter
    
    climate:
      - platform: panasonic_ac
-       type: cn
        name: "Panasonic AC"
    ```
 
@@ -49,7 +48,6 @@ Basic configuration with optional features:
 ```yaml
 climate:
   - platform: panasonic_ac
-    type: cn
     name: "Panasonic AC"
     
     # Optional features (enable only if supported by your AC)
