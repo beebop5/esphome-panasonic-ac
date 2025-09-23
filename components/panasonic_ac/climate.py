@@ -27,21 +27,12 @@ VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_ce
 CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicAC),
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
-            cv.Required("name"): cv.string,
-        }),
-        cv.Optional(CONF_VERTICAL_SWING_SELECT): cv.Schema({
-            cv.Required("name"): cv.string,
-        }),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
-        cv.Optional(CONF_NANOEX_SWITCH): cv.Schema({
-            cv.Required("name"): cv.string,
-        }),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
@@ -52,12 +43,9 @@ async def to_code(config):
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
 
-    # TODO: Implement select components when we figure out the correct approach
-    # For now, just skip select components to get basic functionality working
-
     if CONF_OUTSIDE_TEMPERATURE in config:
         sens = await sensor.new_sensor(config[CONF_OUTSIDE_TEMPERATURE])
         cg.add(var.set_outside_temperature_sensor(sens))
 
-    # TODO: Implement switch components when we figure out the correct approach
-    # For now, just skip switch components to get basic functionality working
+    # TODO: Implement select and switch components as separate entities
+    # For now, just skip select and switch components to get basic functionality working

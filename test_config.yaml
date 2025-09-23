@@ -44,15 +44,18 @@ uart:
 
 external_components:
   source:
-    type: git
-    url: https://github.com/beebop5/esphome-panasonic-ac
-    ref: debug-handshake-14
+    type: local
+    path: components
   components: [panasonic_ac]
-  refresh: 60s
 
 switch:
   - platform: restart
     name: "Restart"
+  - platform: template
+    name: "Test nanoeX"
+    id: test_nanoex
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
 
 climate:
   - platform: panasonic_ac
@@ -61,3 +64,32 @@ climate:
     # Test optional features
     outside_temperature:
       name: "Test Outside Temperature"
+
+# Test select components
+select:
+  - platform: template
+    name: "Test Horizontal Swing"
+    id: test_horizontal_swing
+    options:
+      - "auto"
+      - "left"
+      - "left_center"
+      - "center"
+      - "right_center"
+      - "right"
+    initial_option: "auto"
+    optimistic: true
+
+  - platform: template
+    name: "Test Vertical Swing"
+    id: test_vertical_swing
+    options:
+      - "swing"
+      - "auto"
+      - "up"
+      - "up_center"
+      - "center"
+      - "down_center"
+      - "down"
+    initial_option: "auto"
+    optimistic: true
