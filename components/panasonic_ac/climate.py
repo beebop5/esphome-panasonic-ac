@@ -60,7 +60,6 @@ async def to_code(config):
     if CONF_HORIZONTAL_SWING_SELECT in config:
         sel_config = config[CONF_HORIZONTAL_SWING_SELECT]
         # Create a template select component
-        from esphome.components.template.select import template_select_schema
         sel = await select.new_select(sel_config, options=HORIZONTAL_SWING_OPTIONS)
         await cg.register_parented(sel, config[CONF_ID])
         cg.add(var.set_horizontal_swing_select(sel))
