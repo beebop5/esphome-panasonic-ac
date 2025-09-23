@@ -28,6 +28,8 @@ An ESPHome component for controlling Panasonic air conditioners via the CN inter
    external_components:
      source: github://beebop5/esphome-panasonic-ac
      components: [panasonic_ac]
+     # For latest features including select/switch components, use:
+     # ref: feature/select-switch-components
    
    climate:
      - platform: panasonic_ac
