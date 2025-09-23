@@ -1,0 +1,46 @@
+substitutions:
+  device_name: lr2
+  wifi_ssid: "testwifi"
+  wifi_pass: "test-password"
+
+esphome:
+  name: $device_name
+  comment: $device_name
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  networks:
+  - ssid: $wifi_ssid
+    password: $wifi_pass
+
+api:
+  
+ota:
+  platform: esphome
+
+logger:
+  level: VERBOSE
+
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+
+external_components:
+  source:
+    type: local
+    path: components
+  components: [panasonic_ac]
+
+climate:
+  - platform: panasonic_ac
+    name: lr2
+    horizontal_swing_select:
+      name: Horizontal Swing Mode
+    vertical_swing_select:
+      name: Vertical Swing Mode

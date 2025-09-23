@@ -27,12 +27,21 @@ VERTICAL_SWING_OPTIONS = ["swing", "auto", "up", "up_center", "center", "down_ce
 CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicAC),
+        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
+            cv.Required("name"): cv.string,
+        }),
+        cv.Optional(CONF_VERTICAL_SWING_SELECT): cv.Schema({
+            cv.Required("name"): cv.string,
+        }),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
+        cv.Optional(CONF_NANOEX_SWITCH): cv.Schema({
+            cv.Required("name"): cv.string,
+        }),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
@@ -47,5 +56,26 @@ async def to_code(config):
         sens = await sensor.new_sensor(config[CONF_OUTSIDE_TEMPERATURE])
         cg.add(var.set_outside_temperature_sensor(sens))
 
-    # TODO: Implement select and switch components as separate entities
-    # For now, just skip select and switch components to get basic functionality working
+    # Create template select components for swing control
+    if CONF_HORIZONTAL_SWING_SELECT in config:
+        sel_config = config[CONF_HORIZONTAL_SWING_SELECT]
+        # Create a template select component
+        from esphome.components.template.select import template_select_schema
+        sel = await select.new_select(sel_config, options=HORIZONTAL_SWING_OPTIONS)
+        await cg.register_parented(sel, config[CONF_ID])
+        cg.add(var.set_horizontal_swing_select(sel))
+
+    if CONF_VERTICAL_SWING_SELECT in config:
+        sel_config = config[CONF_VERTICAL_SWING_SELECT]
+        # Create a template select component
+        sel = await select.new_select(sel_config, options=VERTICAL_SWING_OPTIONS)
+        await cg.register_parented(sel, config[CONF_ID])
+        cg.add(var.set_vertical_swing_select(sel))
+
+    # Create template switch component for nanoeX
+    if CONF_NANOEX_SWITCH in config:
+        sw_config = config[CONF_NANOEX_SWITCH]
+        # Create a template switch component
+        sw = await switch.new_switch(sw_config)
+        await cg.register_parented(sw, config[CONF_ID])
+        cg.add(var.set_nanoex_switch(sw))
