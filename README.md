@@ -1,12 +1,12 @@
 # ESPHome Panasonic AC Component
 
-An ESPHome component for controlling Panasonic air conditioners via the WLAN interface. Drop-in replacement for the Panasonic DNSK-P11 WiFi module.
+An ESPHome component for controlling Panasonic air conditioners via the CN interface. Drop-in replacement for the Panasonic DNSK-P11 WiFi module.
 
 ## Features
 
 - Local control via Home Assistant or MQTT
 - Real-time temperature and status updates
-- WLAN interface support (CN-WLAN port)
+- CN interface support (CN port)
 - No cloud dependencies
 
 ## Requirements
@@ -20,7 +20,7 @@ An ESPHome component for controlling Panasonic air conditioners via the WLAN int
 
 1. **Copy the example config:**
    ```bash
-   cp panasonic_ac_wlan.yaml.example ac.yaml
+   cp panasonic_ac.yaml.example ac.yaml
    ```
 
 2. **Update the config:**
@@ -31,7 +31,7 @@ An ESPHome component for controlling Panasonic air conditioners via the WLAN int
    
    climate:
      - platform: panasonic_ac
-       type: wlan
+       type: cn
        name: "Panasonic AC"
    ```
 
@@ -40,7 +40,7 @@ An ESPHome component for controlling Panasonic air conditioners via the WLAN int
    esphome ac.yaml run
    ```
 
-4. **Install hardware:** See [WLAN Installation Guide](README.WLAN_INSTALLATION.md)
+4. **Install hardware:** See [Installation Guide](README.INSTALLATION.md)
 
 ## Configuration
 
@@ -49,7 +49,7 @@ Basic configuration with optional features:
 ```yaml
 climate:
   - platform: panasonic_ac
-    type: wlan
+    type: cn
     name: "Panasonic AC"
     
     # Optional features (enable only if supported by your AC)

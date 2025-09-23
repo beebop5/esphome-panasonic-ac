@@ -31,7 +31,7 @@ static const uint8_t TEMP_SENSOR_INVALID = 0xFF;        // 255 - Invalid reading
 enum class CommandType { Normal, Response, Resend };
 
 enum class ACType {
-  DNSKP11,  // New module (via CN-WLAN)
+  DNSKP11,  // New module (via CN)
 };
 
 class PanasonicACBase : public Component, public uart::UARTDevice, public climate::Climate {

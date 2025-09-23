@@ -33,7 +33,7 @@ done
 removed_files=(
     "components/panasonic_ac/panasonic_ac_select.h"
     "components/panasonic_ac/panasonic_ac_switch.h"
-    "components/panasonic_ac/panasonic_ac_wlan_commands.h"
+    "components/panasonic_ac/panasonic_ac_commands.h"
 )
 
 for file in "${removed_files[@]}"; do

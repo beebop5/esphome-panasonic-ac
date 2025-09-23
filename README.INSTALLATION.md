@@ -1,6 +1,6 @@
 # Hardware installation
 
-This hardware installation guide assumes you already have a Panasonic DNSK-P11 installed and want to replace it. If you do not have a DNSK-P11 installed but your AC has the CN-WLAN connector you will have to find a fitting connector and route a cable from the mainboard yourself.
+This hardware installation guide assumes you already have a Panasonic DNSK-P11 installed and want to replace it. If you do not have a DNSK-P11 installed but your AC has the CN connector you will have to find a fitting connector and route a cable from the mainboard yourself.
 
 * Solder your ESP to your logic converter like this:
 

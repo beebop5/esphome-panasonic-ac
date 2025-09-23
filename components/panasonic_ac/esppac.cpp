@@ -8,7 +8,7 @@ static const char *const TAG = "panasonic_ac.dnskp11";
 void PanasonicAC::setup() {
   PanasonicACBase::setup();
 
-  ESP_LOGD(TAG, "Using DNSK-P11 protocol via CN-WLAN");
+  ESP_LOGD(TAG, "Using DNSK-P11 protocol via CN");
 }
 
 void PanasonicAC::loop() {
