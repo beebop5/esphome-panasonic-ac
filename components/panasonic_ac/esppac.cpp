@@ -557,11 +557,28 @@ void PanasonicAC::handle_packet() {
           update_nanoex(determine_nanoex(this->rx_buffer_[currentIndex + 2]));
           break;
         case 0x20:
-          ESP_LOGV(TAG, "Received unknown nanoex field");
-          // Not sure what this one, ignore it for now
+          ESP_LOGV(TAG, "Received unknown field 0x20: 0x%02X", this->rx_buffer_[currentIndex + 2]);
+          break;
+        case 0x21:
+          ESP_LOGV(TAG, "Received unknown field 0x21: 0x%02X", this->rx_buffer_[currentIndex + 2]);
+          break;
+        case 0x32:
+          ESP_LOGV(TAG, "Received unknown field 0x32: 0x%02X", this->rx_buffer_[currentIndex + 2]);
+          break;
+        case 0x34:
+          ESP_LOGV(TAG, "Received unknown field 0x34: 0x%02X", this->rx_buffer_[currentIndex + 2]);
+          break;
+        case 0x35:
+          ESP_LOGV(TAG, "Received unknown field 0x35: 0x%02X", this->rx_buffer_[currentIndex + 2]);
+          break;
+        case 0xBB:
+          ESP_LOGV(TAG, "Received unknown field 0xBB: 0x%02X", this->rx_buffer_[currentIndex + 2]);
+          break;
+        case 0xBE:
+          ESP_LOGV(TAG, "Received unknown field 0xBE: 0x%02X", this->rx_buffer_[currentIndex + 2]);
           break;
         default:
-          ESP_LOGW(TAG, "Report has unknown field");
+          ESP_LOGW(TAG, "Report has unknown field 0x%02X: 0x%02X", this->rx_buffer_[currentIndex], this->rx_buffer_[currentIndex + 2]);
           break;
       }
     }
