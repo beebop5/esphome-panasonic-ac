@@ -1,5 +1,7 @@
 from esphome.const import (
     CONF_ID,
+    CONF_DISABLED_BY_DEFAULT,
+    CONF_RESTORE_MODE,
     DEVICE_CLASS_TEMPERATURE,
     STATE_CLASS_MEASUREMENT,
     UNIT_CELSIUS,
@@ -7,6 +9,7 @@ from esphome.const import (
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import uart, climate, sensor, select, switch
+from esphome.core import ID
 
 AUTO_LOAD = ["switch", "sensor", "select"]
 DEPENDENCIES = ["uart"]
@@ -27,11 +30,11 @@ VERTICAL_SWING_OPTIONS = ["Up", "Mid Up", "Mid", "Mid Down", "Down"]
 CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
     {
         cv.GenerateID(): cv.declare_id(PanasonicAC),
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): cv.Schema({
-            cv.Required("name"): cv.string,
+        cv.Optional(CONF_HORIZONTAL_SWING_SELECT): select.select_schema(select.Select).extend({
+            cv.GenerateID(): cv.declare_id(select.Select),
         }),
-        cv.Optional(CONF_VERTICAL_SWING_SELECT): cv.Schema({
-            cv.Required("name"): cv.string,
+        cv.Optional(CONF_VERTICAL_SWING_SELECT): select.select_schema(select.Select).extend({
+            cv.GenerateID(): cv.declare_id(select.Select),
         }),
         cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
@@ -39,8 +42,8 @@ CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
-        cv.Optional(CONF_NANOEX_SWITCH): cv.Schema({
-            cv.Required("name"): cv.string,
+        cv.Optional(CONF_NANOEX_SWITCH): switch.switch_schema(switch.Switch).extend({
+            cv.GenerateID(): cv.declare_id(switch.Switch),
         }),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
@@ -59,16 +62,12 @@ async def to_code(config):
     # Create template select components for swing control
     if CONF_HORIZONTAL_SWING_SELECT in config:
         sel_config = config[CONF_HORIZONTAL_SWING_SELECT]
-        # Create a template select component with optimistic mode
-        sel_config["optimistic"] = True
         sel = await select.new_select(sel_config, options=HORIZONTAL_SWING_OPTIONS)
         await cg.register_parented(sel, config[CONF_ID])
         cg.add(var.set_horizontal_swing_select(sel))
 
     if CONF_VERTICAL_SWING_SELECT in config:
         sel_config = config[CONF_VERTICAL_SWING_SELECT]
-        # Create a template select component with optimistic mode
-        sel_config["optimistic"] = True
         sel = await select.new_select(sel_config, options=VERTICAL_SWING_OPTIONS)
         await cg.register_parented(sel, config[CONF_ID])
         cg.add(var.set_vertical_swing_select(sel))
@@ -76,7 +75,6 @@ async def to_code(config):
     # Create template switch component for nanoeX
     if CONF_NANOEX_SWITCH in config:
         sw_config = config[CONF_NANOEX_SWITCH]
-        # Create a template switch component
         sw = await switch.new_switch(sw_config)
         await cg.register_parented(sw, config[CONF_ID])
         cg.add(var.set_nanoex_switch(sw))

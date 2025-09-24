@@ -51,45 +51,17 @@ external_components:
 switch:
   - platform: restart
     name: "Restart"
-  - platform: template
-    name: "Test nanoeX"
-    id: test_nanoex
-    restore_mode: RESTORE_DEFAULT_OFF
-    optimistic: true
 
 climate:
   - platform: panasonic_ac
     name: "Test Panasonic AC"
     
-    # Test optional features
+    # Test embedded select and switch components
+    horizontal_swing_select:
+      name: "Test Horizontal Swing"
+    vertical_swing_select:
+      name: "Test Vertical Swing"
+    nanoex_switch:
+      name: "Test nanoeX"
     outside_temperature:
       name: "Test Outside Temperature"
-
-# Test select components
-select:
-  - platform: template
-    name: "Test Horizontal Swing"
-    id: test_horizontal_swing
-    options:
-      - "auto"
-      - "left"
-      - "left_center"
-      - "center"
-      - "right_center"
-      - "right"
-    initial_option: "auto"
-    optimistic: true
-
-  - platform: template
-    name: "Test Vertical Swing"
-    id: test_vertical_swing
-    options:
-      - "swing"
-      - "auto"
-      - "up"
-      - "up_center"
-      - "center"
-      - "down_center"
-      - "down"
-    initial_option: "auto"
-    optimistic: true
