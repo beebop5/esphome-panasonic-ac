@@ -68,7 +68,7 @@ void PanasonicACBase::update_outside_temperature(int8_t temperature) {
   // Check for special sensor error values
   if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
       temperature == TEMP_SENSOR_INVALID) {
-    ESP_LOGD(TAG, "Outside temperature sensor not available (value: %d)", temperature);
+    ESP_LOGV(TAG, "Outside temperature sensor not available (value: %d)", temperature);
     return;
   }
   

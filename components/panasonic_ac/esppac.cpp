@@ -463,9 +463,6 @@ void PanasonicAC::handle_packet() {
     std::string verticalSwing = determine_swing_vertical(this->rx_buffer_[38]);
     bool nanoex = determine_nanoex(this->rx_buffer_[50]);
 
-    ESP_LOGD(TAG, "Poll response - Horizontal swing: %s, Vertical swing: %s, NanoeX: %s", 
-             horizontalSwing.c_str(), verticalSwing.c_str(), nanoex ? "ON" : "OFF");
-
     update_swing_horizontal(horizontalSwing);
     update_swing_vertical(verticalSwing);
     update_nanoex(nanoex);
@@ -479,6 +476,11 @@ void PanasonicAC::handle_packet() {
     // this->action = action;
 
     this->publish_state();
+    
+    // Log additional status information in a clean format
+    ESP_LOGD(TAG, "   Horizontal Swing: %s", horizontalSwing.c_str());
+    ESP_LOGD(TAG, "   Vertical Swing: %s", verticalSwing.c_str());
+    ESP_LOGD(TAG, "   NanoeX: %s", nanoex ? "ON" : "OFF");
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88)  // Command ack
   {
     ESP_LOGV(TAG, "Received command ack");
