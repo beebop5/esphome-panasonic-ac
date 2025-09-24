@@ -35,14 +35,43 @@ external_components:
   # For latest features including select/switch components, use:
   # ref: feature/select-switch-components
 
+# Horizontal swing control select
+select:
+  - platform: template
+    name: "Panasonic AC Horizontal Swing"
+    id: panasonic_ac_horizontal_swing
+    options:
+      - "Left"
+      - "Centre Left"
+      - "Centre"
+      - "Centre Right"
+      - "Right"
+    initial_option: "Centre"
+    optimistic: true
+
+  - platform: template
+    name: "Panasonic AC Vertical Swing"
+    id: panasonic_ac_vertical_swing
+    options:
+      - "Up"
+      - "Mid Up"
+      - "Mid"
+      - "Mid Down"
+      - "Down"
+    initial_option: "Mid"
+    optimistic: true
+
+# Optional switch components
+switch:
+  - platform: template
+    name: "Panasonic AC NanoeX"
+    id: panasonic_ac_nanoex
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
 
 climate:
   - platform: panasonic_ac
     name: Panasonic AC
-    horizontal_swing_select:
-      name: Panasonic AC Horizontal Swing Mode
-    vertical_swing_select:
-      name: Panasonic AC Vertical Swing Mode
     outside_temperature:
       name: Panasonic AC Outside Temperature
 
@@ -51,8 +80,6 @@ climate:
     #   name: Panasonic AC Eco Switch
     # econavi_switch:
     #   name: Panasonic AC Econavi Switch
-    # nanoex_switch:
-    #   name: Panasonic AC NanoeX Switch
     # mild_dry_switch:
     #   name: Panasonic AC Mild Dry Switch
     # current_power_consumption:
