@@ -493,6 +493,19 @@ void PanasonicAC::handle_packet() {
     // Log additional poll response fields
     ESP_LOGV(TAG, "   Additional fields - 0x20: 0x%02X, 0x21: 0x%02X, 0x32: 0x%02X, 0x34: 0x%02X, 0x35: 0x%02X, 0xBB: 0x%02X, 0xBE: 0x%02X", 
              this->rx_buffer_[74], this->rx_buffer_[78], this->rx_buffer_[82], this->rx_buffer_[86], this->rx_buffer_[90], this->rx_buffer_[94], this->rx_buffer_[98]);
+    
+    // Test potential outside temperature values
+    ESP_LOGD(TAG, "   Potential outside temps - Field 0x20: %d°C, Field 0x21: %d°C, Field 0x34: %d°C", 
+             (int8_t)this->rx_buffer_[74], (int8_t)this->rx_buffer_[78], (int8_t)this->rx_buffer_[86]);
+    
+    // Scan for potential 28°C value (0x1C) or nearby values in poll response
+    ESP_LOGD(TAG, "   Temperature scan - bytes 70-85: ");
+    for (int i = 70; i <= 85; i++) {
+      int8_t temp_val = (int8_t)this->rx_buffer_[i];
+      if (temp_val >= 20 && temp_val <= 35) {  // Reasonable outside temp range
+        ESP_LOGD(TAG, "     Byte[%d]: %d°C (0x%02X)", i, temp_val, this->rx_buffer_[i]);
+      }
+    }
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88)  // Command ack
   {
     ESP_LOGV(TAG, "Received command ack");
