@@ -77,7 +77,9 @@ void PanasonicACBase::update_outside_temperature(int8_t temperature) {
     return;
   }
 
-  if (this->outside_temperature_sensor_ != nullptr && this->outside_temperature_sensor_->state != temperature)
+  ESP_LOGD(TAG, "Outside temperature: %d°C, sensor state: %.1f°C", temperature, this->outside_temperature_sensor_ ? this->outside_temperature_sensor_->state : -999.0f);
+  
+  if (this->outside_temperature_sensor_ != nullptr && this->outside_temperature_sensor_->state != (float)temperature)
     this->outside_temperature_sensor_->publish_state(
         temperature);  // Set current (outside) temperature; no temperature steps
 }
