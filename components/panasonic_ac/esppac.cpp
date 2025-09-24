@@ -461,12 +461,13 @@ void PanasonicAC::handle_packet() {
 
     std::string horizontalSwing = determine_swing_horizontal(this->rx_buffer_[34]);
     std::string verticalSwing = determine_swing_vertical(this->rx_buffer_[38]);
+    bool nanoex = determine_nanoex(this->rx_buffer_[50]);
+
+    ESP_LOGD(TAG, "Poll response - Horizontal swing: %s, Vertical swing: %s, NanoeX: %s", 
+             horizontalSwing.c_str(), verticalSwing.c_str(), nanoex ? "ON" : "OFF");
 
     update_swing_horizontal(horizontalSwing);
     update_swing_vertical(verticalSwing);
-
-    bool nanoex = determine_nanoex(this->rx_buffer_[50]);
-
     update_nanoex(nanoex);
 
     this->custom_fan_mode = determine_fan_speed(this->rx_buffer_[26]);
