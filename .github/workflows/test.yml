@@ -1,0 +1,49 @@
+name: Test ESPHome Component
+
+on:
+  push:
+    branches: [ test3, master ]
+  pull_request:
+    branches: [ test3, master ]
+
+jobs:
+  test-compilation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install ESPHome
+      run: |
+        pip install esphome
+    
+    - name: Test component compilation
+      run: |
+        # Test with ESP32 (default board in test_config.yaml)
+        esphome compile test_config.yaml
+        
+        # Test with ESP8266 by modifying config temporarily
+        sed 's/board: nodemcu-32s/board: nodemcuv2/' test_config.yaml > test_config_esp8266.yaml
+        esphome compile test_config_esp8266.yaml
+    
+    - name: Validate component structure
+      run: |
+        # Check that required files exist
+        test -f components/panasonic_ac/manifest.json
+        test -f components/panasonic_ac/climate.py
+        test -f components/panasonic_ac/panasonic_ac_base.h
+        test -f components/panasonic_ac/panasonic_ac_base.cpp
+        test -f components/panasonic_ac/esppac_wlan.h
+        test -f components/panasonic_ac/esppac_wlan.cpp
+        
+        # Check that removed files don't exist
+        test ! -f components/panasonic_ac/panasonic_ac_select.h
+        test ! -f components/panasonic_ac/panasonic_ac_switch.h
+        test ! -f components/panasonic_ac/panasonic_ac_wlan_commands.h
+        
+        echo "✅ Component structure validation passed"

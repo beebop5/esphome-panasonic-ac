@@ -1,0 +1,80 @@
+esphome:
+  name: panasonic-ac
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  networks:
+    - ssid: "YourWiFiSSID"
+      password: "YourWiFiPassword"
+  ap:
+    ssid: "Panasonic AC Fallback"
+    password: "fallback123"
+
+logger:
+  level: DEBUG
+
+api:
+
+ota:
+  platform: esphome
+
+# Requires ESPHome 1.15.0+ for the even parity option
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+
+external_components:
+  source: github://beebop5/esphome-panasonic-ac
+  components: [panasonic_ac]
+  # For latest features including select/switch components, use:
+  # ref: feature/select-switch-components
+
+# Horizontal swing control select
+select:
+  - platform: template
+    name: "Panasonic AC Horizontal Swing"
+    id: panasonic_ac_horizontal_swing
+    options:
+      - "Left"
+      - "Centre Left"
+      - "Centre"
+      - "Centre Right"
+      - "Right"
+    initial_option: "Centre"
+    optimistic: true
+
+  - platform: template
+    name: "Panasonic AC Vertical Swing"
+    id: panasonic_ac_vertical_swing
+    options:
+      - "Up"
+      - "Mid Up"
+      - "Mid"
+      - "Mid Down"
+      - "Down"
+    initial_option: "Mid"
+    optimistic: true
+
+# Optional switch components
+switch:
+  - platform: template
+    name: "Panasonic AC NanoeX"
+    id: panasonic_ac_nanoex
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+
+climate:
+  - platform: panasonic_ac
+    name: Panasonic AC
+    outside_temperature:
+      name: Panasonic AC Outside Temperature
+    # Connect the external select components to the climate component
+    horizontal_swing_select_id: panasonic_ac_horizontal_swing
+    vertical_swing_select_id: panasonic_ac_vertical_swing
+    nanoex_switch_id: panasonic_ac_nanoex

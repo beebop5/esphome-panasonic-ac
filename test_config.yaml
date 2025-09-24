@@ -1,0 +1,96 @@
+substitutions:
+  device_name: test
+  device_name_short: test
+  wifi_ssid: "testwifi"
+  wifi_pass: "test-password"
+
+esphome:
+  name: $device_name
+  comment: $device_name
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  networks:
+  - ssid: $wifi_ssid
+    password: $wifi_pass
+
+api:
+  
+ota:
+  platform: esphome
+
+logger:
+  level: VERBOSE
+
+# Configure a time source (SNTP is common)
+time:
+  - platform: sntp
+    id: my_time
+    servers:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
+
+# Requires ESPHome 1.15.0+ for the even parity option
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+  rx_buffer_size: 1024
+
+external_components:
+  source:
+    type: local
+    path: components
+  components: [panasonic_ac]
+
+# Template select components
+select:
+  - platform: template
+    name: "Test Horizontal Swing"
+    id: test_horizontal_swing
+    options:
+      - "Left"
+      - "Centre Left"
+      - "Centre"
+      - "Centre Right"
+      - "Right"
+    initial_option: "Centre"
+    optimistic: true
+
+  - platform: template
+    name: "Test Vertical Swing"
+    id: test_vertical_swing
+    options:
+      - "Up"
+      - "Mid Up"
+      - "Mid"
+      - "Mid Down"
+      - "Down"
+    initial_option: "Mid"
+    optimistic: true
+
+# Template switch component
+switch:
+  - platform: restart
+    name: "Restart"
+  - platform: template
+    name: "Test nanoeX"
+    id: test_nanoex
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+
+climate:
+  - platform: panasonic_ac
+    name: "Test Panasonic AC"
+    
+    # Connect to external select and switch components
+    horizontal_swing_select_id: test_horizontal_swing
+    vertical_swing_select_id: test_vertical_swing
+    nanoex_switch_id: test_nanoex
+    outside_temperature:
+      name: "Test Outside Temperature"
