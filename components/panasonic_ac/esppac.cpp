@@ -481,11 +481,11 @@ void PanasonicAC::handle_packet() {
     ESP_LOGD(TAG, "   Power State: %s (0x%02X)", (this->rx_buffer_[14] == 0x31) ? "OFF" : "ON", this->rx_buffer_[14]);
     ESP_LOGD(TAG, "   Mode: %s (0x%02X)", (this->mode == climate::CLIMATE_MODE_OFF) ? "OFF" : "ACTIVE", this->rx_buffer_[18]);
     ESP_LOGD(TAG, "   Target Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[22], this->rx_buffer_[22]);
-    ESP_LOGD(TAG, "   Fan Speed: %s (0x%02X)", this->custom_fan_mode.c_str(), this->rx_buffer_[26]);
+    ESP_LOGD(TAG, "   Fan Speed: %s (0x%02X)", this->custom_fan_mode.has_value() ? this->custom_fan_mode.value().c_str() : "Unknown", this->rx_buffer_[26]);
     ESP_LOGD(TAG, "   Swing Mode: %s (0x%02X)", (this->swing_mode == climate::CLIMATE_SWING_OFF) ? "OFF" : "ACTIVE", this->rx_buffer_[30]);
     ESP_LOGD(TAG, "   Horizontal Swing: %s (0x%02X)", horizontalSwing.c_str(), this->rx_buffer_[34]);
     ESP_LOGD(TAG, "   Vertical Swing: %s (0x%02X)", verticalSwing.c_str(), this->rx_buffer_[38]);
-    ESP_LOGD(TAG, "   Preset: %s (0x%02X)", this->custom_preset.c_str(), this->rx_buffer_[42]);
+    ESP_LOGD(TAG, "   Preset: %s (0x%02X)", this->custom_preset.has_value() ? this->custom_preset.value().c_str() : "Unknown", this->rx_buffer_[42]);
     ESP_LOGD(TAG, "   NanoeX: %s (0x%02X)", nanoex ? "ON" : "OFF", this->rx_buffer_[50]);
     ESP_LOGD(TAG, "   Current Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[62], this->rx_buffer_[62]);
     ESP_LOGD(TAG, "   Outside Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[66], this->rx_buffer_[66]);
