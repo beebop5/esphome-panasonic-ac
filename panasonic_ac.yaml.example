@@ -74,6 +74,10 @@ climate:
     name: Panasonic AC
     outside_temperature:
       name: Panasonic AC Outside Temperature
+    # Connect the external select components to the climate component
+    horizontal_swing_select_id: panasonic_ac_horizontal_swing
+    vertical_swing_select_id: panasonic_ac_vertical_swing
+    nanoex_switch_id: panasonic_ac_nanoex
 
     # Enable as needed
     # eco_switch:

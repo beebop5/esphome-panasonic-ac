@@ -23,6 +23,9 @@ CONF_HORIZONTAL_SWING_SELECT = "horizontal_swing_select"
 CONF_VERTICAL_SWING_SELECT = "vertical_swing_select"
 CONF_OUTSIDE_TEMPERATURE = "outside_temperature"
 CONF_NANOEX_SWITCH = "nanoex_switch"
+CONF_HORIZONTAL_SWING_SELECT_ID = "horizontal_swing_select_id"
+CONF_VERTICAL_SWING_SELECT_ID = "vertical_swing_select_id"
+CONF_NANOEX_SWITCH_ID = "nanoex_switch_id"
 
 HORIZONTAL_SWING_OPTIONS = ["Left", "Centre Left", "Centre", "Centre Right", "Right"]
 VERTICAL_SWING_OPTIONS = ["Up", "Mid Up", "Mid", "Mid Down", "Down"]
@@ -45,6 +48,10 @@ CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
         cv.Optional(CONF_NANOEX_SWITCH): switch.switch_schema(switch.Switch).extend({
             cv.GenerateID(): cv.declare_id(switch.Switch),
         }),
+        # Support for connecting to external select/switch components
+        cv.Optional(CONF_HORIZONTAL_SWING_SELECT_ID): cv.use_id(select.Select),
+        cv.Optional(CONF_VERTICAL_SWING_SELECT_ID): cv.use_id(select.Select),
+        cv.Optional(CONF_NANOEX_SWITCH_ID): cv.use_id(switch.Switch),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
@@ -77,4 +84,17 @@ async def to_code(config):
         sw_config = config[CONF_NANOEX_SWITCH]
         sw = await switch.new_switch(sw_config)
         await cg.register_parented(sw, config[CONF_ID])
+        cg.add(var.set_nanoex_switch(sw))
+
+    # Connect to external select/switch components
+    if CONF_HORIZONTAL_SWING_SELECT_ID in config:
+        sel = await cg.get_variable(config[CONF_HORIZONTAL_SWING_SELECT_ID])
+        cg.add(var.set_horizontal_swing_select(sel))
+
+    if CONF_VERTICAL_SWING_SELECT_ID in config:
+        sel = await cg.get_variable(config[CONF_VERTICAL_SWING_SELECT_ID])
+        cg.add(var.set_vertical_swing_select(sel))
+
+    if CONF_NANOEX_SWITCH_ID in config:
+        sw = await cg.get_variable(config[CONF_NANOEX_SWITCH_ID])
         cg.add(var.set_nanoex_switch(sw))

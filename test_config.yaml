@@ -48,20 +48,49 @@ external_components:
     path: components
   components: [panasonic_ac]
 
+# Template select components
+select:
+  - platform: template
+    name: "Test Horizontal Swing"
+    id: test_horizontal_swing
+    options:
+      - "Left"
+      - "Centre Left"
+      - "Centre"
+      - "Centre Right"
+      - "Right"
+    initial_option: "Centre"
+    optimistic: true
+
+  - platform: template
+    name: "Test Vertical Swing"
+    id: test_vertical_swing
+    options:
+      - "Up"
+      - "Mid Up"
+      - "Mid"
+      - "Mid Down"
+      - "Down"
+    initial_option: "Mid"
+    optimistic: true
+
+# Template switch component
 switch:
   - platform: restart
     name: "Restart"
+  - platform: template
+    name: "Test nanoeX"
+    id: test_nanoex
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
 
 climate:
   - platform: panasonic_ac
     name: "Test Panasonic AC"
     
-    # Test embedded select and switch components
-    horizontal_swing_select:
-      name: "Test Horizontal Swing"
-    vertical_swing_select:
-      name: "Test Vertical Swing"
-    nanoex_switch:
-      name: "Test nanoeX"
+    # Connect to external select and switch components
+    horizontal_swing_select_id: test_horizontal_swing
+    vertical_swing_select_id: test_vertical_swing
+    nanoex_switch_id: test_nanoex
     outside_temperature:
       name: "Test Outside Temperature"
