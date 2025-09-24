@@ -477,10 +477,22 @@ void PanasonicAC::handle_packet() {
 
     this->publish_state();
     
-    // Log additional status information in a clean format
-    ESP_LOGD(TAG, "   Horizontal Swing: %s", horizontalSwing.c_str());
-    ESP_LOGD(TAG, "   Vertical Swing: %s", verticalSwing.c_str());
-    ESP_LOGD(TAG, "   NanoeX: %s", nanoex ? "ON" : "OFF");
+    // Log all poll response values in a comprehensive format
+    ESP_LOGD(TAG, "   Power State: %s (0x%02X)", (this->rx_buffer_[14] == 0x31) ? "OFF" : "ON", this->rx_buffer_[14]);
+    ESP_LOGD(TAG, "   Mode: %s (0x%02X)", (this->mode == climate::CLIMATE_MODE_OFF) ? "OFF" : "ACTIVE", this->rx_buffer_[18]);
+    ESP_LOGD(TAG, "   Target Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[22], this->rx_buffer_[22]);
+    ESP_LOGD(TAG, "   Fan Speed: %s (0x%02X)", this->custom_fan_mode.c_str(), this->rx_buffer_[26]);
+    ESP_LOGD(TAG, "   Swing Mode: %s (0x%02X)", (this->swing_mode == climate::CLIMATE_SWING_OFF) ? "OFF" : "ACTIVE", this->rx_buffer_[30]);
+    ESP_LOGD(TAG, "   Horizontal Swing: %s (0x%02X)", horizontalSwing.c_str(), this->rx_buffer_[34]);
+    ESP_LOGD(TAG, "   Vertical Swing: %s (0x%02X)", verticalSwing.c_str(), this->rx_buffer_[38]);
+    ESP_LOGD(TAG, "   Preset: %s (0x%02X)", this->custom_preset.c_str(), this->rx_buffer_[42]);
+    ESP_LOGD(TAG, "   NanoeX: %s (0x%02X)", nanoex ? "ON" : "OFF", this->rx_buffer_[50]);
+    ESP_LOGD(TAG, "   Current Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[62], this->rx_buffer_[62]);
+    ESP_LOGD(TAG, "   Outside Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[66], this->rx_buffer_[66]);
+    
+    // Log additional poll response fields
+    ESP_LOGV(TAG, "   Additional fields - 0x20: 0x%02X, 0x21: 0x%02X, 0x32: 0x%02X, 0x34: 0x%02X, 0x35: 0x%02X, 0xBB: 0x%02X, 0xBE: 0x%02X", 
+             this->rx_buffer_[74], this->rx_buffer_[78], this->rx_buffer_[82], this->rx_buffer_[86], this->rx_buffer_[90], this->rx_buffer_[94], this->rx_buffer_[98]);
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88)  // Command ack
   {
     ESP_LOGV(TAG, "Received command ack");
