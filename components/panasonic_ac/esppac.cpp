@@ -206,7 +206,6 @@ void PanasonicAC::handle_init_packets() {
     if (millis() - this->init_time_ > INIT_TIMEOUT)  // Handle handshake initialization
     {
       ESP_LOGD(TAG, "Starting handshake [1/16]");
-      // Send handshake commands directly to avoid queuing delays during initialization
       std::vector<uint8_t> packet(sizeof(CMD_HANDSHAKE_1) + 3);
       for (int i = 0; i < sizeof(CMD_HANDSHAKE_1); i++) {
         packet[i + 2] = CMD_HANDSHAKE_1[i];
@@ -222,7 +221,6 @@ void PanasonicAC::handle_init_packets() {
     if (millis() - this->handshake_delay_start_ >= 3)  // Wait for 3ms delay
     {
       ESP_LOGD(TAG, "Sending second handshake packet [2/16]");
-      // Send handshake commands directly to avoid queuing delays during initialization
       std::vector<uint8_t> packet(sizeof(CMD_HANDSHAKE_2) + 3);
       for (int i = 0; i < sizeof(CMD_HANDSHAKE_2); i++) {
         packet[i + 2] = CMD_HANDSHAKE_2[i];
@@ -253,8 +251,6 @@ bool PanasonicAC::verify_packet() {
   if (this->rx_buffer_.size() < 5)  // Drop packets that are too short
   {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
-    //this->rx_buffer_.clear();  // Reset buffer - TEST
-    //return false; //TEST
   }
 
   if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A
@@ -268,8 +264,6 @@ bool PanasonicAC::verify_packet() {
   if (this->rx_buffer_[0] != HEADER)  // Check if header matches
   {
     ESP_LOGW(TAG, "Dropping invalid packet (header)");
-    // this->rx_buffer_.clear();  // Reset buffer TEST
-    // return false; //TEST
   }
 
   if (this->state_ == ACState::Ready && this->waiting_for_response_)  // If we were waiting for a response, check if the
@@ -299,9 +293,6 @@ bool PanasonicAC::verify_packet() {
   if (checksum != 0)  // Check if checksum is valid
   {
     ESP_LOGD(TAG, "Dropping invalid packet (checksum)");
-
-    // this->rx_buffer_.clear();  // Reset buffer <-- put this back later
-    //return false;  //testing only!
   }
 
   return true;
@@ -469,41 +460,7 @@ void PanasonicAC::handle_packet() {
     this->custom_preset = determine_preset(this->rx_buffer_[42]);
 
     this->swing_mode = determine_swing(this->rx_buffer_[30]);
-
-    // climate::ClimateAction action = determine_action(); // Determine the current action of the AC
-    // this->action = action;
-
     this->publish_state();
-    
-    // Log all poll response values in a comprehensive format
-    ESP_LOGD(TAG, "   Power State: %s (0x%02X)", (this->rx_buffer_[14] == 0x31) ? "OFF" : "ON", this->rx_buffer_[14]);
-    ESP_LOGD(TAG, "   Mode: %s (0x%02X)", (this->mode == climate::CLIMATE_MODE_OFF) ? "OFF" : "ACTIVE", this->rx_buffer_[18]);
-    ESP_LOGD(TAG, "   Target Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[22], this->rx_buffer_[22]);
-    ESP_LOGD(TAG, "   Fan Speed: %s (0x%02X)", this->custom_fan_mode.has_value() ? this->custom_fan_mode.value().c_str() : "Unknown", this->rx_buffer_[26]);
-    ESP_LOGD(TAG, "   Swing Mode: %s (0x%02X)", (this->swing_mode == climate::CLIMATE_SWING_OFF) ? "OFF" : "ACTIVE", this->rx_buffer_[30]);
-    ESP_LOGD(TAG, "   Horizontal Swing: %s (0x%02X)", horizontalSwing.c_str(), this->rx_buffer_[34]);
-    ESP_LOGD(TAG, "   Vertical Swing: %s (0x%02X)", verticalSwing.c_str(), this->rx_buffer_[38]);
-    ESP_LOGD(TAG, "   Preset: %s (0x%02X)", this->custom_preset.has_value() ? this->custom_preset.value().c_str() : "Unknown", this->rx_buffer_[42]);
-    ESP_LOGD(TAG, "   NanoeX: %s (0x%02X)", nanoex ? "ON" : "OFF", this->rx_buffer_[50]);
-    ESP_LOGD(TAG, "   Current Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[62], this->rx_buffer_[62]);
-    ESP_LOGD(TAG, "   Outside Temperature: %d°C (0x%02X)", (int8_t)this->rx_buffer_[66], this->rx_buffer_[66]);
-    
-    // Log additional poll response fields
-    ESP_LOGV(TAG, "   Additional fields - 0x20: 0x%02X, 0x21: 0x%02X, 0x32: 0x%02X, 0x34: 0x%02X, 0x35: 0x%02X, 0xBB: 0x%02X, 0xBE: 0x%02X", 
-             this->rx_buffer_[74], this->rx_buffer_[78], this->rx_buffer_[82], this->rx_buffer_[86], this->rx_buffer_[90], this->rx_buffer_[94], this->rx_buffer_[98]);
-    
-    // Test potential outside temperature values
-    ESP_LOGD(TAG, "   Potential outside temps - Field 0x20: %d°C, Field 0x21: %d°C, Field 0x34: %d°C", 
-             (int8_t)this->rx_buffer_[74], (int8_t)this->rx_buffer_[78], (int8_t)this->rx_buffer_[86]);
-    
-    // Scan for potential 28°C value (0x1C) or nearby values in poll response
-    ESP_LOGD(TAG, "   Temperature scan - bytes 70-85: ");
-    for (int i = 70; i <= 85; i++) {
-      int8_t temp_val = (int8_t)this->rx_buffer_[i];
-      if (temp_val >= 20 && temp_val <= 35) {  // Reasonable outside temp range
-        ESP_LOGD(TAG, "     Byte[%d]: %d°C (0x%02X)", i, temp_val, this->rx_buffer_[i]);
-      }
-    }
   } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88)  // Command ack
   {
     ESP_LOGV(TAG, "Received command ack");
