@@ -148,33 +148,6 @@ GND              →    GND
 
 **⚠️ Warning**: Ensure proper voltage levels and isolation if needed. Some AC units may require level shifters or optocouplers.
 
-## Development
-
-### Project Structure
-
-```
-components/panasonic_ac/
-├── __init__.py           # Component initialization
-├── climate.py            # ESPHome climate integration
-├── esppac.cpp            # Core AC communication logic
-├── esppac.h              # Header file
-├── panasonic_ac_base.cpp # Base communication class
-├── panasonic_ac_base.h   # Base class header
-└── manifest.json         # Component metadata
-```
-
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
-### Development Setup
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
 
 ## License
 

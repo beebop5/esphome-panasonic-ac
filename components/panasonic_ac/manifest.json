@@ -1,7 +1,7 @@
 {
   "name": "Panasonic AC",
   "version": "0.9",
-  "homeassistant": "2021.8.0",
+  "homeassistant": "2024.1.0",
   "dependencies": ["uart"],
   "codeowners": ["@beebop5"],
   "documentation": "https://github.com/beebop5/esphome-panasonic-ac",

@@ -40,7 +40,7 @@ void PanasonicACBase::setup() {
 }
 
 void PanasonicACBase::loop() {
-  read_data();  // Read data from UART (if there is any)
+  read_data();  // Read any available data from UART
 }
 
 void PanasonicACBase::read_data() {
@@ -48,52 +48,41 @@ void PanasonicACBase::read_data() {
   uint8_t bytes_read = 0;
   const uint8_t MAX_BYTES_PER_CALL = 10;
   
-  while (available() && bytes_read < MAX_BYTES_PER_CALL)  // Read while data is available, but limit per call
-  {
-    // if (this->receive_buffer_index >= BUFFER_SIZE) {
-    //   ESP_LOGE(TAG, "Receive buffer overflow");
-    //   receiveBufferIndex = 0;
-    // }
-
+  while (available() && bytes_read < MAX_BYTES_PER_CALL) {
     uint8_t c;
-    this->read_byte(&c);  // Store in receive buffer
+    this->read_byte(&c);
     this->rx_buffer_.push_back(c);
-
-    this->last_read_ = millis();  // Update lastRead timestamp
+    this->last_read_ = millis();
     bytes_read++;
   }
 }
 
+bool PanasonicACBase::is_valid_temperature(int8_t temperature) {
+  // Check if temperature value is valid (not an error code and within acceptable range)
+  return temperature != TEMP_SENSOR_NOT_AVAILABLE && 
+         temperature != TEMP_SENSOR_ERROR && 
+         temperature != TEMP_SENSOR_INVALID && 
+         temperature <= TEMPERATURE_THRESHOLD;
+}
+
 void PanasonicACBase::update_outside_temperature(int8_t temperature) {
-  // Check for special sensor error values
-  if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
-      temperature == TEMP_SENSOR_INVALID) {
+  if (!is_valid_temperature(temperature)) {
     ESP_LOGV(TAG, "Outside temperature sensor not available (value: %d)", temperature);
     return;
   }
-  
-  if (temperature > TEMPERATURE_THRESHOLD) {
-    ESP_LOGW(TAG, "Received out of range outside temperature: %d", temperature);
-    return;
-  }
 
-  ESP_LOGD(TAG, "Outside temperature: %d°C, sensor state: %.1f°C", temperature, this->outside_temperature_sensor_ ? this->outside_temperature_sensor_->state : -999.0f);
+  ESP_LOGD(TAG, "Outside temperature: %d°C, sensor state: %.1f°C", temperature, 
+           this->outside_temperature_sensor_ ? this->outside_temperature_sensor_->state : -999.0f);
   
-  if (this->outside_temperature_sensor_ != nullptr && this->outside_temperature_sensor_->state != (float)temperature)
-    this->outside_temperature_sensor_->publish_state(
-        temperature);  // Set current (outside) temperature; no temperature steps
+  if (this->outside_temperature_sensor_ != nullptr && 
+      this->outside_temperature_sensor_->state != (float)temperature) {
+    this->outside_temperature_sensor_->publish_state(temperature);
+  }
 }
 
 void PanasonicACBase::update_current_temperature(int8_t temperature) {
-  // Check for special sensor error values
-  if (temperature == TEMP_SENSOR_NOT_AVAILABLE || temperature == TEMP_SENSOR_ERROR || 
-      temperature == TEMP_SENSOR_INVALID) {
+  if (!is_valid_temperature(temperature)) {
     ESP_LOGD(TAG, "Inside temperature sensor not available (value: %d)", temperature);
-    return;
-  }
-  
-  if (temperature > TEMPERATURE_THRESHOLD) {
-    ESP_LOGW(TAG, "Received out of range inside temperature: %d", temperature);
     return;
   }
 
@@ -101,20 +90,12 @@ void PanasonicACBase::update_current_temperature(int8_t temperature) {
 }
 
 void PanasonicACBase::update_target_temperature(uint8_t raw_value) {
-  // Check for special sensor error values
-  if (raw_value == TEMP_SENSOR_NOT_AVAILABLE || raw_value == TEMP_SENSOR_ERROR || 
-      raw_value == TEMP_SENSOR_INVALID) {
+  if (!is_valid_temperature(raw_value)) {
     ESP_LOGD(TAG, "Target temperature sensor not available (value: %d)", raw_value);
     return;
   }
   
   float temperature = raw_value * TEMPERATURE_STEP;
-
-  if (temperature > TEMPERATURE_THRESHOLD) {
-    ESP_LOGW(TAG, "Received out of range target temperature %.2f", temperature);
-    return;
-  }
-
   this->target_temperature = temperature;
 }
 
@@ -123,16 +104,17 @@ void PanasonicACBase::update_swing_horizontal(const std::string &swing) {
 
   if (this->horizontal_swing_select_ != nullptr &&
       this->horizontal_swing_select_->state != this->horizontal_swing_state_) {
-    this->horizontal_swing_select_->publish_state(
-        this->horizontal_swing_state_);  // Set current horizontal swing position
+    this->horizontal_swing_select_->publish_state(this->horizontal_swing_state_);
   }
 }
 
 void PanasonicACBase::update_swing_vertical(const std::string &swing) {
   this->vertical_swing_state_ = swing;
 
-  if (this->vertical_swing_select_ != nullptr && this->vertical_swing_select_->state != this->vertical_swing_state_)
-    this->vertical_swing_select_->publish_state(this->vertical_swing_state_);  // Set current vertical swing position
+  if (this->vertical_swing_select_ != nullptr && 
+      this->vertical_swing_select_->state != this->vertical_swing_state_) {
+    this->vertical_swing_select_->publish_state(this->vertical_swing_state_);
+  }
 }
 
 void PanasonicACBase::update_nanoex(bool nanoex) {
@@ -142,10 +124,8 @@ void PanasonicACBase::update_nanoex(bool nanoex) {
   }
 }
 
-
-
-
 climate::ClimateAction PanasonicACBase::determine_action() {
+  // Determine the current climate action based on mode and temperature conditions
   if (this->mode == climate::CLIMATE_MODE_OFF) {
     return climate::CLIMATE_ACTION_OFF;
   } else if (this->mode == climate::CLIMATE_MODE_FAN_ONLY) {
@@ -163,15 +143,10 @@ climate::ClimateAction PanasonicACBase::determine_action() {
   }
 }
 
-
-/*
- * Sensor handling
- */
-
+// Sensor and component setup methods
 void PanasonicACBase::set_outside_temperature_sensor(sensor::Sensor *outside_temperature_sensor) {
   this->outside_temperature_sensor_ = outside_temperature_sensor;
 }
-
 
 void PanasonicACBase::set_vertical_swing_select(select::Select *vertical_swing_select) {
   this->vertical_swing_select_ = vertical_swing_select;
@@ -200,14 +175,7 @@ void PanasonicACBase::set_nanoex_switch(switch_::Switch *nanoex_switch) {
   });
 }
 
-
-
-
-
-/*
- * Debugging
- */
-
+// Debugging utilities
 void PanasonicACBase::log_packet(std::vector<uint8_t> data, bool outgoing) {
   if (outgoing) {
     ESP_LOGV(TAG, "TX: %s", format_hex_pretty(data).c_str());

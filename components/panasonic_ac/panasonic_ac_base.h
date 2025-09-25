@@ -72,6 +72,8 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   climate::ClimateTraits traits() override;
 
   void read_data();
+  
+  bool is_valid_temperature(int8_t temperature);
 
   void update_outside_temperature(int8_t temperature);
   void update_current_temperature(int8_t temperature);
