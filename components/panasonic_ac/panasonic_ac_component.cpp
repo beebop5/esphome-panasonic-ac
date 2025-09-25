@@ -1,4 +1,4 @@
-#include "esppac.h"
+#include "panasonic_ac_component.h"
 
 namespace esphome {
 namespace panasonic_ac {

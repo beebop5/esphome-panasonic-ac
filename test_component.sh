@@ -16,8 +16,8 @@ required_files=(
     "components/panasonic_ac/climate.py"
     "components/panasonic_ac/panasonic_ac_base.h"
     "components/panasonic_ac/panasonic_ac_base.cpp"
-    "components/panasonic_ac/esppac.h"
-    "components/panasonic_ac/esppac.cpp"
+    "components/panasonic_ac/panasonic_ac_component.h"
+    "components/panasonic_ac/panasonic_ac_component.cpp"
 )
 
 for file in "${required_files[@]}"; do
