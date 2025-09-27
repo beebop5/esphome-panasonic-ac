@@ -1,9 +1,10 @@
 # ESPHome Panasonic AC Component
 
-A custom ESPHome component for controlling Panasonic air conditioning units via UART communication. This component provides full climate control functionality with support for temperature control, fan speeds, operation modes, and advanced features like swing control and nanoeX air purification.
+A custom ESPHome component for controlling Panasonic air conditioning units via UART communication. This component serves as a replacement for the Panasonic DNSK-P11 wireless LAN adapter (tested with part number ACXA73-28520) and provides full climate control functionality with support for temperature control, fan speeds, operation modes, and advanced features like swing control and nanoeX air purification.
 
 ## Features
 
+- 🔄 **DNSK-P11 Replacement**: Direct replacement for Panasonic DNSK-P11 wireless LAN adapter (tested with ACXA73-28520)
 - 🌡️ **Climate Control**: Full temperature control with heating, cooling, and dry modes
 - 🌪️ **Fan Control**: Automatic and manual fan speed control (1-5 levels)
 - 🎛️ **Swing Control**: Independent horizontal and vertical air swing positioning
@@ -15,6 +16,20 @@ A custom ESPHome component for controlling Panasonic air conditioning units via 
 ## Supported Models
 
 This component is designed for Panasonic AC units that use UART communication. It has been tested with models that support the CZ-TACG1 protocol.
+
+### DNSK-P11 Replacement
+
+This ESPHome component serves as a **replacement for the Panasonic DNSK-P11 wireless LAN adapter**. It has been successfully tested as a replacement for **part number ACXA73-28520**.
+
+The component provides the same functionality as the original DNSK-P11 adapter but with enhanced features through ESPHome integration:
+
+- ✅ **Direct UART communication** with Panasonic AC units
+- ✅ **Home Assistant integration** for advanced automation
+- ✅ **Local control** without dependency on Panasonic cloud services
+- ✅ **Open source** and fully customizable
+- ✅ **Enhanced logging and debugging** capabilities
+
+If you're replacing a DNSK-P11 adapter, this component should provide equivalent functionality with improved integration options.
 
 ## Hardware Requirements
 
