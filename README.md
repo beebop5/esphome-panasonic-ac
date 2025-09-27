@@ -4,14 +4,14 @@ A custom ESPHome component for controlling Panasonic air conditioning units via 
 
 ## Features
 
-- 🔄 **DNSK-P11 Replacement**: Direct replacement for Panasonic DNSK-P11 wireless LAN adapter (tested with ACXA73-28520)
-- 🌡️ **Climate Control**: Full temperature control with heating, cooling, and dry modes
-- 🌪️ **Fan Control**: Automatic and manual fan speed control (1-5 levels)
-- 🎛️ **Swing Control**: Independent horizontal and vertical air swing positioning
-- ✨ **NanoeX Support**: Control for Panasonic's nanoeX air purification technology
-- 📊 **Temperature Monitoring**: Built-in outside temperature sensor support
-- 🔄 **Home Assistant Integration**: Seamless integration with Home Assistant's climate platform
-- 📱 **ESPHome Dashboard**: Full control via ESPHome's web interface
+- **DNSK-P11 Replacement**: Direct replacement for Panasonic DNSK-P11 wireless LAN adapter (tested with ACXA73-28520)
+- **Climate Control**: Full temperature control with heating, cooling, and dry modes
+- **Fan Control**: Automatic and manual fan speed control (1-5 levels)
+- **Swing Control**: Independent horizontal and vertical air swing positioning
+- **NanoeX Support**: Control for Panasonic's nanoeX air purification technology
+- **Temperature Monitoring**: Built-in outside temperature sensor support
+- **Home Assistant Integration**: Seamless integration with Home Assistant's climate platform
+- **ESPHome Dashboard**: Full control via ESPHome's web interface
 
 ## Supported Models
 
@@ -23,11 +23,11 @@ This ESPHome component serves as a **replacement for the Panasonic DNSK-P11 wire
 
 The component provides the same functionality as the original DNSK-P11 adapter but with enhanced features through ESPHome integration:
 
-- ✅ **Direct UART communication** with Panasonic AC units
-- ✅ **Home Assistant integration** for advanced automation
-- ✅ **Local control** without dependency on Panasonic cloud services
-- ✅ **Open source** and fully customizable
-- ✅ **Enhanced logging and debugging** capabilities
+- **Direct UART communication** with Panasonic AC units
+- **Home Assistant integration** for advanced automation
+- **Local control** without dependency on Panasonic cloud services
+- **Open source** and fully customizable
+- **Enhanced logging and debugging** capabilities
 
 If you're replacing a DNSK-P11 adapter, this component should provide equivalent functionality with improved integration options.
 
@@ -161,7 +161,7 @@ GND              →    GND
 3.3V/5V          →    VCC (check AC unit requirements)
 ```
 
-**⚠️ Warning**: Ensure proper voltage levels and isolation if needed. Some AC units may require level shifters or optocouplers.
+**Warning**: Ensure proper voltage levels and isolation if needed. Some AC units may require level shifters or optocouplers.
 
 
 ## License
@@ -171,9 +171,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Based on reverse engineering of Panasonic AC communication protocols
-- Built for the ESPHome ecosystem
+- Developed for the ESPHome ecosystem
 - Community contributions and testing
-- Related work: [DomiStyle/esphome-panasonic-ac](https://github.com/DomiStyle/esphome-panasonic-ac) - A popular ESPHome Panasonic AC component with 313+ stars that provides similar functionality for different AC models
+- Related work: [DomiStyle/esphome-panasonic-ac](https://github.com/DomiStyle/esphome-panasonic-ac) - An ESPHome Panasonic AC component that provides similar functionality for different AC models
 
 ## Support
 
