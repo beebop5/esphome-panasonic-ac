@@ -14,22 +14,29 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     
     - name: Install ESPHome
       run: |
-        pip install esphome
+        pip install esphome[dev]
     
     - name: Test component compilation
       run: |
         # Test with ESP32 (default board in test_config.yaml)
+        echo "Testing ESP32 compilation..."
         esphome compile test_config.yaml
         
         # Test with ESP8266 by modifying config temporarily
-        sed 's/board: nodemcu-32s/board: nodemcuv2/' test_config.yaml > test_config_esp8266.yaml
+        echo "Testing ESP8266 compilation..."
+        sed 's/board: esp32dev/board: nodemcuv2/' test_config.yaml > test_config_esp8266.yaml
         esphome compile test_config_esp8266.yaml
+        
+        echo "✅ All compilation tests passed"
+        
+        # Clean up temporary files
+        rm -f test_config_esp8266.yaml
     
     - name: Validate component structure
       run: |
@@ -38,8 +45,8 @@ jobs:
         test -f components/panasonic_ac/climate.py
         test -f components/panasonic_ac/panasonic_ac_base.h
         test -f components/panasonic_ac/panasonic_ac_base.cpp
-        test -f components/panasonic_ac/esppac_wlan.h
-        test -f components/panasonic_ac/esppac_wlan.cpp
+        test -f components/panasonic_ac/panasonic_ac_component.h
+        test -f components/panasonic_ac/panasonic_ac_component.cpp
         
         # Check that removed files don't exist
         test ! -f components/panasonic_ac/panasonic_ac_select.h
