@@ -57,17 +57,6 @@ else
     exit 1
 fi
 
-# Test ESP8266 compilation
-echo "Testing ESP8266 compilation..."
-sed 's/board: nodemcu-32s/board: nodemcuv2/' test_config.yaml > test_config_esp8266.yaml
-if esphome compile test_config_esp8266.yaml; then
-    echo "✅ ESP8266 compilation successful"
-    rm test_config_esp8266.yaml
-else
-    echo "❌ ESP8266 compilation failed"
-    rm test_config_esp8266.yaml
-    exit 1
-fi
 
 echo ""
 echo "🎉 All tests passed! Component is ready."

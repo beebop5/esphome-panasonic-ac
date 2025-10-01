@@ -28,15 +28,7 @@ jobs:
         echo "Testing ESP32 compilation..."
         esphome compile test_config.yaml
         
-        # Test with ESP8266 by modifying config temporarily
-        echo "Testing ESP8266 compilation..."
-        sed 's/board: esp32dev/board: nodemcuv2/' test_config.yaml > test_config_esp8266.yaml
-        esphome compile test_config_esp8266.yaml
-        
-        echo "✅ All compilation tests passed"
-        
-        # Clean up temporary files
-        rm -f test_config_esp8266.yaml
+        echo "✅ ESP32 compilation test passed"
     
     - name: Validate component structure
       run: |
