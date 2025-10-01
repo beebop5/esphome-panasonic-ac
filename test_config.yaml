@@ -1,8 +1,13 @@
 substitutions:
-  device_name: test
-  device_name_short: test
+  device_name: rc-bedroom-ac
+  device_name_short: bd
   wifi_ssid: "testwifi"
   wifi_pass: "test-password"
+  ota_pw: "test-ota-password"
+  api_key: "dDxC97RB63tXsGpxUBOiyNpv1bPL4DhNfdT1Uvzj8Ec="
+  web_server_user: "admin"
+  web_server_pass: "admin"
+  syslog_ip: "192.168.1.100"
 
 esphome:
   name: $device_name
@@ -10,23 +15,35 @@ esphome:
 
 esp32:
   board: esp32dev
-  framework:
+  framework: 
     type: arduino
-
+    
 wifi:
   networks:
   - ssid: $wifi_ssid
     password: $wifi_pass
 
+web_server:
+  port: 80
+  auth:
+    username: $web_server_user
+    password: $web_server_pass
+
 api:
+  encryption:
+    key: $api_key
   
 ota:
-  platform: esphome
+  - platform: esphome
+    password: $ota_pw
 
 logger:
   level: VERBOSE
 
-# Configure a time source (SNTP is common)
+# syslog IP
+udp:
+  addresses: $syslog_ip
+
 time:
   - platform: sntp
     id: my_time
@@ -34,7 +51,11 @@ time:
     - 0.pool.ntp.org
     - 1.pool.ntp.org
 
-# Requires ESPHome 1.15.0+ for the even parity option
+# syslog configuration. Defaults to udp/514
+syslog:
+  level: VERBOSE
+
+# connectivity to the AC unit
 uart:
   tx_pin: GPIO17
   rx_pin: GPIO16
@@ -44,15 +65,17 @@ uart:
 
 external_components:
   source:
-    type: local
-    path: components
+    type: git
+    url: https://github.com/beebop5/esphome-panasonic-ac
+    #ref: test
   components: [panasonic_ac]
+  refresh: 30s
 
-# Template select components
+# define select controls for the climate component
 select:
   - platform: template
-    name: "Test Horizontal Swing"
-    id: test_horizontal_swing
+    name: "Panasonic AC Horizontal Swing"
+    id: panasonic_ac_hswing
     options:
       - "Left"
       - "Centre Left"
@@ -63,8 +86,8 @@ select:
     optimistic: true
 
   - platform: template
-    name: "Test Vertical Swing"
-    id: test_vertical_swing
+    name: "Panasonic AC Vertical Swing"
+    id: panasonic_ac_vswing
     options:
       - "Up"
       - "Mid Up"
@@ -74,23 +97,20 @@ select:
     initial_option: "Mid"
     optimistic: true
 
-# Template switch component
 switch:
   - platform: restart
     name: "Restart"
   - platform: template
-    name: "Test nanoeX"
-    id: test_nanoex
+    name: "Panasonic AC NanoeX"
+    id: panasonic_ac_nanoex
     restore_mode: RESTORE_DEFAULT_OFF
     optimistic: true
 
 climate:
   - platform: panasonic_ac
-    name: "Test Panasonic AC"
-    
-    # Connect to external select and switch components
-    horizontal_swing_select_id: test_horizontal_swing
-    vertical_swing_select_id: test_vertical_swing
-    nanoex_switch_id: test_nanoex
+    name: $device_name_short
     outside_temperature:
-      name: "Test Outside Temperature"
+      name: " Outside Temp"
+    horizontal_swing_select_id: panasonic_ac_hswing
+    vertical_swing_select_id: panasonic_ac_vswing
+    nanoex_switch_id: panasonic_ac_nanoex

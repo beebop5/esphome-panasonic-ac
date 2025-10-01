@@ -1,45 +1,81 @@
+substitutions:
+  device_name: rc-bedroom-ac
+  device_name_short: bd
+  wifi_ssid: !secret wifi_ssid
+  wifi_pass: !secret wifi_pass
+  ota_pw: !secret ota_pw
+  api_key: !secret api_key  # Must be base64 encoded, 32 characters long
+  web_server_user: !secret web_server_user
+  web_server_pass: !secret web_server_pass
+  syslog_ip: !secret syslog_ip
+
 esphome:
-  name: panasonic-ac
+  name: $device_name
+  comment: $device_name
 
 esp32:
   board: esp32dev
-  framework:
+  framework: 
     type: arduino
-
+    
 wifi:
   networks:
-    - ssid: "YourWiFiSSID"
-      password: "YourWiFiPassword"
-  ap:
-    ssid: "Panasonic AC Fallback"
-    password: "fallback123"
+  - ssid: $wifi_ssid
+    password: $wifi_pass
 
-logger:
-  level: DEBUG
+web_server:
+  port: 80
+  auth:
+    username: $web_server_user
+    password: $web_server_pass
 
 api:
-
+  encryption:
+    key: $api_key
+  
 ota:
-  platform: esphome
+  - platform: esphome
+    password: !secret ota_pw
 
-# Requires ESPHome 1.15.0+ for the even parity option
+logger:
+  level: VERBOSE
+
+# syslog IP
+udp:
+  addresses: $syslog_ip
+
+time:
+  - platform: sntp
+  id: my_time
+  servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+
+# syslog configuration. Defaults to udp/514
+syslog:
+  level: VERBOSE
+
+# connectivity to the AC unit
 uart:
   tx_pin: GPIO17
   rx_pin: GPIO16
   baud_rate: 9600
   parity: EVEN
+  rx_buffer_size: 1024
 
 external_components:
-  source: github://beebop5/esphome-panasonic-ac
+  source:
+    type: git
+    url: https://github.com/beebop5/esphome-panasonic-ac
+    #ref: test
   components: [panasonic_ac]
-  # For latest features including select/switch components, use:
-  # ref: feature/select-switch-components
+  refresh: 30s
 
-# Horizontal swing control select
+# define select controls for the climate component
 select:
   - platform: template
     name: "Panasonic AC Horizontal Swing"
-    id: panasonic_ac_horizontal_swing
+    id: panasonic_ac_hswing
     options:
       - "Left"
       - "Centre Left"
@@ -51,7 +87,7 @@ select:
 
   - platform: template
     name: "Panasonic AC Vertical Swing"
-    id: panasonic_ac_vertical_swing
+    id: panasonic_ac_vswing
     options:
       - "Up"
       - "Mid Up"
@@ -61,8 +97,9 @@ select:
     initial_option: "Mid"
     optimistic: true
 
-# Optional switch components
 switch:
+  - platform: restart
+    name: "Restart"
   - platform: template
     name: "Panasonic AC NanoeX"
     id: panasonic_ac_nanoex
@@ -71,10 +108,9 @@ switch:
 
 climate:
   - platform: panasonic_ac
-    name: Panasonic AC
+    name: $device_name_short
     outside_temperature:
-      name: Panasonic AC Outside Temperature
-    # Connect the external select components to the climate component
-    horizontal_swing_select_id: panasonic_ac_horizontal_swing
-    vertical_swing_select_id: panasonic_ac_vertical_swing
+      name: " Outside Temp"
+    horizontal_swing_select_id: panasonic_ac_hswing
+    vertical_swing_select_id: panasonic_ac_vswing
     nanoex_switch_id: panasonic_ac_nanoex
