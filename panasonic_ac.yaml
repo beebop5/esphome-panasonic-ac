@@ -1,10 +1,10 @@
 substitutions:
   device_name: rc-test
   device_name_short: test
-  wifi_ssid: !secret wifi_ssid
-  wifi_pass: !secret wifi_pass
-  ota_pw: !secret ota_pw
-  api_key: !secret api_key  # Must be base64 encoded, 32 characters long
+  wifi_ssid: wifissid
+  wifi_pass: wifipass
+  ota_pw: "s0/blwvQQhhdnOzHqrbixA=="
+  api_key: "5Vq+Zr3gQqy9+kDYvEE7ZhdWtYRlyekqfW/igr+QcrQ="
   syslog_ip: !secret syslog_ip
 
 esphome:
@@ -36,8 +36,8 @@ time:
   - platform: sntp
   id: my_time
   servers:
-  - 0.pool.ntp.org
-  - 1.pool.ntp.org
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
 
 # syslog configuration. Defaults to udp/514
 syslog:

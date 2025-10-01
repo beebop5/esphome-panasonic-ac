@@ -3,8 +3,8 @@ substitutions:
   device_name_short: bd
   wifi_ssid: "testwifi"
   wifi_pass: "test-password"
-  ota_pw: "test-ota-password"
-  api_key: "dDxC97RB63tXsGpxUBOiyNpv1bPL4DhNfdT1Uvzj8Ec="
+  ota_pw: "s0/blwvQQhhdnOzHqrbixA=="
+  api_key: "5Vq+Zr3gQqy9+kDYvEE7ZhdWtYRlyekqfW/igr+QcrQ="
   web_server_user: "admin"
   web_server_pass: "admin"
   syslog_ip: "192.168.1.100"
