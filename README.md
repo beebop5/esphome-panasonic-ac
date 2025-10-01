@@ -1,10 +1,10 @@
-# ESPHome Panasonic AC Component
+# ESPHome Panasonic AC WLAN Component
 
 An open source alternative for Panasonic air conditioning wifi adapters that works locally without the Comfort Cloud.
 
 ## Overview
 
-A custom ESPHome component for controlling Panasonic air conditioning units via UART communication. This component serves as a replacement for the Panasonic DNSK-P11 wireless LAN adapter (tested with part number ACXA73-28520) and provides full climate control functionality.
+A custom ESPHome component for controlling Panasonic air conditioning units via the WLAN interface (CN-WLAN port). This component serves as a replacement for the Panasonic DNSK-P11 wireless LAN adapter (tested with part number ACXA73-28520) and provides full climate control functionality through the WLAN port.
 
 ## Features
 
@@ -12,7 +12,7 @@ A custom ESPHome component for controlling Panasonic air conditioning units via 
 * Instantly control the AC without any delay like in the Comfort Cloud app
 * Receive live reports and state from the AC
 * Uses the UART interface on the AC instead of the IR interface
-* Provides a drop-in replacement for the Panasonic DNSK-P11 wifi module
+* Provides a drop-in replacement for the Panasonic DNSK-P11 wifi module via WLAN interface
 * Full temperature control with heating, cooling, and dry modes
 * Automatic and manual fan speed control (1-5 levels)
 * Independent horizontal and vertical air swing positioning
@@ -21,7 +21,9 @@ A custom ESPHome component for controlling Panasonic air conditioning units via 
 
 ## Supported hardware
 
-This component works with Panasonic AC units that use UART communication and has been tested with models that support the CZ-TACG1 protocol.
+This component works with Panasonic AC units that have a WLAN interface (CN-WLAN port) and use UART communication. It has been tested with models that support the CZ-TACG1 protocol through the WLAN port.
+
+**Note**: This component is specifically designed for the WLAN interface (CN-WLAN port) and serves as a replacement for the DNSK-P11 adapter. For the CN-CNT port interface, please refer to the [DomiStyle/esphome-panasonic-ac](https://github.com/DomiStyle/esphome-panasonic-ac) component.
 
 Works on the ESP8266 but ESP32 is preferred for the multiple hardware serial ports.
 
@@ -85,15 +87,17 @@ In order to find out which features are supported by your AC, check the remote t
 
 ### Wiring Diagram
 
-Connect your ESP32/ESP8266 to the AC unit using a logic level converter:
+Connect your ESP32/ESP8266 to the AC unit's WLAN interface (CN-WLAN port) using a logic level converter:
 
 ```
-ESP32/ESP8266    Logic Converter    Panasonic AC
+ESP32/ESP8266    Logic Converter    Panasonic AC (CN-WLAN)
 GPIO17 (TX)      →    TX            RX
 GPIO16 (RX)      →    RX            TX
 GND              →    GND           GND
 3.3V/5V          →    VCC           VCC (check AC unit requirements)
 ```
+
+**Important**: This component connects to the CN-WLAN port (where the DNSK-P11 adapter normally connects), not the CN-CNT port.
 
 **Warning**: Ensure proper voltage levels and isolation if needed. Some AC units may require level shifters or optocouplers.
 

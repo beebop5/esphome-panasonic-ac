@@ -1,5 +1,5 @@
 {
-  "name": "Panasonic AC",
+  "name": "Panasonic AC WLAN",
   "version": "0.9",
   "homeassistant": "2024.1.0",
   "dependencies": ["uart"],
