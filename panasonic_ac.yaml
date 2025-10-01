@@ -1,12 +1,10 @@
 substitutions:
-  device_name: rc-bedroom-ac
-  device_name_short: bd
+  device_name: rc-test
+  device_name_short: test
   wifi_ssid: !secret wifi_ssid
   wifi_pass: !secret wifi_pass
   ota_pw: !secret ota_pw
   api_key: !secret api_key  # Must be base64 encoded, 32 characters long
-  web_server_user: !secret web_server_user
-  web_server_pass: !secret web_server_pass
   syslog_ip: !secret syslog_ip
 
 esphome:
@@ -23,12 +21,6 @@ wifi:
   - ssid: $wifi_ssid
     password: $wifi_pass
 
-web_server:
-  port: 80
-  auth:
-    username: $web_server_user
-    password: $web_server_pass
-
 api:
   encryption:
     key: $api_key
@@ -39,10 +31,6 @@ ota:
 
 logger:
   level: VERBOSE
-
-# syslog IP
-udp:
-  addresses: $syslog_ip
 
 time:
   - platform: sntp
@@ -61,15 +49,12 @@ uart:
   rx_pin: GPIO16
   baud_rate: 9600
   parity: EVEN
-  rx_buffer_size: 1024
 
 external_components:
   source:
     type: git
     url: https://github.com/beebop5/esphome-panasonic-ac
-    #ref: test
   components: [panasonic_ac]
-  refresh: 30s
 
 # define select controls for the climate component
 select:
@@ -110,7 +95,7 @@ climate:
   - platform: panasonic_ac
     name: $device_name_short
     outside_temperature:
-      name: " Outside Temp"
+      name: "Outside Temp"
     horizontal_swing_select_id: panasonic_ac_hswing
     vertical_swing_select_id: panasonic_ac_vswing
     nanoex_switch_id: panasonic_ac_nanoex
