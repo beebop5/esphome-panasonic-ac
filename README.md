@@ -1,47 +1,52 @@
 # ESPHome Panasonic AC Component
 
-A custom ESPHome component for controlling Panasonic air conditioning units via UART communication. This component serves as a replacement for the Panasonic DNSK-P11 wireless LAN adapter (tested with part number ACXA73-28520) and provides full climate control functionality with support for temperature control, fan speeds, operation modes, and advanced features like swing control and nanoeX air purification.
+An open source alternative for Panasonic air conditioning wifi adapters that works locally without the Comfort Cloud.
+
+## Overview
+
+A custom ESPHome component for controlling Panasonic air conditioning units via UART communication. This component serves as a replacement for the Panasonic DNSK-P11 wireless LAN adapter (tested with part number ACXA73-28520) and provides full climate control functionality.
 
 ## Features
 
-- **DNSK-P11 Replacement**: Direct replacement for Panasonic DNSK-P11 wireless LAN adapter (tested with ACXA73-28520)
-- **Climate Control**: Full temperature control with heating, cooling, and dry modes
-- **Fan Control**: Automatic and manual fan speed control (1-5 levels)
-- **Swing Control**: Independent horizontal and vertical air swing positioning
-- **NanoeX Support**: Control for Panasonic's nanoeX air purification technology
-- **Temperature Monitoring**: Built-in outside temperature sensor support
-- **Home Assistant Integration**: Seamless integration with Home Assistant's climate platform
-- **ESPHome Dashboard**: Full control via ESPHome's web interface
+* Control your AC locally via Home Assistant, MQTT or directly
+* Instantly control the AC without any delay like in the Comfort Cloud app
+* Receive live reports and state from the AC
+* Uses the UART interface on the AC instead of the IR interface
+* Provides a drop-in replacement for the Panasonic DNSK-P11 wifi module
+* Full temperature control with heating, cooling, and dry modes
+* Automatic and manual fan speed control (1-5 levels)
+* Independent horizontal and vertical air swing positioning
+* Control for Panasonic's nanoeX air purification technology
+* Built-in outside temperature sensor support
 
-## Supported Models
+## Supported hardware
 
-This component is designed for Panasonic AC units that use UART communication. It has been tested with models that support the CZ-TACG1 protocol.
+This component works with Panasonic AC units that use UART communication and has been tested with models that support the CZ-TACG1 protocol.
 
-### DNSK-P11 Replacement
+Works on the ESP8266 but ESP32 is preferred for the multiple hardware serial ports.
 
-This ESPHome component serves as a **replacement for the Panasonic DNSK-P11 wireless LAN adapter**. It has been successfully tested as a replacement for **part number ACXA73-28520**.
+## Requirements
 
-The component provides the same functionality as the original DNSK-P11 adapter but with enhanced features through ESPHome integration:
+* ESP32 (or ESP8266) (supported by ESPHome)
+* 5V to 3.3V bi-directional Logic Converter (minimum 2 channels, available as pre-soldered prototyping boards)
+* Female-Female Jumper cables
+* Soldering iron
+* Wires to solder from Logic converter to ESP
+* Heat shrink
+* ESPHome 2022.5.0 or newer
+* Home Assistant 2021.8.0 or newer
 
-- **Direct UART communication** with Panasonic AC units
-- **Home Assistant integration** for advanced automation
-- **Local control** without dependency on Panasonic cloud services
-- **Open source** and fully customizable
-- **Enhanced logging and debugging** capabilities
+## Notes
 
-If you're replacing a DNSK-P11 adapter, this component should provide equivalent functionality with improved integration options.
+* **Make sure to disconnect mains power before opening your AC, the mains contacts are exposed and can be touched by accident!**
+* **Do not connect your ESP32/ESP8266 directly to the AC, the AC uses 5V while the ESPs use 3.3V!**
+* **While installation is fairly straightforward I do not take any responsibility for any damage done to you or your AC during installation**
 
-## Hardware Requirements
+## Software installation
 
-- ESP32 or ESP8266 microcontroller
-- UART connection to your Panasonic AC unit
-- Appropriate wiring (see wiring section)
+This software installation guide assumes some familiarity with ESPHome.
 
-## Installation
-
-### Method 1: External Component (Recommended)
-
-Add this to your ESPHome configuration:
+* Add this to your ESPHome configuration:
 
 ```yaml
 external_components:
@@ -49,120 +54,69 @@ external_components:
   components: [panasonic_ac]
 ```
 
-### Method 2: Local Development
+* Copy the configuration from `panasonic_ac.yaml.example` in the root folder
+* Adjust the configuration to your needs
+* Connect your ESP
+* Run `esphome your_config.yaml run` and choose your serial port (or do this via the Home Assistant UI)
+* If you see the handshake messages being sent in the log you are good to go
+* Disconnect the ESP and continue with hardware installation
 
-1. Clone this repository
-2. Copy the `components/panasonic_ac` folder to your ESPHome custom components directory
-3. Use the component in your configuration
+## Setting supported features
 
-## Configuration
-
-### Basic Setup
-
-```yaml
-# UART configuration (ESPHome 1.15.0+ required for even parity)
-uart:
-  tx_pin: GPIO17
-  rx_pin: GPIO16
-  baud_rate: 9600
-  parity: EVEN
-
-# External component reference
-external_components:
-  source: github://beebop5/esphome-panasonic-ac
-  components: [panasonic_ac]
-
-# Climate component
-climate:
-  - platform: panasonic_ac
-    name: "Living Room AC"
-    outside_temperature:
-      name: "AC Outside Temperature"
-```
-
-### Advanced Configuration with Swing Control
+Since Panasonic ACs support different features you can comment out the lines in your configuration:
 
 ```yaml
-# Template select components for swing control
-select:
-  - platform: template
-    name: "AC Horizontal Swing"
-    id: ac_horizontal_swing
-    options:
-      - "Left"
-      - "Centre Left"
-      - "Centre"
-      - "Centre Right"
-      - "Right"
-    initial_option: "Centre"
-    optimistic: true
-
-  - platform: template
-    name: "AC Vertical Swing"
-    id: ac_vertical_swing
-    options:
-      - "Up"
-      - "Mid Up"
-      - "Mid"
-      - "Mid Down"
-      - "Down"
-    initial_option: "Mid"
-    optimistic: true
-
-# Optional nanoeX switch
-switch:
-  - platform: template
-    name: "AC NanoeX"
-    id: ac_nanoex
-    restore_mode: RESTORE_DEFAULT_OFF
-    optimistic: true
-
-climate:
-  - platform: panasonic_ac
-    name: "Living Room AC"
-    outside_temperature:
-      name: "AC Outside Temperature"
-    # Connect external components
-    horizontal_swing_select_id: ac_horizontal_swing
-    vertical_swing_select_id: ac_vertical_swing
-    nanoex_switch_id: ac_nanoex
+# Enable as needed
+# outside_temperature_sensor:
+#   name: "Panasonic AC Outside Temperature"
+# vertical_swing_select:
+#   name: "Panasonic AC Vertical Swing"
+# horizontal_swing_select:
+#   name: "Panasonic AC Horizontal Swing"
+# nanoex_switch:
+#   name: "Panasonic AC NanoeX"
 ```
 
-## Configuration Options
+In order to find out which features are supported by your AC, check the remote that came with it.
 
-### Climate Component
+**Enabling unsupported features can lead to undefined behavior and may damage your AC. Make sure to check your remote or manual first.**
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `name` | string | **Yes** | The name for the climate device |
-| `outside_temperature` | sensor | No | Temperature sensor for outside temperature monitoring |
-| `horizontal_swing_select_id` | ID | No | ID of template select for horizontal swing control |
-| `vertical_swing_select_id` | ID | No | ID of template select for vertical swing control |
-| `nanoex_switch_id` | ID | No | ID of template switch for nanoeX control |
+## Hardware installation
 
-### UART Configuration
+### Wiring Diagram
 
-| Option | Value | Description |
-|--------|-------|-------------|
-| `tx_pin` | GPIO pin | Transmit pin (typically GPIO17) |
-| `rx_pin` | GPIO pin | Receive pin (typically GPIO16) |
-| `baud_rate` | 9600 | Communication speed |
-| `parity` | EVEN | Required for Panasonic AC communication |
-
-## Wiring
-
-Connect your ESP32/ESP8266 to your Panasonic AC unit:
+Connect your ESP32/ESP8266 to the AC unit using a logic level converter:
 
 ```
-ESP32/ESP8266    →    Panasonic AC
-GPIO17 (TX)      →    RX
-GPIO16 (RX)      →    TX
-GND              →    GND
-3.3V/5V          →    VCC (check AC unit requirements)
+ESP32/ESP8266    Logic Converter    Panasonic AC
+GPIO17 (TX)      →    TX            RX
+GPIO16 (RX)      →    RX            TX
+GND              →    GND           GND
+3.3V/5V          →    VCC           VCC (check AC unit requirements)
 ```
 
 **Warning**: Ensure proper voltage levels and isolation if needed. Some AC units may require level shifters or optocouplers.
 
+## Configuration Example
+
+```yaml
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 2400
+  data_bits: 8
+  parity: even
+  stop_bits: 1
+
+panasonic_ac:
+  id: ac1
+  uart_id: uart1
+
+climate:
+  - platform: panasonic_ac
+    name: "Panasonic AC"
+    panasonic_ac_id: ac1
+```
 
 ## License
 
@@ -187,138 +141,44 @@ This section documents the key-value pairs used in the UART communication protoc
 
 ### Protocol Overview
 
-- **Baud Rate**: 9600 bps
-- **Parity**: Even
-- **Data Bits**: 8
-- **Stop Bits**: 1
-- **Packet Format**: `[Header][Length][Counter][Data][Checksum]`
+The communication protocol uses a custom UART-based protocol with the following characteristics:
+- Baud rate: 2400
+- Data bits: 8
+- Parity: Even
+- Stop bits: 1
+- Header: 0x5A
 
-### Command Key-Value Pairs
+### Key-Value Pairs
 
-#### Power Control
 | Key | Value | Description |
 |-----|-------|-------------|
-| `0x80` | `0x30` | Power ON |
-| `0x80` | `0x31` | Power OFF |
+| `0x14` | `0x31` | Power OFF |
+| `0x14` | `0x30` | Power ON |
+| `0x18` | `0x30` | Auto mode |
+| `0x18` | `0x31` | Cool mode |
+| `0x18` | `0x32` | Heat mode |
+| `0x18` | `0x33` | Dry mode |
+| `0x18` | `0x34` | Fan only mode |
+| `0x22` | `0x10-0x1E` | Target temperature (16-30°C) |
+| `0x26` | `0x30-0x34` | Fan speed (Auto, 1, 2, 3, 4, 5) |
+| `0x30` | `0x30` | Swing OFF |
+| `0x30` | `0x31` | Swing ON |
+| `0x34` | `0x30-0x34` | Horizontal swing position |
+| `0x38` | `0x30-0x34` | Vertical swing position |
+| `0x42` | `0x30` | Normal preset |
+| `0x42` | `0x31` | Powerful preset |
+| `0x42` | `0x32` | Quiet preset |
+| `0x50` | `0x30` | NanoeX OFF |
+| `0x50` | `0x31` | NanoeX ON |
 
-#### Operation Mode
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0xB0` | `0x41` | Auto mode |
-| `0xB0` | `0x42` | Cool mode |
-| `0xB0` | `0x43` | Heat mode |
-| `0xB0` | `0x44` | Dry mode |
-| `0xB0` | `0x45` | Fan only mode |
+### Packet Structure
 
-#### Temperature Control
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0x31` | `(temp * 2)` | Target temperature (e.g., 0x38 = 28°C) |
+Each packet follows this structure:
+1. Header (0x5A)
+2. Packet counter
+3. Command type
+4. Data length
+5. Data payload
+6. Checksum
 
-#### Fan Speed Control
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0xA0` | `0x32` | Fan speed 1 |
-| `0xA0` | `0x33` | Fan speed 2 |
-| `0xA0` | `0x34` | Fan speed 3 |
-| `0xA0` | `0x35` | Fan speed 4 |
-| `0xA0` | `0x36` | Fan speed 5 |
-| `0xA0` | `0x41` | Auto fan speed |
-
-#### Preset Modes
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0xB2` | `0x41` | Normal preset |
-| `0xB2` | `0x42` | Quiet preset |
-| `0xB2` | `0x43` | Powerful preset |
-
-#### Vertical Swing Control
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0xA1` | `0x41` | Up |
-| `0xA1` | `0x42` | Down |
-| `0xA1` | `0x43` | Centre |
-| `0xA1` | `0x44` | Up centre |
-| `0xA1` | `0x45` | Down centre |
-
-#### Horizontal Swing Control
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0xA5` | `0x41` | Right |
-| `0xA5` | `0x42` | Left |
-| `0xA5` | `0x43` | Centre |
-| `0xA5` | `0x56` | Right centre |
-| `0xA5` | `0x5C` | Left centre |
-
-#### Swing Mode Control
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0x34` | `0x41` | Both swing |
-| `0x34` | `0x42` | Off |
-| `0x34` | `0x43` | Vertical only |
-| `0x34` | `0x44` | Horizontal only |
-
-#### NanoeX Air Purification
-| Key | Value | Description |
-|-----|-------|-------------|
-| `0x33` | `0x42` | NanoeX OFF |
-| `0x33` | `0x45` | NanoeX ON |
-
-### Response Packet Types
-
-#### Handshake Packets
-| Packet ID | Description |
-|-----------|-------------|
-| `0x00 0x89` | Handshake step 2 response |
-| `0x00 0x8C` | Handshake step 3 response |
-| `0x00 0x90` | Handshake step 4 response |
-| `0x00 0x91` | Handshake step 5 response |
-| `0x00 0x92` | Handshake step 6 response |
-| `0x00 0xC1` | Handshake step 7 response |
-| `0x01 0xCC` | Handshake step 8 response |
-| `0x10 0x80` | Handshake step 9 response |
-| `0x10 0x81` | Handshake step 10 response |
-| `0x00 0x98` | Handshake step 11 response |
-| `0x01 0x80` | Handshake step 12 response |
-| `0x10 0x88` | Handshake step 13 response |
-
-#### Status Packets
-| Packet ID | Description |
-|-----------|-------------|
-| `0x01 0x01` | Ping response |
-| `0x11 0x01` | Alternative ping response |
-| `0x10 0x89` | Status query response |
-| `0x10 0x88` | Command acknowledgment |
-| `0x10 0x0A` | Status report |
-| `0x00 0x20` | Unsolicited status packet |
-| `0x00 0x09` | First unsolicited packet with RX counter |
-
-#### Sync Packets
-| Value | Description |
-|-------|-------------|
-| `0x66` | Sync packet (only packet not starting with 0x5A) |
-
-### Status Reading
-
-The component reads AC status from query response packets (`0x10 0x89`) and parses the following fields:
-
-| Offset | Key | Description |
-|--------|-----|-------------|
-| 14 | `0x80` | Power status (0x30=ON, 0x31=OFF) |
-| 15 | `0xB0` | Operation mode |
-| 16 | `0x31` | Target temperature |
-| 17 | `0xA0` | Fan speed |
-| 18 | `0xB2` | Preset mode |
-| 19 | `0xA1` | Vertical swing |
-| 20 | `0xA5` | Horizontal swing |
-| 21 | `0x33` | NanoeX status |
-
-### Temperature Encoding
-
-Temperatures are encoded as `(temperature * 2)`:
-- 16°C = 0x20 (32)
-- 20°C = 0x28 (40)
-- 24°C = 0x30 (48)
-- 28°C = 0x38 (56)
-- 32°C = 0x40 (64)
-
+The checksum is calculated by summing all bytes in the packet (excluding the checksum byte itself).
