@@ -433,9 +433,22 @@ void PanasonicAC::handle_packet() {
     send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
   } else if (this->rx_buffer_[2] == 0x11 && this->rx_buffer_[3] == 0x03) // Status/telemetry packet
   {
-    ESP_LOGV(TAG, "Received telemetry packet (0x11 0x03) - ignoring");
-    // This appears to be a periodic telemetry/status packet from the AC
-    // We can safely ignore it as it doesn't contain actionable data for our use case
+    ESP_LOGV(TAG, "Received telemetry packet (0x11 0x03, size: %d)", this->rx_buffer_.size());
+    
+    // Telemetry packet contains periodic diagnostic data
+    // Packet structure appears to have multiple data blocks
+    if (this->rx_buffer_.size() >= 40) {
+      // Parse available telemetry data
+      // Bytes seem to repeat in blocks of ~40 bytes, suggesting multiple sensor readings
+      
+      // Log some potentially useful values for debugging
+      ESP_LOGVV(TAG, "Telemetry data block 1: [6]=0x%02X [7]=0x%02X [8]=0x%02X [9]=0x%02X",
+                this->rx_buffer_[6], this->rx_buffer_[7], this->rx_buffer_[8], this->rx_buffer_[9]);
+      
+      // The exact meaning of telemetry data is not yet fully decoded
+      // For now we log it for analysis but don't act on it
+      // Future enhancement: Parse specific sensor values if they prove useful
+    }
   } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
              (this->rx_buffer_[3] == 0x89 || this->rx_buffer_[3] == 0xC9))  // Received query/poll response
   {
