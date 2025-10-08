@@ -105,6 +105,16 @@ switch:
     id: panasonic_ac_nanoex
     restore_mode: RESTORE_DEFAULT_OFF
     optimistic: true
+  - platform: template
+    name: "Panasonic AC Powerful"
+    id: panasonic_ac_powerful
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
+  - platform: template
+    name: "Panasonic AC Quiet"
+    id: panasonic_ac_quiet
+    restore_mode: RESTORE_DEFAULT_OFF
+    optimistic: true
 
 climate:
   - platform: panasonic_ac
@@ -114,3 +124,5 @@ climate:
     horizontal_swing_select_id: panasonic_ac_hswing
     vertical_swing_select_id: panasonic_ac_vswing
     nanoex_switch_id: panasonic_ac_nanoex
+    powerful_switch_id: panasonic_ac_powerful
+    quiet_switch_id: panasonic_ac_quiet

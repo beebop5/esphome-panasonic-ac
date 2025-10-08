@@ -40,6 +40,8 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void set_vertical_swing_select(select::Select *vertical_swing_select);
   void set_horizontal_swing_select(select::Select *horizontal_swing_select);
   void set_nanoex_switch(switch_::Switch *nanoex_switch);
+  void set_powerful_switch(switch_::Switch *powerful_switch);
+  void set_quiet_switch(switch_::Switch *quiet_switch);
 
   void set_current_temperature_sensor(sensor::Sensor *current_temperature_sensor);
 
@@ -51,11 +53,15 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   select::Select *vertical_swing_select_ = nullptr;             // Select to store manual position of vertical swing
   select::Select *horizontal_swing_select_ = nullptr;           // Select to store manual position of horizontal swing
   switch_::Switch *nanoex_switch_ = nullptr;                    // Switch to toggle nanoeX on/off
+  switch_::Switch *powerful_switch_ = nullptr;                  // Switch to toggle powerful mode on/off
+  switch_::Switch *quiet_switch_ = nullptr;                     // Switch to toggle quiet mode on/off
 
   std::string vertical_swing_state_;
   std::string horizontal_swing_state_;
 
-  bool nanoex_state_ = false;    // Stores the state of nanoex to prevent duplicate packets
+  bool nanoex_state_ = false;      // Stores the state of nanoex to prevent duplicate packets
+  bool powerful_state_ = false;    // Stores the state of powerful mode to prevent duplicate packets
+  bool quiet_state_ = false;       // Stores the state of quiet mode to prevent duplicate packets
 
   bool waiting_for_response_ = false;  // Set to true if we are waiting for a response
 
@@ -81,10 +87,14 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void update_swing_horizontal(const std::string &swing);
   void update_swing_vertical(const std::string &swing);
   void update_nanoex(bool nanoex);
+  void update_powerful(bool powerful);
+  void update_quiet(bool quiet);
 
   virtual void on_horizontal_swing_change(const std::string &swing) = 0;
   virtual void on_vertical_swing_change(const std::string &swing) = 0;
   virtual void on_nanoex_change(bool nanoex) = 0;
+  virtual void on_powerful_change(bool powerful) = 0;
+  virtual void on_quiet_change(bool quiet) = 0;
 
   climate::ClimateAction determine_action();
 

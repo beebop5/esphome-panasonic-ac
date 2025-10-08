@@ -253,7 +253,7 @@ bool PanasonicAC::verify_packet() {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
   }
 
-  if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A
+  if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A or 0x3A
   {
     ESP_LOGI(TAG, "Received sync packet, triggering initialization");
     this->init_time_ -= INIT_TIMEOUT;  // Set init time back to trigger a initialization now
@@ -261,9 +261,11 @@ bool PanasonicAC::verify_packet() {
     return false;
   }
 
-  if (this->rx_buffer_[0] != HEADER)  // Check if header matches
+  // Check if header matches - AC uses both 0x5A and 0x3A headers!
+  if (this->rx_buffer_[0] != HEADER_TX && this->rx_buffer_[0] != HEADER_RX)
   {
-    ESP_LOGW(TAG, "Dropping invalid packet (header)");
+    ESP_LOGW(TAG, "Dropping invalid packet (header: 0x%02X)", this->rx_buffer_[0]);
+    return false;
   }
 
   if (this->state_ == ACState::Ready && this->waiting_for_response_)  // If we were waiting for a response, check if the
@@ -429,12 +431,15 @@ void PanasonicAC::handle_packet() {
   {
     ESP_LOGD(TAG, "Answering ping 2");
     send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
-  } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x89)  // Received query response
+  } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
+             (this->rx_buffer_[3] == 0x89 || this->rx_buffer_[3] == 0xC9))  // Received query/poll response
   {
-    ESP_LOGD(TAG, "Received query response");
+    ESP_LOGD(TAG, "Received query/poll response (type: 0x%02X 0x%02X, size: %d)", 
+             this->rx_buffer_[2], this->rx_buffer_[3], this->rx_buffer_.size());
 
-    if (this->rx_buffer_.size() != 125) {
-      ESP_LOGW(TAG, "Received invalid query response");
+    // Query response size can vary, check minimum size instead of exact match
+    if (this->rx_buffer_.size() < 70) {
+      ESP_LOGW(TAG, "Received invalid query response - too short (size: %d)", this->rx_buffer_.size());
       return;
     }
 
@@ -446,7 +451,11 @@ void PanasonicAC::handle_packet() {
 
     update_target_temperature((int8_t) this->rx_buffer_[22]);
     update_current_temperature((int8_t) this->rx_buffer_[62]);
-    update_outside_temperature((int8_t) this->rx_buffer_[66]);  // Set current (outside) temperature
+    
+    // Only read outside temperature if packet is large enough
+    if (this->rx_buffer_.size() > 66) {
+      update_outside_temperature((int8_t) this->rx_buffer_[66]);
+    }
 
     std::string horizontalSwing = determine_swing_horizontal(this->rx_buffer_[34]);
     std::string verticalSwing = determine_swing_vertical(this->rx_buffer_[38]);
@@ -458,13 +467,19 @@ void PanasonicAC::handle_packet() {
 
     this->custom_fan_mode = determine_fan_speed(this->rx_buffer_[26]);
     this->custom_preset = determine_preset(this->rx_buffer_[42]);
+    
+    // Update powerful and quiet switches based on preset
+    update_powerful(this->rx_buffer_[42] == 0x42);  // 0x42 = Powerful
+    update_quiet(this->rx_buffer_[42] == 0x43);     // 0x43 = Quiet
 
     this->swing_mode = determine_swing(this->rx_buffer_[30]);
     this->publish_state();
-  } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x88)  // Command ack
+  } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
+             this->rx_buffer_[3] == 0x88)  // Command ack
   {
-    ESP_LOGV(TAG, "Received command ack");
-  } else if (this->rx_buffer_[2] == 0x10 && this->rx_buffer_[3] == 0x0A)  // Report
+    ESP_LOGV(TAG, "Received command ack (type: 0x%02X 0x%02X)", this->rx_buffer_[2], this->rx_buffer_[3]);
+  } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
+             this->rx_buffer_[3] == 0x0A)  // Report
   {
     ESP_LOGV(TAG, "Received report");
     send_command(CMD_REPORT_ACK, sizeof(CMD_REPORT_ACK), CommandType::Response);
@@ -516,6 +531,9 @@ void PanasonicAC::handle_packet() {
         case 0xB2: // Preset
           ESP_LOGV(TAG, "Received preset");
           this->custom_preset = determine_preset(this->rx_buffer_[currentIndex + 2]);
+          // Update powerful and quiet switches based on preset
+          update_powerful(this->rx_buffer_[currentIndex + 2] == 0x42);  // 0x42 = Powerful
+          update_quiet(this->rx_buffer_[currentIndex + 2] == 0x43);     // 0x43 = Quiet
           break;
         case 0xA1:
           ESP_LOGV(TAG, "Received swing mode");
@@ -713,7 +731,7 @@ void PanasonicAC::send_packet(std::vector<uint8_t> packet, CommandType type) {
   uint8_t length = packet.size();
 
   uint8_t checksum = 0;  // Checksum is calculated by adding all bytes together
-  packet[0] = HEADER;    // Write header to packet
+  packet[0] = HEADER_TX;    // Write header to packet (we always send with 0x5A)
 
   uint8_t packetCount = this->transmit_packet_count_;  // Set packet counter
 
@@ -979,6 +997,52 @@ void PanasonicAC::on_nanoex_change(bool state) {
   } else {
     ESP_LOGV(TAG, "Turning nanoex off");
     set_value(0x33, 0x42);  // nanoeX off
+  }
+
+  send_set_command();
+}
+
+void PanasonicAC::on_powerful_change(bool state) {
+  if (this->state_ != ACState::Ready)
+    return;
+
+  if (state) {
+    ESP_LOGD(TAG, "Turning powerful mode on");
+    set_value(0xB2, 0x42);  // Powerful mode on
+    set_value(0x35, 0x42);  // Clear eco mode
+    set_value(0x34, 0x42);  // Clear other modes
+    // Turn off quiet if it's on
+    if (this->quiet_state_) {
+      update_quiet(false);
+    }
+  } else {
+    ESP_LOGD(TAG, "Turning powerful mode off");
+    set_value(0xB2, 0x41);  // Normal mode
+    set_value(0x35, 0x42);
+    set_value(0x34, 0x42);
+  }
+
+  send_set_command();
+}
+
+void PanasonicAC::on_quiet_change(bool state) {
+  if (this->state_ != ACState::Ready)
+    return;
+
+  if (state) {
+    ESP_LOGD(TAG, "Turning quiet mode on");
+    set_value(0xB2, 0x43);  // Quiet mode on
+    set_value(0x35, 0x42);  // Clear eco mode
+    set_value(0x34, 0x42);  // Clear other modes
+    // Turn off powerful if it's on
+    if (this->powerful_state_) {
+      update_powerful(false);
+    }
+  } else {
+    ESP_LOGD(TAG, "Turning quiet mode off");
+    set_value(0xB2, 0x41);  // Normal mode
+    set_value(0x35, 0x42);
+    set_value(0x34, 0x42);
   }
 
   send_set_command();

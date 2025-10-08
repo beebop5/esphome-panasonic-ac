@@ -5,7 +5,9 @@
 namespace esphome {
 namespace panasonic_ac {
 
-static const uint8_t HEADER = 0x5A;  // The header of the protocol, every packet starts with this
+static const uint8_t HEADER_TX = 0x5A;  // Header for packets we send to AC
+static const uint8_t HEADER_RX = 0x3A;  // Header for packets AC sends to us
+static const uint8_t HEADER = 0x5A;     // Legacy header constant for compatibility
 
 static const int INIT_TIMEOUT = 10000;       // Time to wait before initializing after boot
 static const int INIT_END_TIMEOUT = 20000;   // Time to wait for last handshake packet
@@ -80,6 +82,8 @@ class PanasonicAC : public PanasonicACBase {
   void on_horizontal_swing_change(const std::string &swing) override;
   void on_vertical_swing_change(const std::string &swing) override;
   void on_nanoex_change(bool nanoex) override;
+  void on_powerful_change(bool powerful) override;
+  void on_quiet_change(bool quiet) override;
 
   void setup() override;
   void loop() override;

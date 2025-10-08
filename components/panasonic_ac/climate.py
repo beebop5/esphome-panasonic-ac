@@ -23,6 +23,8 @@ CONF_OUTSIDE_TEMPERATURE = "outside_temperature"
 CONF_HORIZONTAL_SWING_SELECT_ID = "horizontal_swing_select_id"
 CONF_VERTICAL_SWING_SELECT_ID = "vertical_swing_select_id"
 CONF_NANOEX_SWITCH_ID = "nanoex_switch_id"
+CONF_POWERFUL_SWITCH_ID = "powerful_switch_id"
+CONF_QUIET_SWITCH_ID = "quiet_switch_id"
 
 
 CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
@@ -38,6 +40,8 @@ CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
         cv.Optional(CONF_HORIZONTAL_SWING_SELECT_ID): cv.use_id(select.Select),
         cv.Optional(CONF_VERTICAL_SWING_SELECT_ID): cv.use_id(select.Select),
         cv.Optional(CONF_NANOEX_SWITCH_ID): cv.use_id(switch.Switch),
+        cv.Optional(CONF_POWERFUL_SWITCH_ID): cv.use_id(switch.Switch),
+        cv.Optional(CONF_QUIET_SWITCH_ID): cv.use_id(switch.Switch),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
@@ -64,3 +68,11 @@ async def to_code(config):
     if CONF_NANOEX_SWITCH_ID in config:
         sw = await cg.get_variable(config[CONF_NANOEX_SWITCH_ID])
         cg.add(var.set_nanoex_switch(sw))
+
+    if CONF_POWERFUL_SWITCH_ID in config:
+        sw = await cg.get_variable(config[CONF_POWERFUL_SWITCH_ID])
+        cg.add(var.set_powerful_switch(sw))
+
+    if CONF_QUIET_SWITCH_ID in config:
+        sw = await cg.get_variable(config[CONF_QUIET_SWITCH_ID])
+        cg.add(var.set_quiet_switch(sw))

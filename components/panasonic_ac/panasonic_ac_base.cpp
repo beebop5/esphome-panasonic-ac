@@ -120,6 +120,20 @@ void PanasonicACBase::update_nanoex(bool nanoex) {
   }
 }
 
+void PanasonicACBase::update_powerful(bool powerful) {
+  if (this->powerful_switch_ != nullptr) {
+    this->powerful_state_ = powerful;
+    this->powerful_switch_->publish_state(this->powerful_state_);
+  }
+}
+
+void PanasonicACBase::update_quiet(bool quiet) {
+  if (this->quiet_switch_ != nullptr) {
+    this->quiet_state_ = quiet;
+    this->quiet_switch_->publish_state(this->quiet_state_);
+  }
+}
+
 climate::ClimateAction PanasonicACBase::determine_action() {
   // Determine the current climate action based on mode and temperature conditions
   if (this->mode == climate::CLIMATE_MODE_OFF) {
@@ -168,6 +182,24 @@ void PanasonicACBase::set_nanoex_switch(switch_::Switch *nanoex_switch) {
     if (state == this->nanoex_state_)
       return;
     this->on_nanoex_change(state);
+  });
+}
+
+void PanasonicACBase::set_powerful_switch(switch_::Switch *powerful_switch) {
+  this->powerful_switch_ = powerful_switch;
+  this->powerful_switch_->add_on_state_callback([this](bool state) {
+    if (state == this->powerful_state_)
+      return;
+    this->on_powerful_change(state);
+  });
+}
+
+void PanasonicACBase::set_quiet_switch(switch_::Switch *quiet_switch) {
+  this->quiet_switch_ = quiet_switch;
+  this->quiet_switch_->add_on_state_callback([this](bool state) {
+    if (state == this->quiet_state_)
+      return;
+    this->on_quiet_change(state);
   });
 }
 
