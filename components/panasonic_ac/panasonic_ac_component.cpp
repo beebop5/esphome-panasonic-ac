@@ -431,6 +431,11 @@ void PanasonicAC::handle_packet() {
   {
     ESP_LOGD(TAG, "Answering ping 2");
     send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
+  } else if (this->rx_buffer_[2] == 0x11 && this->rx_buffer_[3] == 0x03) // Status/telemetry packet
+  {
+    ESP_LOGV(TAG, "Received telemetry packet (0x11 0x03) - ignoring");
+    // This appears to be a periodic telemetry/status packet from the AC
+    // We can safely ignore it as it doesn't contain actionable data for our use case
   } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
              (this->rx_buffer_[3] == 0x89 || this->rx_buffer_[3] == 0xC9))  // Received query/poll response
   {
