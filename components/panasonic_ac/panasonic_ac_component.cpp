@@ -601,6 +601,14 @@ void PanasonicAC::handle_packet() {
 
 void PanasonicAC::handle_handshake_packet() {
   ESP_LOGV(TAG, "Handling RX packet: : %s", format_hex_pretty(rx_buffer_).c_str());
+  
+  // Handle ping packets during initialization
+  if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x01) {
+    ESP_LOGD(TAG, "Answering ping during handshake");
+    send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
+    return;
+  }
+  
   if (this->rx_buffer_[2] == 0x00 && this->rx_buffer_[3] == 0x89)  // Answer for handshake 2
   {
     ESP_LOGD(TAG, "Answering handshake [2/16]");
