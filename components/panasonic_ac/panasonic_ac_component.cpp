@@ -429,40 +429,35 @@ void PanasonicAC::handle_packet() {
     if (this->rx_buffer_.size() >= 174) {
       uint8_t telemetry_counter = this->rx_buffer_[6];  // Increments with each telemetry packet
       uint8_t state_change_flag = this->rx_buffer_[7];  // 0x01 when state changes, 0x00 normally
-      // uint8_t power_state = this->rx_buffer_[9];     // Seems to lag behind actual state
       
       // Each block contains power state and temperature data
-      // Block structure (40 bytes each): [PowerState at +0] [Temperatures at +6,+7,+16,...] [Sensor data]
+      // Block structure (40 bytes each): [PowerState at +0] [Sensor data...]
       // Block offsets: 10, 50, 90, 130
       uint8_t block1_power = this->rx_buffer_[50];   // 0x31=OFF, 0x30=ON
       uint8_t block2_power = this->rx_buffer_[90];   // 0x31=OFF, 0x30=ON
       uint8_t block3_power = this->rx_buffer_[130];  // 0x31=OFF, 0x30=ON
       
-      // Temperature readings appear at various offsets in each block (SIGNED values!)
-      // When AC is ON, additional sensor data appears (coil temps, etc)
-      int8_t temp1 = (int8_t)this->rx_buffer_[16];   // Often shows current room temp
-      int8_t temp2 = (int8_t)this->rx_buffer_[56];   // Varies when AC runs (can be negative!)
-      int8_t temp3 = (int8_t)this->rx_buffer_[96];   // Varies when AC runs
-      int8_t temp4 = (int8_t)this->rx_buffer_[136];  // Varies when AC runs
+      // Temperature readings at specific offsets (all unsigned, 18-40°C range typical)
+      // Positions that consistently show valid temperature values
+      uint8_t outdoor_temp_1 = this->rx_buffer_[16];  // Outdoor temperature
+      uint8_t outdoor_temp_2 = this->rx_buffer_[57];  // Outdoor temperature (duplicate/verification)
+      uint8_t indoor_temp = this->rx_buffer_[58];     // Indoor/room temperature
+      uint8_t target_temp = this->rx_buffer_[59];     // Target/set temperature
       
-      ESP_LOGD(TAG, "Telemetry #%d (change=%d): Blocks[%s,%s,%s] Temps: %d°C, %d°C, %d°C, %d°C",
+      ESP_LOGD(TAG, "Telemetry #%d (change=%d): Blocks[%s,%s,%s]",
                 telemetry_counter,
                 state_change_flag,
                 block1_power == 0x30 ? "ON" : "OFF",
                 block2_power == 0x30 ? "ON" : "OFF",
-                block3_power == 0x30 ? "ON" : "OFF",
-                temp1, temp2, temp3, temp4);
+                block3_power == 0x30 ? "ON" : "OFF");
       
-      // When AC is ON, more diagnostic data becomes available in blocks
-      // Additional temperatures and sensor readings (some are signed, some unsigned)
+      // When AC is ON, show detailed temperature and sensor readings
       if (block1_power == 0x30) {
-        int8_t coil_temp1 = (int8_t)this->rx_buffer_[56];  // Can be negative (defrost/heat exchanger)
-        int8_t room_temp = (int8_t)this->rx_buffer_[57];   // Room temperature
-        int8_t outdoor_temp = (int8_t)this->rx_buffer_[58]; // Outdoor coil temp
-        
-        ESP_LOGD(TAG, "  AC Running - Coil:%d°C Room:%d°C Outdoor:%d°C | Raw[59-61]: %02X.%02X.%02X",
-                  coil_temp1, room_temp, outdoor_temp,
-                  this->rx_buffer_[59], this->rx_buffer_[60], this->rx_buffer_[61]);
+        ESP_LOGD(TAG, "  Temps: Outdoor=%d°C, Indoor=%d°C, Target=%d°C | Status: %02X %02X",
+                  outdoor_temp_1, indoor_temp, target_temp,
+                  this->rx_buffer_[56], this->rx_buffer_[60]);
+      } else {
+        ESP_LOGD(TAG, "  Temps: Outdoor=%d°C, Indoor=%d°C", outdoor_temp_1, indoor_temp);
       }
     }
   } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
