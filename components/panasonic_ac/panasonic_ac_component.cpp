@@ -421,45 +421,9 @@ void PanasonicAC::handle_packet() {
     send_command(CMD_PING, sizeof(CMD_PING), CommandType::Response);
   } else if (this->rx_buffer_[2] == 0x11 && this->rx_buffer_[3] == 0x03) // Status/telemetry packet
   {
-    ESP_LOGV(TAG, "Received telemetry packet (0x11 0x03, size: %d)", this->rx_buffer_.size());
-    
-    // Telemetry packet contains periodic diagnostic data
-    // Packet structure: [Header][Counter][0x11][0x03][0x00][0xA7][TelemetryCounter][StateChange?][0xA4][PowerState][Data blocks...]
-    // Contains 4 repeating data blocks of ~40 bytes each
-    if (this->rx_buffer_.size() >= 174) {
-      uint8_t telemetry_counter = this->rx_buffer_[6];  // Increments with each telemetry packet
-      uint8_t state_change_flag = this->rx_buffer_[7];  // 0x01 when state changes, 0x00 normally
-      
-      // Each block contains power state and temperature data
-      // Block structure (40 bytes each): [PowerState at +0] [Sensor data...]
-      // Block offsets: 10, 50, 90, 130
-      uint8_t block1_power = this->rx_buffer_[50];   // 0x31=OFF, 0x30=ON
-      uint8_t block2_power = this->rx_buffer_[90];   // 0x31=OFF, 0x30=ON
-      uint8_t block3_power = this->rx_buffer_[130];  // 0x31=OFF, 0x30=ON
-      
-      // Temperature readings at specific offsets (all unsigned, 18-40°C range typical)
-      // Positions that consistently show valid temperature values
-      uint8_t outdoor_temp_1 = this->rx_buffer_[16];  // Outdoor temperature
-      uint8_t outdoor_temp_2 = this->rx_buffer_[57];  // Outdoor temperature (duplicate/verification)
-      uint8_t indoor_temp = this->rx_buffer_[58];     // Indoor/room temperature
-      uint8_t target_temp = this->rx_buffer_[59];     // Target/set temperature
-      
-      ESP_LOGD(TAG, "Telemetry #%d (change=%d): Blocks[%s,%s,%s]",
-                telemetry_counter,
-                state_change_flag,
-                block1_power == 0x30 ? "ON" : "OFF",
-                block2_power == 0x30 ? "ON" : "OFF",
-                block3_power == 0x30 ? "ON" : "OFF");
-      
-      // When AC is ON, show detailed temperature and sensor readings
-      if (block1_power == 0x30) {
-        ESP_LOGD(TAG, "  Temps: Outdoor=%d°C, Indoor=%d°C, Target=%d°C | Status: %02X %02X",
-                  outdoor_temp_1, indoor_temp, target_temp,
-                  this->rx_buffer_[56], this->rx_buffer_[60]);
-      } else {
-        ESP_LOGD(TAG, "  Temps: Outdoor=%d°C, Indoor=%d°C", outdoor_temp_1, indoor_temp);
-      }
-    }
+    // Telemetry packet - ignored (contains periodic diagnostic data)
+    // Not decoded as temperature encoding is unclear
+    ESP_LOGV(TAG, "Received telemetry packet (0x11 0x03) - ignoring");
   } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
              (this->rx_buffer_[3] == 0x89 || this->rx_buffer_[3] == 0xC9))  // Received query/poll response
   {
