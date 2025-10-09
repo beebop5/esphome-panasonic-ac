@@ -72,7 +72,7 @@ void PanasonicACBase::update_outside_temperature(int8_t temperature) {
 
   if (this->outside_temperature_sensor_ != nullptr && 
       this->outside_temperature_sensor_->state != (float)temperature) {
-    this->outside_temperature_sensor_->publish_state(temperature);
+    this->outside_temperature_sensor_->publish_state((float)temperature);
   }
 }
 

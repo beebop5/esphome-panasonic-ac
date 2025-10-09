@@ -8,7 +8,7 @@ A custom ESPHome component for controlling Panasonic air conditioning units via 
 
 ## Features
 
-* Control your AC locally via Home Assistant, MQTT or directly
+* Control your AC locally via Home Assistant
 * Instantly control the AC without any delay like in the Comfort Cloud app
 * Receive live reports and state from the AC
 * Uses the UART interface on the AC instead of the IR interface

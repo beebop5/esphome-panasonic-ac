@@ -9,8 +9,8 @@ static const uint8_t HEADER_TX = 0x5A;  // Header for packets we send to AC
 static const uint8_t HEADER_RX = 0x3A;  // Header for packets AC sends to us
 static const uint8_t HEADER = 0x5A;     // Legacy header constant for compatibility
 
-static const int INIT_TIMEOUT = 10000;       // Time to wait before initializing after boot
-static const int INIT_END_TIMEOUT = 20000;   // Time to wait for last handshake packet
+static const int INIT_TIMEOUT = 2000;        // Time to wait before initializing after boot (reduced from 10s)
+static const int INIT_END_TIMEOUT = 1000;    // Time to wait for last handshake packet (reduced from 20s)
 static const int FIRST_POLL_TIMEOUT = 650;   // Time to wait before requesting the first poll
 static const int POLL_INTERVAL = 30000;      // The interval at which to poll the AC
 static const int RESPONSE_TIMEOUT = 600;     // The timeout after which we expect a response to our last command
@@ -69,12 +69,6 @@ enum class PacketProcessState {
   Handling          // Handling the packet
 };
 
-enum class HandshakeProcessState {
-  None,             // No handshake packet being processed
-  Identifying,      // Identifying the handshake packet type
-  Responding        // Sending the response command
-};
-
 class PanasonicAC : public PanasonicACBase {
  public:
   void control(const climate::ClimateCall &call) override;
@@ -103,8 +97,6 @@ class PanasonicAC : public PanasonicACBase {
   uint32_t handshake_delay_start_ = 0;  // Time when handshake delay started
   
   PacketProcessState packet_process_state_ = PacketProcessState::None;  // Current packet processing state
-  HandshakeProcessState handshake_process_state_ = HandshakeProcessState::None;  // Current handshake processing state
-  uint8_t handshake_response_type_ = 0;  // Store the handshake response type for processing
   
   // Command queuing for non-blocking operation
   struct QueuedCommand {
