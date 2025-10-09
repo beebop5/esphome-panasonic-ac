@@ -436,18 +436,42 @@ void PanasonicAC::handle_packet() {
     ESP_LOGV(TAG, "Received telemetry packet (0x11 0x03, size: %d)", this->rx_buffer_.size());
     
     // Telemetry packet contains periodic diagnostic data
-    // Packet structure appears to have multiple data blocks
-    if (this->rx_buffer_.size() >= 40) {
-      // Parse available telemetry data
-      // Bytes seem to repeat in blocks of ~40 bytes, suggesting multiple sensor readings
+    // Packet structure: [Header][Counter][0x11][0x03][0x00][0xA7][TelemetryCounter][StateChange?][0xA4][PowerState][Data blocks...]
+    // Contains 4 repeating data blocks of ~40 bytes each
+    if (this->rx_buffer_.size() >= 174) {
+      uint8_t telemetry_counter = this->rx_buffer_[6];  // Increments with each telemetry packet
+      uint8_t state_change_flag = this->rx_buffer_[7];  // 0x01 when state changes, 0x00 normally
+      // uint8_t power_state = this->rx_buffer_[9];     // Seems to lag behind actual state
       
-      // Log some potentially useful values for debugging
-      ESP_LOGVV(TAG, "Telemetry data block 1: [6]=0x%02X [7]=0x%02X [8]=0x%02X [9]=0x%02X",
-                this->rx_buffer_[6], this->rx_buffer_[7], this->rx_buffer_[8], this->rx_buffer_[9]);
+      // Each block contains power state and temperature data
+      // Block structure (40 bytes each): [PowerState at +0] [Temperatures at +6,+7,+16,...] [Sensor data]
+      // Block offsets: 10, 50, 90, 130
+      uint8_t block1_power = this->rx_buffer_[50];   // 0x31=OFF, 0x30=ON
+      uint8_t block2_power = this->rx_buffer_[90];   // 0x31=OFF, 0x30=ON
+      uint8_t block3_power = this->rx_buffer_[130];  // 0x31=OFF, 0x30=ON
       
-      // The exact meaning of telemetry data is not yet fully decoded
-      // For now we log it for analysis but don't act on it
-      // Future enhancement: Parse specific sensor values if they prove useful
+      // Temperature readings appear at various offsets in each block
+      // When AC is ON, additional sensor data appears (coil temps, etc)
+      uint8_t temp1 = this->rx_buffer_[16];   // Often shows current room temp
+      uint8_t temp2 = this->rx_buffer_[56];   // Varies when AC runs
+      uint8_t temp3 = this->rx_buffer_[96];   // Varies when AC runs
+      uint8_t temp4 = this->rx_buffer_[136];  // Varies when AC runs
+      
+      ESP_LOGD(TAG, "Telemetry #%d (change=%d): Blocks[%s,%s,%s] Temps: %d°C, %d°C, %d°C, %d°C",
+                telemetry_counter,
+                state_change_flag,
+                block1_power == 0x30 ? "ON" : "OFF",
+                block2_power == 0x30 ? "ON" : "OFF",
+                block3_power == 0x30 ? "ON" : "OFF",
+                temp1, temp2, temp3, temp4);
+      
+      // When AC is ON, more diagnostic data becomes available in blocks
+      // Bytes like [56-61]: 24.1D.00.00.00.00 show coil/heat exchanger temps
+      if (block1_power == 0x30) {
+        ESP_LOGD(TAG, "  AC Running - Block2 sensors: [56-61]: %02X.%02X.%02X.%02X.%02X.%02X",
+                  this->rx_buffer_[56], this->rx_buffer_[57], this->rx_buffer_[58],
+                  this->rx_buffer_[59], this->rx_buffer_[60], this->rx_buffer_[61]);
+      }
     }
   } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
              (this->rx_buffer_[3] == 0x89 || this->rx_buffer_[3] == 0xC9))  // Received query/poll response
@@ -613,8 +637,6 @@ void PanasonicAC::handle_packet() {
 }
 
 void PanasonicAC::handle_handshake_packet() {
-  ESP_LOGV(TAG, "Handling RX packet: : %s", format_hex_pretty(rx_buffer_).c_str());
-  
   // Handle ping packets during initialization
   if (this->rx_buffer_[2] == 0x01 && this->rx_buffer_[3] == 0x01) {
     ESP_LOGD(TAG, "Answering ping during handshake");
