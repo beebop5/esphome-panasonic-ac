@@ -438,12 +438,12 @@ void PanasonicAC::handle_packet() {
       uint8_t block2_power = this->rx_buffer_[90];   // 0x31=OFF, 0x30=ON
       uint8_t block3_power = this->rx_buffer_[130];  // 0x31=OFF, 0x30=ON
       
-      // Temperature readings appear at various offsets in each block
+      // Temperature readings appear at various offsets in each block (SIGNED values!)
       // When AC is ON, additional sensor data appears (coil temps, etc)
-      uint8_t temp1 = this->rx_buffer_[16];   // Often shows current room temp
-      uint8_t temp2 = this->rx_buffer_[56];   // Varies when AC runs
-      uint8_t temp3 = this->rx_buffer_[96];   // Varies when AC runs
-      uint8_t temp4 = this->rx_buffer_[136];  // Varies when AC runs
+      int8_t temp1 = (int8_t)this->rx_buffer_[16];   // Often shows current room temp
+      int8_t temp2 = (int8_t)this->rx_buffer_[56];   // Varies when AC runs (can be negative!)
+      int8_t temp3 = (int8_t)this->rx_buffer_[96];   // Varies when AC runs
+      int8_t temp4 = (int8_t)this->rx_buffer_[136];  // Varies when AC runs
       
       ESP_LOGD(TAG, "Telemetry #%d (change=%d): Blocks[%s,%s,%s] Temps: %d°C, %d°C, %d°C, %d°C",
                 telemetry_counter,
@@ -454,10 +454,14 @@ void PanasonicAC::handle_packet() {
                 temp1, temp2, temp3, temp4);
       
       // When AC is ON, more diagnostic data becomes available in blocks
-      // Bytes like [56-61]: 24.1D.00.00.00.00 show coil/heat exchanger temps
+      // Additional temperatures and sensor readings (some are signed, some unsigned)
       if (block1_power == 0x30) {
-        ESP_LOGD(TAG, "  AC Running - Block2 sensors: [56-61]: %02X.%02X.%02X.%02X.%02X.%02X",
-                  this->rx_buffer_[56], this->rx_buffer_[57], this->rx_buffer_[58],
+        int8_t coil_temp1 = (int8_t)this->rx_buffer_[56];  // Can be negative (defrost/heat exchanger)
+        int8_t room_temp = (int8_t)this->rx_buffer_[57];   // Room temperature
+        int8_t outdoor_temp = (int8_t)this->rx_buffer_[58]; // Outdoor coil temp
+        
+        ESP_LOGD(TAG, "  AC Running - Coil:%d°C Room:%d°C Outdoor:%d°C | Raw[59-61]: %02X.%02X.%02X",
+                  coil_temp1, room_temp, outdoor_temp,
                   this->rx_buffer_[59], this->rx_buffer_[60], this->rx_buffer_[61]);
       }
     }
