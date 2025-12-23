@@ -65,11 +65,9 @@ uart:
 
 external_components:
   source:
-    type: git
-    url: https://github.com/beebop5/esphome-panasonic-ac
-    #ref: test
+    type: local
+    path: components
   components: [panasonic_ac]
-  refresh: 30s
 
 # define select controls for the climate component
 select:
