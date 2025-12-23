@@ -61,9 +61,23 @@ These sensors will report the current fan mode (Automatic, 1-5) and preset (Norm
 
 Add the external component to your ESPHome configuration:
 
+**For stable releases (recommended):**
 ```yaml
 external_components:
-  source: github://beebop5/esphome-panasonic-ac
+  source:
+    type: git
+    url: https://github.com/beebop5/esphome-panasonic-ac
+    ref: v1.0.0
+  components: [panasonic_ac]
+```
+
+**For latest development version:**
+```yaml
+external_components:
+  source:
+    type: git
+    url: https://github.com/beebop5/esphome-panasonic-ac
+    ref: master
   components: [panasonic_ac]
 ```
 
@@ -144,6 +158,7 @@ external_components:
   source:
     type: git
     url: https://github.com/beebop5/esphome-panasonic-ac
+    ref: v1.0.0
   components: [panasonic_ac]
 
 # Select controls for swing positioning
@@ -203,6 +218,10 @@ climate:
     nanoex_switch_id: panasonic_ac_nanoex
     powerful_switch_id: panasonic_ac_powerful
     quiet_switch_id: panasonic_ac_quiet
+    fan_mode_status:
+      name: "AC Fan Mode Status"
+    preset_status:
+      name: "AC Preset Status"
 ```
 
 ## Configuration Options
@@ -216,6 +235,10 @@ climate:
 | `horizontal_swing_select_id` | ID | No | ID of template select for horizontal swing control |
 | `vertical_swing_select_id` | ID | No | ID of template select for vertical swing control |
 | `nanoex_switch_id` | ID | No | ID of template switch for nanoeX control |
+| `powerful_switch_id` | ID | No | ID of template switch for Powerful mode control |
+| `quiet_switch_id` | ID | No | ID of template switch for Quiet mode control |
+| `fan_mode_status` | text_sensor | No | Text sensor to report current fan mode from AC telemetry |
+| `preset_status` | text_sensor | No | Text sensor to report current preset from AC telemetry |
 
 ### UART Configuration
 
