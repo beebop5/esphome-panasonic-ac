@@ -26,10 +26,34 @@ This component works with Panasonic AC units that have a WLAN interface (CN-WLAN
 * ESP32 (recommended) or ESP8266
 * 5V to 3.3V bi-directional logic level converter (minimum 2 channels)
 * Jumper wires for connections
-* ESPHome 2022.5.0 or newer
+* ESPHome 2025.12.1 or newer (v1.0.0+ requires 2025.12.1+)
 * Home Assistant 2024.1.0 or newer
 
 **Note**: This component is designed for the CN-WLAN port. For AC units with CN-CNT port, see [DomiStyle/esphome-panasonic-ac](https://github.com/DomiStyle/esphome-panasonic-ac).
+
+## Breaking Changes in v1.0.0
+
+⚠️ **Version 1.0.0 requires ESPHome 2025.12.1 or newer** due to API changes in the Climate component.
+
+### What Changed:
+- **ESPHome Requirement**: Minimum version increased from 2022.5.0 to **2025.12.1+**
+- **Fan Mode & Preset Status**: The climate entity's `custom_fan_mode` and `custom_preset` attributes no longer update automatically from AC telemetry (ESPHome API limitation)
+
+### Migration Guide:
+To restore fan mode and preset status reporting, add optional text sensors to your configuration:
+
+```yaml
+climate:
+  - platform: panasonic_ac
+    name: "AC"
+    # ... other config ...
+    fan_mode_status:
+      name: "AC Fan Mode Status"
+    preset_status:
+      name: "AC Preset Status"
+```
+
+These sensors will report the current fan mode (Automatic, 1-5) and preset (Normal, Powerful, Quiet) from AC telemetry.
 
 ## Installation
 
