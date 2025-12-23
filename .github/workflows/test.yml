@@ -20,7 +20,7 @@ jobs:
     
     - name: Install ESPHome
       run: |
-        pip install esphome[dev]
+        pip install "esphome[dev]>=2025.12.1"
     
     - name: Test component compilation
       run: |
