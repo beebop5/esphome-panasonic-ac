@@ -7,12 +7,14 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/component.h"
 
-// Forward declaration for optional text sensors
+#ifdef USE_TEXT_SENSOR
+// Forward declaration for optional text sensors (to avoid hard dependency in the header)
 namespace esphome {
 namespace text_sensor {
 class TextSensor;
 }
 }
+#endif
 
 namespace esphome {
 
@@ -51,8 +53,10 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void set_quiet_switch(switch_::Switch *quiet_switch);
 
   // Optional status reporting sensors
+#ifdef USE_TEXT_SENSOR
   void set_fan_mode_status_text_sensor(esphome::text_sensor::TextSensor *fan_mode_status);
   void set_preset_status_text_sensor(esphome::text_sensor::TextSensor *preset_status);
+#endif
 
   void set_current_temperature_sensor(sensor::Sensor *current_temperature_sensor);
 
@@ -68,8 +72,10 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   switch_::Switch *quiet_switch_ = nullptr;                     // Switch to toggle quiet mode on/off
 
   // Optional text sensors to report current fan mode and preset back to ESPHome/HA
+#ifdef USE_TEXT_SENSOR
   esphome::text_sensor::TextSensor *fan_mode_status_text_sensor_ = nullptr;
   esphome::text_sensor::TextSensor *preset_status_text_sensor_ = nullptr;
+#endif
 
   std::string vertical_swing_state_;
   std::string horizontal_swing_state_;
@@ -105,8 +111,10 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void update_powerful(bool powerful);
   void update_quiet(bool quiet);
 
+#ifdef USE_TEXT_SENSOR
   void update_fan_mode_status(const std::string &fan_mode);
   void update_preset_status(const std::string &preset);
+#endif
 
   virtual void on_horizontal_swing_change(const std::string &swing) = 0;
   virtual void on_vertical_swing_change(const std::string &swing) = 0;

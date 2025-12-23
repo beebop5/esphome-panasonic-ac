@@ -1,6 +1,8 @@
 #include "panasonic_ac_base.h"
 
+#ifdef USE_TEXT_SENSOR
 #include "esphome/components/text_sensor/text_sensor.h"
+#endif
 #include "esphome/core/log.h"
 
 namespace esphome {
@@ -134,19 +136,23 @@ void PanasonicACBase::update_quiet(bool quiet) {
   }
 }
 
+#ifdef USE_TEXT_SENSOR
 void PanasonicACBase::update_fan_mode_status(const std::string &fan_mode) {
   if (this->fan_mode_status_text_sensor_ != nullptr &&
       this->fan_mode_status_text_sensor_->state != fan_mode) {
-    this->fan_mode_status_text_sensor_->publish_state(fan_mode);
+    // Use const char* overload for broader ESPHome compatibility
+    this->fan_mode_status_text_sensor_->publish_state(fan_mode.c_str());
   }
 }
 
 void PanasonicACBase::update_preset_status(const std::string &preset) {
   if (this->preset_status_text_sensor_ != nullptr &&
       this->preset_status_text_sensor_->state != preset) {
-    this->preset_status_text_sensor_->publish_state(preset);
+    // Use const char* overload for broader ESPHome compatibility
+    this->preset_status_text_sensor_->publish_state(preset.c_str());
   }
 }
+#endif
 
 climate::ClimateAction PanasonicACBase::determine_action() {
   // Determine the current climate action based on mode and temperature conditions
@@ -217,6 +223,7 @@ void PanasonicACBase::set_quiet_switch(switch_::Switch *quiet_switch) {
   });
 }
 
+#ifdef USE_TEXT_SENSOR
 void PanasonicACBase::set_fan_mode_status_text_sensor(text_sensor::TextSensor *fan_mode_status) {
   this->fan_mode_status_text_sensor_ = fan_mode_status;
 }
@@ -224,6 +231,7 @@ void PanasonicACBase::set_fan_mode_status_text_sensor(text_sensor::TextSensor *f
 void PanasonicACBase::set_preset_status_text_sensor(text_sensor::TextSensor *preset_status) {
   this->preset_status_text_sensor_ = preset_status;
 }
+#endif
 
 // Debugging utilities
 void PanasonicACBase::log_packet(std::vector<uint8_t> data, bool outgoing) {
