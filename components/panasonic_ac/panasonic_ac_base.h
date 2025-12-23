@@ -3,6 +3,7 @@
 #include "esphome/components/climate/climate.h"
 #include "esphome/components/select/select.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/component.h"
@@ -43,6 +44,10 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void set_powerful_switch(switch_::Switch *powerful_switch);
   void set_quiet_switch(switch_::Switch *quiet_switch);
 
+  // Optional status reporting sensors
+  void set_fan_mode_status_text_sensor(text_sensor::TextSensor *fan_mode_status);
+  void set_preset_status_text_sensor(text_sensor::TextSensor *preset_status);
+
   void set_current_temperature_sensor(sensor::Sensor *current_temperature_sensor);
 
   void setup() override;
@@ -55,6 +60,10 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   switch_::Switch *nanoex_switch_ = nullptr;                    // Switch to toggle nanoeX on/off
   switch_::Switch *powerful_switch_ = nullptr;                  // Switch to toggle powerful mode on/off
   switch_::Switch *quiet_switch_ = nullptr;                     // Switch to toggle quiet mode on/off
+
+  // Optional text sensors to report current fan mode and preset back to ESPHome/HA
+  text_sensor::TextSensor *fan_mode_status_text_sensor_ = nullptr;
+  text_sensor::TextSensor *preset_status_text_sensor_ = nullptr;
 
   std::string vertical_swing_state_;
   std::string horizontal_swing_state_;
@@ -89,6 +98,9 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void update_nanoex(bool nanoex);
   void update_powerful(bool powerful);
   void update_quiet(bool quiet);
+
+  void update_fan_mode_status(const std::string &fan_mode);
+  void update_preset_status(const std::string &preset);
 
   virtual void on_horizontal_swing_change(const std::string &swing) = 0;
   virtual void on_vertical_swing_change(const std::string &swing) = 0;

@@ -462,16 +462,16 @@ void PanasonicAC::handle_packet() {
     update_swing_vertical(verticalSwing);
     update_nanoex(nanoex);
 
+    // Report current fan mode and preset via text sensors, since the core Climate
+    // custom_fan_mode_/custom_preset_ fields are private in ESPHome 2025.12.1+.
+    update_fan_mode_status(determine_fan_speed(this->rx_buffer_[26]));
+    update_preset_status(determine_preset(this->rx_buffer_[42]));
+
     // Update powerful and quiet switches based on preset
     update_powerful(this->rx_buffer_[42] == 0x42);  // 0x42 = Powerful
     update_quiet(this->rx_buffer_[42] == 0x43);     // 0x43 = Quiet
 
     this->swing_mode = determine_swing(this->rx_buffer_[30]);
-    
-    // Note: In ESPHome 2025.12.1+, custom_fan_mode_ and custom_preset_ are private
-    // We cannot set them directly. The Climate base class manages these internally.
-    // State will be updated when publish_state() is called with the current values
-    // stored in the Climate object's internal state.
     this->publish_state();
   } else if ((this->rx_buffer_[2] == 0x10 || this->rx_buffer_[2] == 0x90) && 
              this->rx_buffer_[3] == 0x88)  // Command ack
@@ -525,13 +525,11 @@ void PanasonicAC::handle_packet() {
           break;
         case 0xA0:  // Fan speed
           ESP_LOGV(TAG, "Received fan speed");
-          // Note: In ESPHome 2025.12.1+, custom_fan_mode_ is private
-          // State will be updated when publish_state() is called
+          update_fan_mode_status(determine_fan_speed(this->rx_buffer_[currentIndex + 2]));
           break;
         case 0xB2: // Preset
           ESP_LOGV(TAG, "Received preset");
-          // Note: In ESPHome 2025.12.1+, custom_preset_ is private
-          // State will be updated when publish_state() is called
+          update_preset_status(determine_preset(this->rx_buffer_[currentIndex + 2]));
           // Update powerful and quiet switches based on preset
           update_powerful(this->rx_buffer_[currentIndex + 2] == 0x42);  // 0x42 = Powerful
           update_quiet(this->rx_buffer_[currentIndex + 2] == 0x43);     // 0x43 = Quiet
