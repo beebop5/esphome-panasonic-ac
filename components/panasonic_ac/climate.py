@@ -11,7 +11,7 @@ import esphome.config_validation as cv
 from esphome.components import uart, climate, sensor, select, switch, text_sensor
 from esphome.core import ID
 
-AUTO_LOAD = ["switch", "sensor", "select"]
+AUTO_LOAD = ["switch", "sensor", "select", "text_sensor"]
 DEPENDENCIES = ["uart"]
 
 panasonic_ac_ns = cg.esphome_ns.namespace("panasonic_ac")
