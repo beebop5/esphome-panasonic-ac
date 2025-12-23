@@ -124,3 +124,7 @@ climate:
     nanoex_switch_id: panasonic_ac_nanoex
     powerful_switch_id: panasonic_ac_powerful
     quiet_switch_id: panasonic_ac_quiet
+    fan_mode_status:
+      name: "AC Fan Mode Status"
+    preset_status:
+      name: "AC Preset Status"
