@@ -109,12 +109,12 @@ void PanasonicAC::control(const climate::ClimateCall &call) {
     set_value(0x31, *call.get_target_temperature() * 2);
   }
 
-  if (call.get_custom_fan_mode().has_value()) {
+  if (call.get_custom_fan_mode() != nullptr) {
     ESP_LOGV(TAG, "Requested fan mode change");
 
-    std::string fanMode = *call.get_custom_fan_mode();
+    std::string fanMode = call.get_custom_fan_mode();
 
-    if (fanMode == "Auto") {
+    if (fanMode == "Automatic") {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x41);
     } else if (fanMode == "1") {
@@ -163,10 +163,14 @@ void PanasonicAC::control(const climate::ClimateCall &call) {
     }
   }
 
-  if (call.get_custom_preset().has_value()) {
+  if (call.get_custom_preset() != nullptr) {
     ESP_LOGV(TAG, "Requested preset change");
+    
+    // Update internal state - Climate base class handles this via publish_state()
+    // Note: In ESPHome 2025.12.1+, we can't directly set custom_preset_ as it's private
+    // The state will be updated when publish_state() is called
 
-    std::string preset = *call.get_custom_preset();
+    std::string preset = call.get_custom_preset();
 
     if (preset.compare("Normal") == 0) {
       set_value(0xB2, 0x41);
@@ -311,7 +315,7 @@ climate::ClimateMode PanasonicAC::determine_mode(uint8_t mode) {
   }
 }
 
-std::string PanasonicAC::determine_fan_speed(uint8_t speed) {
+const char *PanasonicAC::determine_fan_speed(uint8_t speed) {
   switch (speed) {
     case 0x32:  // 1
       return "1";
@@ -331,7 +335,7 @@ std::string PanasonicAC::determine_fan_speed(uint8_t speed) {
   }
 }
 
-std::string PanasonicAC::determine_preset(uint8_t preset) {
+const char *PanasonicAC::determine_preset(uint8_t preset) {
   switch (preset) {
     case 0x43:  // Quiet
       return "Quiet";
@@ -458,9 +462,11 @@ void PanasonicAC::handle_packet() {
     update_swing_vertical(verticalSwing);
     update_nanoex(nanoex);
 
-    this->custom_fan_mode = determine_fan_speed(this->rx_buffer_[26]);
-    this->custom_preset = determine_preset(this->rx_buffer_[42]);
-    
+    // Report current fan mode and preset via text sensors, since the core Climate
+    // custom_fan_mode_/custom_preset_ fields are private in ESPHome 2025.12.1+.
+    update_fan_mode_status(determine_fan_speed(this->rx_buffer_[26]));
+    update_preset_status(determine_preset(this->rx_buffer_[42]));
+
     // Update powerful and quiet switches based on preset
     update_powerful(this->rx_buffer_[42] == 0x42);  // 0x42 = Powerful
     update_quiet(this->rx_buffer_[42] == 0x43);     // 0x43 = Quiet
@@ -519,11 +525,11 @@ void PanasonicAC::handle_packet() {
           break;
         case 0xA0:  // Fan speed
           ESP_LOGV(TAG, "Received fan speed");
-          this->custom_fan_mode = determine_fan_speed(this->rx_buffer_[currentIndex + 2]);
+          update_fan_mode_status(determine_fan_speed(this->rx_buffer_[currentIndex + 2]));
           break;
         case 0xB2: // Preset
           ESP_LOGV(TAG, "Received preset");
-          this->custom_preset = determine_preset(this->rx_buffer_[currentIndex + 2]);
+          update_preset_status(determine_preset(this->rx_buffer_[currentIndex + 2]));
           // Update powerful and quiet switches based on preset
           update_powerful(this->rx_buffer_[currentIndex + 2] == 0x42);  // 0x42 = Powerful
           update_quiet(this->rx_buffer_[currentIndex + 2] == 0x43);     // 0x43 = Quiet

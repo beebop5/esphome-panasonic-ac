@@ -8,7 +8,7 @@ from esphome.const import (
 )
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, climate, sensor, select, switch
+from esphome.components import uart, climate, sensor, select, switch, text_sensor
 from esphome.core import ID
 
 AUTO_LOAD = ["switch", "sensor", "select"]
@@ -25,6 +25,8 @@ CONF_VERTICAL_SWING_SELECT_ID = "vertical_swing_select_id"
 CONF_NANOEX_SWITCH_ID = "nanoex_switch_id"
 CONF_POWERFUL_SWITCH_ID = "powerful_switch_id"
 CONF_QUIET_SWITCH_ID = "quiet_switch_id"
+CONF_FAN_MODE_STATUS = "fan_mode_status"
+CONF_PRESET_STATUS = "preset_status"
 
 
 CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
@@ -42,6 +44,9 @@ CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
         cv.Optional(CONF_NANOEX_SWITCH_ID): cv.use_id(switch.Switch),
         cv.Optional(CONF_POWERFUL_SWITCH_ID): cv.use_id(switch.Switch),
         cv.Optional(CONF_QUIET_SWITCH_ID): cv.use_id(switch.Switch),
+        # Optional status-only text sensors for reporting current fan mode and preset
+        cv.Optional(CONF_FAN_MODE_STATUS): text_sensor.text_sensor_schema(),
+        cv.Optional(CONF_PRESET_STATUS): text_sensor.text_sensor_schema(),
     }
 ).extend(uart.UART_DEVICE_SCHEMA)
 
@@ -76,3 +81,12 @@ async def to_code(config):
     if CONF_QUIET_SWITCH_ID in config:
         sw = await cg.get_variable(config[CONF_QUIET_SWITCH_ID])
         cg.add(var.set_quiet_switch(sw))
+
+    # Optional status reporting text sensors
+    if CONF_FAN_MODE_STATUS in config:
+        ts = await text_sensor.new_text_sensor(config[CONF_FAN_MODE_STATUS])
+        cg.add(var.set_fan_mode_status_text_sensor(ts))
+
+    if CONF_PRESET_STATUS in config:
+        ts = await text_sensor.new_text_sensor(config[CONF_PRESET_STATUS])
+        cg.add(var.set_preset_status_text_sensor(ts))

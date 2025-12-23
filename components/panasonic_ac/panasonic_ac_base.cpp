@@ -134,6 +134,20 @@ void PanasonicACBase::update_quiet(bool quiet) {
   }
 }
 
+void PanasonicACBase::update_fan_mode_status(const std::string &fan_mode) {
+  if (this->fan_mode_status_text_sensor_ != nullptr &&
+      this->fan_mode_status_text_sensor_->state != fan_mode) {
+    this->fan_mode_status_text_sensor_->publish_state(fan_mode);
+  }
+}
+
+void PanasonicACBase::update_preset_status(const std::string &preset) {
+  if (this->preset_status_text_sensor_ != nullptr &&
+      this->preset_status_text_sensor_->state != preset) {
+    this->preset_status_text_sensor_->publish_state(preset);
+  }
+}
+
 climate::ClimateAction PanasonicACBase::determine_action() {
   // Determine the current climate action based on mode and temperature conditions
   if (this->mode == climate::CLIMATE_MODE_OFF) {
@@ -201,6 +215,14 @@ void PanasonicACBase::set_quiet_switch(switch_::Switch *quiet_switch) {
       return;
     this->on_quiet_change(state);
   });
+}
+
+void PanasonicACBase::set_fan_mode_status_text_sensor(text_sensor::TextSensor *fan_mode_status) {
+  this->fan_mode_status_text_sensor_ = fan_mode_status;
+}
+
+void PanasonicACBase::set_preset_status_text_sensor(text_sensor::TextSensor *preset_status) {
+  this->preset_status_text_sensor_ = preset_status;
 }
 
 // Debugging utilities

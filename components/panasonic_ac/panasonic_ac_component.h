@@ -121,8 +121,8 @@ class PanasonicAC : public PanasonicACBase {
   void send_packet(std::vector<uint8_t> packet, CommandType type = CommandType::Normal);
 
   climate::ClimateMode determine_mode(uint8_t mode);
-  std::string determine_fan_speed(uint8_t speed);
-  std::string determine_preset(uint8_t preset);
+  const char *determine_fan_speed(uint8_t speed);
+  const char *determine_preset(uint8_t preset);
   std::string determine_swing_vertical(uint8_t swing);
   std::string determine_swing_horizontal(uint8_t swing);
   climate::ClimateSwingMode determine_swing(uint8_t swing);
