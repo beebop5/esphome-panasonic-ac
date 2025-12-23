@@ -1,5 +1,6 @@
 #include "panasonic_ac_base.h"
 
+#include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
