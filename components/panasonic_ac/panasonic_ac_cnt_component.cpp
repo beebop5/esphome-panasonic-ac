@@ -138,6 +138,7 @@ void PanasonicACCNT::loop() {
     log_packet(this->rx_buffer_);
 
     if (!verify_packet_()) {
+      ESP_LOGW(TAG, "Dropping invalid CNT packet (size: %zu)", this->rx_buffer_.size());
       this->rx_buffer_.clear();
       return;
     }
@@ -329,17 +330,19 @@ void PanasonicACCNT::send_packet_(const std::vector<uint8_t> &packet, CommandTyp
 
 bool PanasonicACCNT::verify_packet_() {
   if (this->rx_buffer_.size() < 12) {
-    ESP_LOGW(TAG, "Dropping invalid packet (length)");
+    ESP_LOGW(TAG, "Dropping invalid packet (length: %zu)", this->rx_buffer_.size());
     return false;
   }
 
   if (this->rx_buffer_[0] != cnt::CTRL_HEADER && this->rx_buffer_[0] != cnt::POLL_HEADER) {
-    ESP_LOGW(TAG, "Dropping invalid packet (header)");
+    ESP_LOGW(TAG, "Dropping invalid packet (header: 0x%02X)", this->rx_buffer_[0]);
     return false;
   }
 
-  if (this->rx_buffer_[1] != this->rx_buffer_.size() - 3) {
-    ESP_LOGD(TAG, "Dropping invalid packet (length mismatch)");
+  const auto expected_len = static_cast<uint8_t>(this->rx_buffer_.size() - 3);
+  if (this->rx_buffer_[1] != expected_len) {
+    ESP_LOGD(TAG, "Dropping invalid packet (length mismatch: len byte=%u expected=%u, size=%zu)",
+             this->rx_buffer_[1], expected_len, this->rx_buffer_.size());
     return false;
   }
 
@@ -347,7 +350,7 @@ bool PanasonicACCNT::verify_packet_() {
   for (uint8_t b : this->rx_buffer_)
     checksum += b;
   if (checksum != 0) {
-    ESP_LOGD(TAG, "Dropping invalid packet (checksum)");
+    ESP_LOGD(TAG, "Dropping invalid packet (checksum sum: 0x%02X)", checksum);
     return false;
   }
 
@@ -356,6 +359,7 @@ bool PanasonicACCNT::verify_packet_() {
 
 void PanasonicACCNT::handle_packet_() {
   if (this->rx_buffer_[0] == cnt::POLL_HEADER) {
+    ESP_LOGD(TAG, "Received poll response (size: %zu)", this->rx_buffer_.size());
     // payload starts at byte 2, length 10
     if (this->rx_buffer_.size() >= 2 + 10) {
       this->data_ = std::vector<uint8_t>(this->rx_buffer_.begin() + 2, this->rx_buffer_.begin() + 12);
@@ -363,9 +367,12 @@ void PanasonicACCNT::handle_packet_() {
       publish_state();
       if (this->state_ != CNTState::Ready)
         this->state_ = CNTState::Ready;
+      ESP_LOGD(TAG, "CNT protocol ready");
+    } else {
+      ESP_LOGW(TAG, "Poll response too short (size: %zu)", this->rx_buffer_.size());
     }
   } else {
-    ESP_LOGD(TAG, "Received unknown packet");
+    ESP_LOGW(TAG, "Received unknown CNT packet (header: 0x%02X, size: %zu)", this->rx_buffer_[0], this->rx_buffer_.size());
   }
 }
 
