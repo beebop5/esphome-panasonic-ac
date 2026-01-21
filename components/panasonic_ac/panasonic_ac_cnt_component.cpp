@@ -57,19 +57,19 @@ static std::string determine_vertical_swing_cnt(uint8_t swing) {
   uint8_t nib = (swing >> 4) & 0x0F;
   switch (nib) {
     case 0x0E:
-      return "swing";
+      return "Swing";
     case 0x0F:
-      return "auto";
+      return "Auto";
     case 0x01:
-      return "up";
+      return "Up";
     case 0x02:
-      return "up_center";
+      return "Mid Up";
     case 0x03:
-      return "center";
+      return "Mid";
     case 0x04:
-      return "down_center";
+      return "Mid Down";
     case 0x05:
-      return "down";
+      return "Down";
     case 0x00:
       return "unsupported";
     default:
@@ -82,17 +82,17 @@ static std::string determine_horizontal_swing_cnt(uint8_t swing) {
   uint8_t nib = (swing >> 0) & 0x0F;
   switch (nib) {
     case 0x0D:
-      return "auto";
+      return "Auto";
     case 0x09:
-      return "left";
+      return "Left";
     case 0x0A:
-      return "left_center";
+      return "Centre Left";
     case 0x06:
-      return "center";
+      return "Centre";
     case 0x0B:
-      return "right_center";
+      return "Centre Right";
     case 0x0C:
-      return "right";
+      return "Right";
     case 0x00:
       return "unsupported";
     default:
@@ -285,11 +285,11 @@ void PanasonicACCNT::set_data_(bool publish) {
   }
 
   // Swing mode derivation
-  if (vertical == "auto" && horizontal == "auto")
+  if (vertical == "Auto" && horizontal == "Auto")
     this->swing_mode = climate::CLIMATE_SWING_BOTH;
-  else if (vertical == "auto")
+  else if (vertical == "Auto")
     this->swing_mode = climate::CLIMATE_SWING_VERTICAL;
-  else if (horizontal == "auto")
+  else if (horizontal == "Auto")
     this->swing_mode = climate::CLIMATE_SWING_HORIZONTAL;
   else
     this->swing_mode = climate::CLIMATE_SWING_OFF;
@@ -398,19 +398,19 @@ void PanasonicACCNT::on_vertical_swing_change(const std::string &swing) {
   if (this->cmd_.empty())
     this->cmd_ = this->data_;
 
-  if (swing == "down")
+  if (swing == "Down")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0x50;
-  else if (swing == "down_center")
+  else if (swing == "Mid Down")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0x40;
-  else if (swing == "center")
+  else if (swing == "Mid")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0x30;
-  else if (swing == "up_center")
+  else if (swing == "Mid Up")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0x20;
-  else if (swing == "up")
+  else if (swing == "Up")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0x10;
-  else if (swing == "swing")
+  else if (swing == "Swing")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0xE0;
-  else if (swing == "auto")
+  else if (swing == "Auto")
     this->cmd_[4] = (this->cmd_[4] & 0x0F) + 0xF0;
   else
     ESP_LOGW(TAG, "Unsupported vertical swing position received");
@@ -423,17 +423,17 @@ void PanasonicACCNT::on_horizontal_swing_change(const std::string &swing) {
   if (this->cmd_.empty())
     this->cmd_ = this->data_;
 
-  if (swing == "left")
+  if (swing == "Left")
     this->cmd_[4] = (this->cmd_[4] & 0xF0) + 0x09;
-  else if (swing == "left_center")
+  else if (swing == "Centre Left")
     this->cmd_[4] = (this->cmd_[4] & 0xF0) + 0x0A;
-  else if (swing == "center")
+  else if (swing == "Centre")
     this->cmd_[4] = (this->cmd_[4] & 0xF0) + 0x06;
-  else if (swing == "right_center")
+  else if (swing == "Centre Right")
     this->cmd_[4] = (this->cmd_[4] & 0xF0) + 0x0B;
-  else if (swing == "right")
+  else if (swing == "Right")
     this->cmd_[4] = (this->cmd_[4] & 0xF0) + 0x0C;
-  else if (swing == "auto")
+  else if (swing == "Auto")
     this->cmd_[4] = (this->cmd_[4] & 0xF0) + 0x0D;
   else
     ESP_LOGW(TAG, "Unsupported horizontal swing position received");

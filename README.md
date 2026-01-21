@@ -251,6 +251,10 @@ climate:
     # quiet_switch_id: my_quiet
 ```
 
+CNT swing select options match the WLAN spelling/capitalization:
+- Vertical: `Up`, `Mid Up`, `Mid`, `Mid Down`, `Down`, `Swing`, `Auto`
+- Horizontal: `Left`, `Centre Left`, `Centre`, `Centre Right`, `Right`, `Auto`
+
 ## Local Development / Testing
 
 ESPHome 2026.x requires **Python 3.11+**. To run the same compile locally:
