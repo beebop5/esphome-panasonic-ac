@@ -22,10 +22,6 @@ PanasonicACCNT = panasonic_ac_ns.class_(
     "PanasonicACCNT", cg.Component, uart.UARTDevice, climate.Climate
 )
 
-CONF_TYPE = "type"
-TYPE_WLAN = "wlan"
-TYPE_CNT = "cnt"
-
 CONF_OUTSIDE_TEMPERATURE = "outside_temperature"
 CONF_HORIZONTAL_SWING_SELECT_ID = "horizontal_swing_select_id"
 CONF_VERTICAL_SWING_SELECT_ID = "vertical_swing_select_id"
@@ -35,6 +31,10 @@ CONF_QUIET_SWITCH_ID = "quiet_switch_id"
 CONF_FAN_MODE_STATUS = "fan_mode_status"
 CONF_PRESET_STATUS = "preset_status"
 
+
+CONF_TYPE = "type"
+TYPE_WLAN = "wlan"
+TYPE_CNT = "cnt"
 
 COMMON_SCHEMA = {
     cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
@@ -54,23 +54,20 @@ COMMON_SCHEMA = {
     cv.Optional(CONF_PRESET_STATUS): text_sensor.text_sensor_schema(),
 }
 
-WLAN_SCHEMA = climate.climate_schema(PanasonicAC).extend(
-    {cv.GenerateID(): cv.declare_id(PanasonicAC), **COMMON_SCHEMA}
+CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
+    {
+        cv.GenerateID(): cv.declare_id(PanasonicAC),
+        cv.Optional(CONF_TYPE, default=TYPE_WLAN): cv.one_of(TYPE_WLAN, TYPE_CNT, lower=True),
+        **COMMON_SCHEMA,
+    }
 ).extend(uart.UART_DEVICE_SCHEMA)
-
-CNT_SCHEMA = climate.climate_schema(PanasonicACCNT).extend(
-    {cv.GenerateID(): cv.declare_id(PanasonicACCNT), **COMMON_SCHEMA}
-).extend(uart.UART_DEVICE_SCHEMA)
-
-CONFIG_SCHEMA = cv.typed_schema(
-    {TYPE_WLAN: WLAN_SCHEMA, TYPE_CNT: CNT_SCHEMA},
-    default_type=TYPE_WLAN,
-    lower=True,
-)
 
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_ID])
+    if config.get(CONF_TYPE, TYPE_WLAN) == TYPE_CNT:
+        var = cg.new_Pvariable(config[CONF_ID], PanasonicACCNT)
+    else:
+        var = cg.new_Pvariable(config[CONF_ID], PanasonicAC)
     await climate.register_climate(var, config)
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
