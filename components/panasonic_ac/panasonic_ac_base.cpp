@@ -100,6 +100,11 @@ void PanasonicACBase::update_target_temperature(uint8_t raw_value) {
 void PanasonicACBase::update_swing_horizontal(const std::string &swing) {
   this->horizontal_swing_state_ = swing;
 
+  // Don't publish "unsupported" or "Unknown" to select - these aren't valid options
+  if (swing == "unsupported" || swing == "Unknown") {
+    return;
+  }
+
   if (this->horizontal_swing_select_ != nullptr &&
       std::string(this->horizontal_swing_select_->current_option()) != this->horizontal_swing_state_) {
     this->horizontal_swing_select_->publish_state(this->horizontal_swing_state_);
@@ -108,6 +113,11 @@ void PanasonicACBase::update_swing_horizontal(const std::string &swing) {
 
 void PanasonicACBase::update_swing_vertical(const std::string &swing) {
   this->vertical_swing_state_ = swing;
+
+  // Don't publish "unsupported" or "Unknown" to select - these aren't valid options
+  if (swing == "unsupported" || swing == "Unknown") {
+    return;
+  }
 
   if (this->vertical_swing_select_ != nullptr && 
       std::string(this->vertical_swing_select_->current_option()) != this->vertical_swing_state_) {
