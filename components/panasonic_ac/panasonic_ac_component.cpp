@@ -1,5 +1,7 @@
 #include "panasonic_ac_component.h"
 
+#include <cstring>
+
 namespace esphome {
 namespace panasonic_ac {
 
@@ -109,27 +111,27 @@ void PanasonicAC::control(const climate::ClimateCall &call) {
     set_value(0x31, *call.get_target_temperature() * 2);
   }
 
-  if (call.get_custom_fan_mode() != nullptr) {
+  if (call.has_custom_fan_mode()) {
     ESP_LOGV(TAG, "Requested fan mode change");
 
-    std::string fanMode = call.get_custom_fan_mode();
+    const char *fanMode = call.get_custom_fan_mode().c_str();
 
-    if (fanMode == "Automatic") {
+    if (strcmp(fanMode, "Automatic") == 0) {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x41);
-    } else if (fanMode == "1") {
+    } else if (strcmp(fanMode, "1") == 0) {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x32);
-    } else if (fanMode == "2") {
+    } else if (strcmp(fanMode, "2") == 0) {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x33);
-    } else if (fanMode == "3") {
+    } else if (strcmp(fanMode, "3") == 0) {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x34);
-    } else if (fanMode == "4") {
+    } else if (strcmp(fanMode, "4") == 0) {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x35);
-    } else if (fanMode == "5") {
+    } else if (strcmp(fanMode, "5") == 0) {
       set_value(0xB2, 0x41);
       set_value(0xA0, 0x36);
     } else
@@ -163,24 +165,24 @@ void PanasonicAC::control(const climate::ClimateCall &call) {
     }
   }
 
-  if (call.get_custom_preset() != nullptr) {
+  if (call.has_custom_preset()) {
     ESP_LOGV(TAG, "Requested preset change");
     
     // Update internal state - Climate base class handles this via publish_state()
     // Note: In ESPHome 2025.12.1+, we can't directly set custom_preset_ as it's private
     // The state will be updated when publish_state() is called
 
-    std::string preset = call.get_custom_preset();
+    const char *preset = call.get_custom_preset().c_str();
 
-    if (preset.compare("Normal") == 0) {
+    if (strcmp(preset, "Normal") == 0) {
       set_value(0xB2, 0x41);
       set_value(0x35, 0x42);
       set_value(0x34, 0x42);
-    } else if (preset.compare("Powerful") == 0) {
+    } else if (strcmp(preset, "Powerful") == 0) {
       set_value(0xB2, 0x42);
       set_value(0x35, 0x42);
       set_value(0x34, 0x42);
-    } else if (preset.compare("Quiet") == 0) {
+    } else if (strcmp(preset, "Quiet") == 0) {
       set_value(0xB2, 0x43);
       set_value(0x35, 0x42);
       set_value(0x34, 0x42);

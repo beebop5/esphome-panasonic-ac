@@ -1,0 +1,45 @@
+substitutions:
+  device_name: cnt-test-ac
+  wifi_ssid: "testwifi"
+  wifi_pass: "test-password"
+  ota_pw: "test"
+  api_key: "test"
+
+esphome:
+  name: $device_name
+
+esp32:
+  board: esp32dev
+
+wifi:
+  ssid: $wifi_ssid
+  password: $wifi_pass
+
+api:
+  encryption:
+    key: $api_key
+
+ota:
+  - platform: esphome
+    password: $ota_pw
+
+logger:
+  level: VERBOSE
+
+uart:
+  tx_pin: GPIO17
+  rx_pin: GPIO16
+  baud_rate: 9600
+  parity: EVEN
+
+external_components:
+  source:
+    type: local
+    path: components
+  components: [panasonic_ac]
+
+climate:
+  - platform: panasonic_ac
+    type: cnt
+    name: "CNT Test AC"
+

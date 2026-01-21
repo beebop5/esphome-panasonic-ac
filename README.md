@@ -1,6 +1,10 @@
-# ESPHome Panasonic AC WLAN Component
+# ESPHome Panasonic AC Component (WLAN + CNT)
 
-A custom ESPHome component for controlling Panasonic air conditioning units via UART communication through the WLAN interface (CN-WLAN port). This component provides an open source alternative to Panasonic wifi adapters, working locally without the Comfort Cloud.
+A custom ESPHome component for controlling Panasonic air conditioning units via UART communication through either:
+- **WLAN interface (CN-WLAN port)** (DNSK-P11 compatible)
+- **CNT interface (CN-CNT port)** (CZ-TACG1 compatible)
+
+This provides a local-control alternative to Panasonic adapters, without Comfort Cloud.
 
 ## Features
 
@@ -14,10 +18,16 @@ A custom ESPHome component for controlling Panasonic air conditioning units via 
 
 ## Supported Hardware
 
+### CN-WLAN (DNSK-P11 compatible)
+
 This component works with Panasonic AC units that have a WLAN interface (CN-WLAN port). It serves as a drop-in replacement for the Panasonic DNSK-P11 wireless LAN adapter. Tested as a drop in replacement for part number ACXA73-28520 on:
 - CS-RU12YKA
 - CS-RU18YKA
 - CS-RU24YKA
+
+### CN-CNT (CZ-TACG1 compatible)
+
+This component also supports the **CZ-TACG1 protocol via CN-CNT** (often called “CNT” in configs).
 
 
 
@@ -29,7 +39,7 @@ This component works with Panasonic AC units that have a WLAN interface (CN-WLAN
 * ESPHome 2025.12.1 or newer (v1.0.0+ requires 2025.12.1+)
 * Home Assistant 2024.1.0 or newer
 
-**Note**: This component is designed for the CN-WLAN port. For AC units with CN-CNT port, see [DomiStyle/esphome-panasonic-ac](https://github.com/DomiStyle/esphome-panasonic-ac).
+**Note**: Select the protocol with `type:` in the `climate:` config. Default is `wlan`.
 
 ## Breaking Changes in v1.0.0
 
@@ -103,7 +113,7 @@ GND                 →   GND            →   GND
 
 ## Configuration
 
-### Complete Example Configuration
+### Complete Example Configuration (CN-WLAN)
 
 ```yaml
 substitutions:
@@ -210,6 +220,7 @@ switch:
 # Climate component with all features
 climate:
   - platform: panasonic_ac
+    type: wlan
     name: $device_name_short
     outside_temperature:
       name: "Outside Temperature"
@@ -222,6 +233,23 @@ climate:
       name: "AC Fan Mode Status"
     preset_status:
       name: "AC Preset Status"
+
+### Minimal Example (CN-CNT / CZ-TACG1)
+
+For CN-CNT, set `type: cnt`. (Select/switch IDs are optional, but recommended.)
+
+```yaml
+climate:
+  - platform: panasonic_ac
+    type: cnt
+    name: "Office AC"
+    # Optional wiring-dependent entities:
+    # vertical_swing_select_id: my_vswing
+    # horizontal_swing_select_id: my_hswing
+    # nanoex_switch_id: my_nanoex
+    # powerful_switch_id: my_powerful
+    # quiet_switch_id: my_quiet
+```
 ```
 
 ## Configuration Options

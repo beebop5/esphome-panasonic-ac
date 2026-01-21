@@ -18,6 +18,13 @@ panasonic_ac_ns = cg.esphome_ns.namespace("panasonic_ac")
 PanasonicAC = panasonic_ac_ns.class_(
     "PanasonicAC", cg.Component, uart.UARTDevice, climate.Climate
 )
+PanasonicACCNT = panasonic_ac_ns.class_(
+    "PanasonicACCNT", cg.Component, uart.UARTDevice, climate.Climate
+)
+
+CONF_TYPE = "type"
+TYPE_WLAN = "wlan"
+TYPE_CNT = "cnt"
 
 CONF_OUTSIDE_TEMPERATURE = "outside_temperature"
 CONF_HORIZONTAL_SWING_SELECT_ID = "horizontal_swing_select_id"
@@ -29,26 +36,37 @@ CONF_FAN_MODE_STATUS = "fan_mode_status"
 CONF_PRESET_STATUS = "preset_status"
 
 
-CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
-    {
-        cv.GenerateID(): cv.declare_id(PanasonicAC),
-        cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
-            unit_of_measurement=UNIT_CELSIUS,
-            accuracy_decimals=0,
-            device_class=DEVICE_CLASS_TEMPERATURE,
-            state_class=STATE_CLASS_MEASUREMENT,
-        ),
-        # Support for connecting to external select/switch components
-        cv.Optional(CONF_HORIZONTAL_SWING_SELECT_ID): cv.use_id(select.Select),
-        cv.Optional(CONF_VERTICAL_SWING_SELECT_ID): cv.use_id(select.Select),
-        cv.Optional(CONF_NANOEX_SWITCH_ID): cv.use_id(switch.Switch),
-        cv.Optional(CONF_POWERFUL_SWITCH_ID): cv.use_id(switch.Switch),
-        cv.Optional(CONF_QUIET_SWITCH_ID): cv.use_id(switch.Switch),
-        # Optional status-only text sensors for reporting current fan mode and preset
-        cv.Optional(CONF_FAN_MODE_STATUS): text_sensor.text_sensor_schema(),
-        cv.Optional(CONF_PRESET_STATUS): text_sensor.text_sensor_schema(),
-    }
+COMMON_SCHEMA = {
+    cv.Optional(CONF_OUTSIDE_TEMPERATURE): sensor.sensor_schema(
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=0,
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+    ),
+    # Support for connecting to external select/switch components
+    cv.Optional(CONF_HORIZONTAL_SWING_SELECT_ID): cv.use_id(select.Select),
+    cv.Optional(CONF_VERTICAL_SWING_SELECT_ID): cv.use_id(select.Select),
+    cv.Optional(CONF_NANOEX_SWITCH_ID): cv.use_id(switch.Switch),
+    cv.Optional(CONF_POWERFUL_SWITCH_ID): cv.use_id(switch.Switch),
+    cv.Optional(CONF_QUIET_SWITCH_ID): cv.use_id(switch.Switch),
+    # Optional status-only text sensors for reporting current fan mode and preset
+    cv.Optional(CONF_FAN_MODE_STATUS): text_sensor.text_sensor_schema(),
+    cv.Optional(CONF_PRESET_STATUS): text_sensor.text_sensor_schema(),
+}
+
+WLAN_SCHEMA = climate.climate_schema(PanasonicAC).extend(
+    {cv.GenerateID(): cv.declare_id(PanasonicAC), **COMMON_SCHEMA}
 ).extend(uart.UART_DEVICE_SCHEMA)
+
+CNT_SCHEMA = climate.climate_schema(PanasonicACCNT).extend(
+    {cv.GenerateID(): cv.declare_id(PanasonicACCNT), **COMMON_SCHEMA}
+).extend(uart.UART_DEVICE_SCHEMA)
+
+CONFIG_SCHEMA = cv.typed_schema(
+    {TYPE_WLAN: WLAN_SCHEMA, TYPE_CNT: CNT_SCHEMA},
+    default_type=TYPE_WLAN,
+    lower=True,
+)
 
 
 async def to_code(config):

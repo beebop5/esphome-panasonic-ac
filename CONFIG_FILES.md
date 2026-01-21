@@ -37,6 +37,10 @@ esphome compile test_config.yaml
 ✅ Horizontal and Vertical swing selects
 ✅ Outside temperature sensor
 
+## CNT Configuration
+
+- For CN-CNT / CZ-TACG1, use `test_config_cnt_local.yaml` and set `type: cnt` under the `climate:` block.
+
 ## Development Workflow:
 
 1. **Make changes** to `components/panasonic_ac/` files
