@@ -54,20 +54,24 @@ COMMON_SCHEMA = {
     cv.Optional(CONF_PRESET_STATUS): text_sensor.text_sensor_schema(),
 }
 
-CONFIG_SCHEMA = climate.climate_schema(PanasonicAC).extend(
-    {
-        cv.GenerateID(): cv.declare_id(PanasonicAC),
-        cv.Optional(CONF_TYPE, default=TYPE_WLAN): cv.one_of(TYPE_WLAN, TYPE_CNT, lower=True),
-        **COMMON_SCHEMA,
-    }
+WLAN_SCHEMA = climate.climate_schema(PanasonicAC).extend(
+    {cv.GenerateID(): cv.declare_id(PanasonicAC), **COMMON_SCHEMA}
 ).extend(uart.UART_DEVICE_SCHEMA)
+
+CNT_SCHEMA = climate.climate_schema(PanasonicACCNT).extend(
+    {cv.GenerateID(): cv.declare_id(PanasonicACCNT), **COMMON_SCHEMA}
+).extend(uart.UART_DEVICE_SCHEMA)
+
+# Use a typed schema so the generated C++ uses the correct concrete class.
+CONFIG_SCHEMA = cv.typed_schema(
+    {TYPE_WLAN: WLAN_SCHEMA, TYPE_CNT: CNT_SCHEMA},
+    default_type=TYPE_WLAN,
+    lower=True,
+)
 
 
 async def to_code(config):
-    if config.get(CONF_TYPE, TYPE_WLAN) == TYPE_CNT:
-        var = cg.new_Pvariable(config[CONF_ID], PanasonicACCNT)
-    else:
-        var = cg.new_Pvariable(config[CONF_ID], PanasonicAC)
+    var = cg.new_Pvariable(config[CONF_ID])
     await climate.register_climate(var, config)
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)

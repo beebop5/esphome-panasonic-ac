@@ -250,6 +250,19 @@ climate:
     # powerful_switch_id: my_powerful
     # quiet_switch_id: my_quiet
 ```
+
+## Local Development / Testing
+
+ESPHome 2026.x requires **Python 3.11+**. To run the same compile locally:
+
+```bash
+cd beebop-panasonic-ac
+/usr/local/bin/python3.11 -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+python -m pip install esphome==2026.1.0
+./scripts/compile_all.sh
+```
 ```
 
 ## Configuration Options
