@@ -36,14 +36,26 @@ This component also supports the **CZ-TACG1 protocol via CN-CNT** (often called 
 * ESP32 (recommended) or ESP8266
 * 5V to 3.3V bi-directional logic level converter (minimum 2 channels)
 * Jumper wires for connections
-* ESPHome 2025.12.1 or newer (v1.0.0+ requires 2025.12.1+)
+* ESPHome 2025.12.1 or newer (v1.1.0+ requires 2025.12.1+)
 * Home Assistant 2024.1.0 or newer
 
 **Note**: Select the protocol with `type:` in the `climate:` config. Default is `wlan`.
 
-## Breaking Changes in v1.0.0
+## Version History
 
-⚠️ **Version 1.0.0 requires ESPHome 2025.12.1 or newer** due to API changes in the Climate component.
+### v1.1.0 - CN-CNT (CZ-TACG1) Support
+
+**New in v1.1.0:**
+- ✨ **CN-CNT protocol support**: Full support for Panasonic AC units with CN-CNT interface (CZ-TACG1 compatible)
+- ✨ **Enhanced swing modes**: CNT units support "Auto" and "Swing" modes for vertical swing
+- 🔧 **Improved architecture**: Refactored component to support multiple protocol types
+- 📚 **Better documentation**: Comprehensive examples for both WLAN and CNT interfaces
+
+See [CHANGELOG.md](CHANGELOG.md) for complete details.
+
+### Breaking Changes in v1.0.0
+
+⚠️ **Version 1.0.0+ requires ESPHome 2025.12.1 or newer** due to API changes in the Climate component.
 
 ### What Changed:
 - **ESPHome Requirement**: Minimum version increased from 2022.5.0 to **2025.12.1+**
@@ -74,11 +86,11 @@ Add the external component to your ESPHome configuration:
 **For stable releases (recommended):**
 ```yaml
 external_components:
-  source:
-    type: git
-    url: https://github.com/beebop5/esphome-panasonic-ac
-    ref: v1.0.0
-  components: [panasonic_ac]
+  - source:
+      type: git
+      url: https://github.com/beebop5/esphome-panasonic-ac
+      ref: v1.1.0
+    components: [panasonic_ac]
 ```
 
 **For latest development version:**
@@ -165,11 +177,11 @@ uart:
   rx_buffer_size: 1024
 
 external_components:
-  source:
-    type: git
-    url: https://github.com/beebop5/esphome-panasonic-ac
-    ref: v1.0.0
-  components: [panasonic_ac]
+  - source:
+      type: git
+      url: https://github.com/beebop5/esphome-panasonic-ac
+      ref: v1.1.0
+    components: [panasonic_ac]
 
 # Select controls for swing positioning
 select:
@@ -267,7 +279,6 @@ python -m pip install -U pip
 python -m pip install esphome==2026.1.0
 ./scripts/compile_all.sh
 ```
-```
 
 ## Configuration Options
 
@@ -276,6 +287,7 @@ python -m pip install esphome==2026.1.0
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
 | `name` | string | **Yes** | The name for the climate device |
+| `type` | string | No | Protocol type: `wlan` (default, DNSK-P11) or `cnt` (CZ-TACG1) |
 | `outside_temperature` | sensor | No | Temperature sensor for outside temperature monitoring |
 | `horizontal_swing_select_id` | ID | No | ID of template select for horizontal swing control |
 | `vertical_swing_select_id` | ID | No | ID of template select for vertical swing control |
