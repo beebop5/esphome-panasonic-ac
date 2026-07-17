@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0-beta1] - 2026-07-17
+
+Pre-release for testing. Bug fixes and forward-compatibility with current ESPHome.
+
+### Fixed
+- **WLAN packet validation**: `verify_packet()` now actually drops packets that fail the
+  minimum-length and checksum checks. Previously these checks logged a warning but the packet
+  was still accepted and parsed, which could feed corrupt data into the climate state or cause
+  an out-of-bounds read.
+- **WLAN report parsing**: the key/value loop is now bounds-checked against the device-reported
+  pair count, so a malformed report can no longer index past the receive buffer.
+- **Resend safety**: `last_command_`/`last_command_length_` are initialised and the resend path
+  guards against a null command pointer.
+- **CNT nanoeX decoding**: corrected the bit test in `determine_nanoex_cnt()` (the previous mask
+  made part of the logic unreachable).
+
+### Changed
+- **ESPHome 2026.5.0+ compatibility**: custom fan modes and presets are now declared on the
+  Climate entity instead of on the (now-deprecated) traits setters, removing the deprecation
+  warning. Older ESPHome versions continue to use the traits setters via a version guard.
+- `log_packet()` takes its buffer by const reference to avoid copying on every RX/TX log.
+
 ## [1.1.0] - 2025-01-XX
 
 ### Added

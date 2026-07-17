@@ -117,13 +117,8 @@ static const char *determine_preset_cnt(uint8_t preset) {
 }
 
 static bool determine_nanoex_cnt(uint8_t preset) {
-  uint8_t nib = (preset >> 4) & 0x04;
-  if (nib == 0x04)
-    return true;
-  if (nib == 0x00)
-    return false;
-  ESP_LOGW(TAG, "Received unknown nanoex value");
-  return false;
+  // nanoeX lives in bit 6 (0x40) of the preset byte's high nibble.
+  return (preset & 0x40) != 0;
 }
 
 void PanasonicACCNT::setup() {

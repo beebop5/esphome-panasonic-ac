@@ -4,6 +4,7 @@
 #include "esphome/components/text_sensor/text_sensor.h"
 #endif
 #include "esphome/core/log.h"
+#include "esphome/core/version.h"
 
 namespace esphome {
 namespace panasonic_ac {
@@ -23,12 +24,15 @@ climate::ClimateTraits PanasonicACBase::traits() {
   traits.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT_COOL, climate::CLIMATE_MODE_COOL,
                               climate::CLIMATE_MODE_HEAT, climate::CLIMATE_MODE_FAN_ONLY, climate::CLIMATE_MODE_DRY});
 
-  traits.set_supported_custom_fan_modes({"Automatic", "1", "2", "3", "4", "5"});
-
   traits.set_supported_swing_modes({climate::CLIMATE_SWING_OFF, climate::CLIMATE_SWING_BOTH,
                                     climate::CLIMATE_SWING_VERTICAL, climate::CLIMATE_SWING_HORIZONTAL});
 
+#if ESPHOME_VERSION_CODE < VERSION_CODE(2026, 5, 0)
+  // Pre-2026.5.0: custom fan modes and presets are declared on the traits.
+  // Newer versions declare them on the Climate entity in setup() instead.
+  traits.set_supported_custom_fan_modes({"Automatic", "1", "2", "3", "4", "5"});
   traits.set_supported_custom_presets({"Normal", "Powerful", "Quiet"});
+#endif
 
   return traits;
 }
@@ -37,6 +41,13 @@ void PanasonicACBase::setup() {
   // Initialize times
   this->init_time_ = millis();
   this->last_packet_sent_ = millis();
+
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 5, 0)
+  // 2026.5.0+ declares custom fan modes and presets on the Climate entity
+  // rather than on the traits (the traits setters are deprecated).
+  this->set_supported_custom_fan_modes({"Automatic", "1", "2", "3", "4", "5"});
+  this->set_supported_custom_presets({"Normal", "Powerful", "Quiet"});
+#endif
 
   ESP_LOGI(TAG, "Panasonic AC component v%s starting...", VERSION);
 }
@@ -246,7 +257,7 @@ void PanasonicACBase::set_preset_status_text_sensor(text_sensor::TextSensor *pre
 #endif
 
 // Debugging utilities
-void PanasonicACBase::log_packet(std::vector<uint8_t> data, bool outgoing) {
+void PanasonicACBase::log_packet(const std::vector<uint8_t> &data, bool outgoing) {
   if (outgoing) {
     ESP_LOGV(TAG, "TX: %s", format_hex_pretty(data).c_str());
   } else {

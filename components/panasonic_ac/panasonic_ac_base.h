@@ -20,7 +20,7 @@ namespace esphome {
 
 namespace panasonic_ac {
 
-static const char *const VERSION = "1.1.0";
+static const char *const VERSION = "1.2.0-beta1";
 
 static const uint8_t BUFFER_SIZE = 255;  // The maximum size of a single packet (both receive and transmit)
 static const uint8_t READ_TIMEOUT = 100;  // The maximum time to wait before considering a packet complete
@@ -124,7 +124,7 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
 
   climate::ClimateAction determine_action();
 
-  void log_packet(std::vector<uint8_t> data, bool outgoing = false);
+  void log_packet(const std::vector<uint8_t> &data, bool outgoing = false);
 };
 
 }  // namespace panasonic_ac

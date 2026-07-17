@@ -245,6 +245,7 @@ bool PanasonicAC::verify_packet() {
   if (this->rx_buffer_.size() < 5)  // Drop packets that are too short
   {
     ESP_LOGW(TAG, "Dropping invalid packet (length)");
+    return false;
   }
 
   if (this->rx_buffer_[0] == 0x66)  // Sync packets are the only packet not starting with 0x5A or 0x3A
@@ -289,6 +290,7 @@ bool PanasonicAC::verify_packet() {
   if (checksum != 0)  // Check if checksum is valid
   {
     ESP_LOGD(TAG, "Dropping invalid packet (checksum)");
+    return false;
   }
 
   return true;
@@ -499,6 +501,13 @@ void PanasonicAC::handle_packet() {
       // Offset everything by header, packet length and pair counter (4 * 3)
       // then offset by pair length (i * 4)
       int currentIndex = (4 * 3) + (i * 4);
+
+      // The pair count byte (rx_buffer_[10]) is device-reported; guard against a
+      // count that runs past the actual buffer so we never index out of bounds.
+      if (currentIndex + 3 >= (int) this->rx_buffer_.size()) {
+        ESP_LOGW(TAG, "Report pair %d exceeds packet bounds (size: %d), stopping", i, this->rx_buffer_.size());
+        break;
+      }
 
       // 0 = Header
       // 1 = Data
@@ -804,7 +813,8 @@ void PanasonicAC::process_command_queue() {
  * Helpers
  */
 void PanasonicAC::handle_resend() {
-  if (this->waiting_for_response_ && millis() - this->last_packet_sent_ > RESPONSE_TIMEOUT &&
+  if (this->waiting_for_response_ && this->last_command_ != nullptr &&
+      millis() - this->last_packet_sent_ > RESPONSE_TIMEOUT &&
       this->rx_buffer_.empty())  // Check if AC failed to respond in time and resend packet, if nothing was received yet
   {
     ESP_LOGD(TAG, "Resending previous packet");
