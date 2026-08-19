@@ -252,8 +252,11 @@ void PanasonicACCNT::control(const climate::ClimateCall &call) {
 
 void PanasonicACCNT::set_data_(bool publish) {
   this->mode = determine_mode_cnt(this->data_[0]);
+
+  const char *fan_speed = determine_fan_speed_cnt(this->data_[3]);
+  this->update_climate_fan_mode(fan_speed);
 #ifdef USE_TEXT_SENSOR
-  update_fan_mode_status(determine_fan_speed_cnt(this->data_[3]));
+  update_fan_mode_status(fan_speed);
 #endif
 
   std::string vertical = determine_vertical_swing_cnt(this->data_[4]);
@@ -294,6 +297,7 @@ void PanasonicACCNT::set_data_(bool publish) {
   update_swing_vertical(vertical);
   update_swing_horizontal(horizontal);
 
+  this->update_climate_preset(preset);
 #ifdef USE_TEXT_SENSOR
   update_preset_status(preset);
 #endif

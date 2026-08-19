@@ -6,6 +6,8 @@
 #include "esphome/core/log.h"
 #include "esphome/core/version.h"
 
+#include <cstring>
+
 namespace esphome {
 namespace panasonic_ac {
 
@@ -174,6 +176,38 @@ void PanasonicACBase::update_preset_status(const std::string &preset) {
   }
 }
 #endif
+
+void PanasonicACBase::update_climate_fan_mode(const char *fan_mode) {
+  // determine_fan_speed() falls back to "Unknown", which is not one of the declared custom
+  // fan modes; clear the entity's fan mode rather than publishing a value HA cannot show.
+  bool known = strcmp(fan_mode, "Unknown") != 0;
+
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 2, 0)
+  // 2026.2.0+ keeps custom_fan_mode_ private and exposes protected setters. Setting the
+  // custom mode also clears the primary fan_mode, which otherwise reports a stale "ON".
+  if (known) {
+    this->set_custom_fan_mode_(fan_mode);
+  } else {
+    this->clear_custom_fan_mode_();
+  }
+#else
+  if (known) {
+    this->fan_mode.reset();
+    this->custom_fan_mode = std::string(fan_mode);
+  } else {
+    this->custom_fan_mode.reset();
+  }
+#endif
+}
+
+void PanasonicACBase::update_climate_preset(const char *preset) {
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 2, 0)
+  this->set_custom_preset_(preset);
+#else
+  this->preset.reset();
+  this->custom_preset = std::string(preset);
+#endif
+}
 
 climate::ClimateAction PanasonicACBase::determine_action() {
   // Determine the current climate action based on mode and temperature conditions

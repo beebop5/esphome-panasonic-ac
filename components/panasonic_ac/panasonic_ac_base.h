@@ -20,7 +20,7 @@ namespace esphome {
 
 namespace panasonic_ac {
 
-static const char *const VERSION = "1.2.0";
+static const char *const VERSION = "1.2.1";
 
 static const uint8_t BUFFER_SIZE = 255;  // The maximum size of a single packet (both receive and transmit)
 static const uint8_t READ_TIMEOUT = 100;  // The maximum time to wait before considering a packet complete
@@ -115,6 +115,11 @@ class PanasonicACBase : public Component, public uart::UARTDevice, public climat
   void update_fan_mode_status(const std::string &fan_mode);
   void update_preset_status(const std::string &preset);
 #endif
+
+  // Publish the fan speed and preset reported by the unit onto the Climate entity itself,
+  // so the climate card tracks the AC instead of only the optional status text sensors.
+  void update_climate_fan_mode(const char *fan_mode);
+  void update_climate_preset(const char *preset);
 
   virtual void on_horizontal_swing_change(const std::string &swing) = 0;
   virtual void on_vertical_swing_change(const std::string &swing) = 0;

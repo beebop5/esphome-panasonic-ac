@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-08-19
+
+### Fixed
+- **Fan mode and preset now reach the Climate entity**: the unit's reported fan speed and preset
+  were only published to the optional status text sensors, so the climate entity never tracked
+  the AC — it reported a stale primary fan mode (showing up as `Fan Mode: ON` in the logs) and no
+  preset at all. Both are now published via `update_climate_fan_mode()` / `update_climate_preset()`
+  in the WLAN poll and report paths and in the CNT `set_data_()` path. The text sensors still
+  receive the same values, so existing dashboards keep working.
+  - ESPHome 2026.2.0+ made `custom_fan_mode_`/`custom_preset_` private but exposes protected
+    setters; the helpers use those and fall back to the old public members on older versions.
+  - An unrecognised fan speed clears the entity's fan mode instead of publishing `"Unknown"`,
+    which is not one of the declared custom modes.
+
 ## [1.2.0] - 2026-08-19
 
 First stable release of the 1.2.0 line. Includes everything from 1.2.0-beta1 below.

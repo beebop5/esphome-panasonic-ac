@@ -468,11 +468,16 @@ void PanasonicAC::handle_packet() {
     update_swing_vertical(verticalSwing);
     update_nanoex(nanoex);
 
+    const char *fan_speed = determine_fan_speed(this->rx_buffer_[26]);
+    const char *preset = determine_preset(this->rx_buffer_[42]);
+
+    this->update_climate_fan_mode(fan_speed);
+    this->update_climate_preset(preset);
+
 #ifdef USE_TEXT_SENSOR
-    // Report current fan mode and preset via text sensors, since the core Climate
-    // custom_fan_mode_/custom_preset_ fields are private in ESPHome 2025.12.1+.
-    this->update_fan_mode_status(determine_fan_speed(this->rx_buffer_[26]));
-    this->update_preset_status(determine_preset(this->rx_buffer_[42]));
+    // Also mirror fan mode and preset to the optional status text sensors.
+    this->update_fan_mode_status(fan_speed);
+    this->update_preset_status(preset);
 #endif
 
     // Update powerful and quiet switches based on preset
@@ -540,12 +545,14 @@ void PanasonicAC::handle_packet() {
           break;
         case 0xA0:  // Fan speed
           ESP_LOGV(TAG, "Received fan speed");
+          this->update_climate_fan_mode(determine_fan_speed(this->rx_buffer_[currentIndex + 2]));
 #ifdef USE_TEXT_SENSOR
           this->update_fan_mode_status(determine_fan_speed(this->rx_buffer_[currentIndex + 2]));
 #endif
           break;
         case 0xB2: // Preset
           ESP_LOGV(TAG, "Received preset");
+          this->update_climate_preset(determine_preset(this->rx_buffer_[currentIndex + 2]));
 #ifdef USE_TEXT_SENSOR
           this->update_preset_status(determine_preset(this->rx_buffer_[currentIndex + 2]));
 #endif
