@@ -88,7 +88,7 @@ Add the external component to your ESPHome configuration:
 external_components:
   - source:
       type: git
-      url: https://github.com/beebop5/esphome-panasonic-ac
+      url: https://github.com/bl0ckstat/esphome-panasonic-ac
       ref: v1.1.0
     components: [panasonic_ac]
 ```
@@ -98,7 +98,7 @@ external_components:
 external_components:
   source:
     type: git
-    url: https://github.com/beebop5/esphome-panasonic-ac
+    url: https://github.com/bl0ckstat/esphome-panasonic-ac
     ref: master
   components: [panasonic_ac]
 ```
@@ -179,7 +179,7 @@ uart:
 external_components:
   - source:
       type: git
-      url: https://github.com/beebop5/esphome-panasonic-ac
+      url: https://github.com/bl0ckstat/esphome-panasonic-ac
       ref: v1.1.0
     components: [panasonic_ac]
 
@@ -319,6 +319,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/beebop5/esphome-panasonic-ac/issues)
-- **Documentation**: [Component Documentation](https://github.com/beebop5/esphome-panasonic-ac)
+- **Issues**: [GitHub Issues](https://github.com/bl0ckstat/esphome-panasonic-ac/issues)
+- **Documentation**: [Component Documentation](https://github.com/bl0ckstat/esphome-panasonic-ac)
 - **ESPHome**: [ESPHome Documentation](https://esphome.io/)

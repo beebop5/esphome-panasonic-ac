@@ -18,7 +18,7 @@ esphome compile test_config_local.yaml
 ## test_config.yaml
 **Use for:** Testing with the published GitHub version
 
-**Source:** `https://github.com/beebop5/esphome-panasonic-ac` (remote repository)
+**Source:** `https://github.com/bl0ckstat/esphome-panasonic-ac` (remote repository)
 
 **Purpose:**
 - Test the published version from GitHub

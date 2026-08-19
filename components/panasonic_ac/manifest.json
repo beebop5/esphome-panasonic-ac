@@ -3,7 +3,7 @@
   "version": "1.2.0-beta1",
   "homeassistant": "2024.1.0",
   "dependencies": ["uart"],
-  "codeowners": ["@beebop5"],
-  "documentation": "https://github.com/beebop5/esphome-panasonic-ac",
-  "issue_tracker": "https://github.com/beebop5/esphome-panasonic-ac/issues"
+  "codeowners": ["@bl0ckstat"],
+  "documentation": "https://github.com/bl0ckstat/esphome-panasonic-ac",
+  "issue_tracker": "https://github.com/bl0ckstat/esphome-panasonic-ac/issues"
 }
