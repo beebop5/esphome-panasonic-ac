@@ -207,8 +207,9 @@ void PanasonicACCNT::control(const climate::ClimateCall &call) {
       this->cmd_[3] = 0x60;
     else if (strcmp(fan_mode, "5") == 0)
       this->cmd_[3] = 0x70;
-    else
+    else {
       ESP_LOGV(TAG, "Unsupported fan mode requested");
+    }
   }
 
   if (call.get_swing_mode().has_value()) {
@@ -243,8 +244,9 @@ void PanasonicACCNT::control(const climate::ClimateCall &call) {
       this->cmd_[5] = (this->cmd_[5] & 0xF0) + 0x02;
     else if (strcmp(preset, "Quiet") == 0)
       this->cmd_[5] = (this->cmd_[5] & 0xF0) + 0x04;
-    else
+    else {
       ESP_LOGV(TAG, "Unsupported preset requested");
+    }
   }
 }
 

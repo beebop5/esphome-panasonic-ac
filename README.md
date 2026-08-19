@@ -89,7 +89,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/bl0ckstat/esphome-panasonic-ac
-      ref: v1.1.0
+      ref: v1.2.0
     components: [panasonic_ac]
 ```
 
@@ -180,7 +180,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/bl0ckstat/esphome-panasonic-ac
-      ref: v1.1.0
+      ref: v1.2.0
     components: [panasonic_ac]
 
 # Select controls for swing positioning
