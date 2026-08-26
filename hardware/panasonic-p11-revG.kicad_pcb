@@ -1975,121 +1975,121 @@
 		)
 	)
 	(gr_text "github.com/bl0ckstat/esphome-panasonic-ac"
-		(at 33.5 40.1 0)
+		(at 31.2 38.15 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000167")
+		(uuid "3f85b87e-def5-4a86-97be-4c82c59d5fb5")
 		(effects
 			(font
-				(size 0.6 0.6)
-				(thickness 0.13)
+				(size 0.55 0.55)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
 	(gr_text "MCU: ESP32-C3 SuperMini"
-		(at 31.5 27.3 0)
+		(at 31.2 27.35 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000159")
+		(uuid "bf76beb7-ac6b-4df6-b862-5504fec175e1")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
-	(gr_text "LLC: BSS138 2-ch module (10.16mm rows)"
-		(at 31.5 28.9 0)
+	(gr_text "LLC: BSS138 2-ch module 10.16mm"
+		(at 31.2 28.7 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000160")
+		(uuid "56455745-c211-4c1e-91a7-62724a21e5a6")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
-	(gr_text "D1: 1N5819   C1: 100uF/16V radial"
-		(at 31.5 30.5 0)
+	(gr_text "D1: 1N5819  C1: 100uF/16V"
+		(at 31.2 30.05 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000161")
+		(uuid "c408117f-3e98-4f87-8126-b6eca5609476")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
 	(gr_text "J11: CN-WLAN (DNSK-P11) 1.27mm"
-		(at 31.5 32.1 0)
+		(at 31.2 31.4 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000162")
+		(uuid "bbd7756c-91a0-4a83-b1d2-11ea37e5b85f")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
-	(gr_text "CNT: CN-CNT 5-pin  PIN4=12V NO CONNECT"
-		(at 31.5 33.7 0)
+	(gr_text "CNT: CN-CNT 5p PIN4=12V NO CONN"
+		(at 31.2 32.75 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000163")
+		(uuid "20817e48-da1e-4beb-a6ca-06ef44ff17ba")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
 	(gr_text "J1: IO1 IO0 GND 3V3 (direct)"
-		(at 31.5 35.3 0)
+		(at 31.2 34.1 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000164")
+		(uuid "41cd22e4-2a63-4c9c-b699-8d83e479ef78")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
-	(gr_text "J2: IO10 IO7 GND 5V (input only)"
-		(at 31.5 36.9 0)
+	(gr_text "J2: IO10 IO7 GND 5V (in only)"
+		(at 31.2 35.45 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000165")
+		(uuid "2c39daa6-d73f-4954-baf5-41a70dd9257e")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
-	(gr_text "UART 9600 8E1  TX=IO3 RX=IO4"
-		(at 31.5 38.5 0)
+	(gr_text "UART 9600 8E1 TX=IO3 RX=IO4"
+		(at 31.2 36.8 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000166")
+		(uuid "476ee104-224a-4868-94fb-737e1d90c4b2")
 		(effects
 			(font
-				(size 0.65 0.65)
-				(thickness 0.13)
+				(size 0.6 0.6)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)
 	)
 	(gr_text "PANASONIC AC INTERFACE  rev G"
-		(at 31.5 25.4 0)
+		(at 31.2 26 0)
 		(layer "B.SilkS")
-		(uuid "bb000000-0000-0000-0000-000000000158")
+		(uuid "cb1282d6-1e7d-4b34-a46a-0547b37f3286")
 		(effects
 			(font
-				(size 0.8 0.8)
-				(thickness 0.13)
+				(size 0.65 0.65)
+				(thickness 0.11)
 			)
 			(justify mirror)
 		)

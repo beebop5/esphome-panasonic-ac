@@ -58,9 +58,9 @@ for i in range(len(boxes)):
             print("  TEXT-OVERLAP  '%s' <-> '%s' on %s" % (a[0], c[0], a[1])); bad += 1
 
 for t, lay, x1, y1, x2, y2 in boxes:
-    if lay not in ("F.SilkS","F.Silkscreen"): continue
+    # through-hole pads exist on BOTH faces - check front and back silk alike
     for ref, px1, py1, px2, py2 in pads:
         if not (x2 <= px1 or px2 <= x1 or y2 <= py1 or py2 <= y1):
-            print("  TEXT-ON-PAD   '%s' over %s" % (t, ref)); bad += 1
+            print("  TEXT-ON-PAD   '%s' (%s) over %s" % (t, lay, ref)); bad += 1
 
 print("PROBLEMS:", bad)
