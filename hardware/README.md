@@ -35,8 +35,8 @@ setting selects the protocol.
 
 | Ref | Pins | Level | Notes |
 |---|---|---|---|
-| **J1** (top edge) | IO1 · IO0 · GND · 3V3 | 3.3 V | Direct GPIO, bidirectional |
-| **J2** (bottom edge) | IO10 · IO7 · GND · 5V | 5 V | Via the BSS138 module's divider channels — **input to the ESP only** (5 V → 3.3 V, unidirectional) |
+| **J1** (top edge, 2.54 mm) | IO1 · IO0 · GND · 3V3 | 3.3 V | Direct GPIO, bidirectional |
+| **J2** (bottom edge, 2.54 mm) | IO10 · IO7 · GND · 5V | 5 V | Via the BSS138 module's divider channels — **input to the ESP only** (5 V → 3.3 V, unidirectional) |
 
 ## Board features
 
