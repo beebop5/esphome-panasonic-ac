@@ -75,12 +75,12 @@ for i in range(8):
 U2Y=[24.38+2.54*i for i in range(6)]; cy=(U2Y[0]+U2Y[5])/2.0
 LVN=[5,15,4,1,16,6];  LVL=["TXI","RXO","LV","G","RXO","TXI"]
 HVN=[8,17,2,1,18,7];  HVL=["TXO","RXI","HV","G","RXI","TXO"]
-s+='  (footprint "local:U2" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000002) (at 48.0 %g) (attr through_hole)\n'%cy
+s+='  (footprint "local:U2" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000002) (at 49.0 %g) (attr through_hole)\n'%cy
 s+=ft("reference","BSS138",0,0,0.9)+ft("value","BSS138-2ch-module",0,1.25,0.6,"F.Fab")
-for i in range(6): s+=th("L%d"%(i+1),42.92-48.0,U2Y[i]-cy,LVN[i],shape=("rect" if i==0 else "circle"))
-for i in range(6): s+=th("H%d"%(i+1),53.08-48.0,U2Y[i]-cy,HVN[i])
+for i in range(6): s+=th("L%d"%(i+1),43.92-49.0,U2Y[i]-cy,LVN[i],shape=("rect" if i==0 else "circle"))
+for i in range(6): s+=th("H%d"%(i+1),54.08-49.0,U2Y[i]-cy,HVN[i])
 s+=box(6.3,7.2)+'  )\n'
-for i in range(6): lbl(LVL[i],44.6,U2Y[i],0.38); lbl(HVL[i],51.5,U2Y[i],0.38)
+for i in range(6): lbl(LVL[i],45.6,U2Y[i],0.38); lbl(HVL[i],52.5,U2Y[i],0.38)
 
 # ---------------- D1 (bottom strip) ----------------
 s+='  (footprint "local:D1" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000004) (at 50.5 39.6) (attr through_hole)\n'
@@ -93,7 +93,7 @@ s+='  )\n'
 lbl("K",46.3,39.6,0.4); lbl("A",54.4,39.6,0.4)
 
 # ---------------- C1 between converter and AC headers, body lies flat vertically -----
-CX,CY=56.9,27.6
+CX,CY=57.1,27.6
 s+='  (footprint "local:C1" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000005) (at %g %g) (attr through_hole)\n'%(CX,CY)
 s+=ft("reference","C1",1.9,-1.3,0.55)+ft("value","100uF_16V",0,-2.4,0.5,"F.Fab")
 s+=th("1",-1.0,0,2,shape="rect",size=1.6,drill=0.9)+th("2",1.0,0,1,size=1.6,drill=0.9)
@@ -101,7 +101,7 @@ s+=th("1",-1.0,0,2,shape="rect",size=1.6,drill=0.9)+th("2",1.0,0,1,size=1.6,dril
 for a,b in [((-2.0,0.9),(2.0,0.9)),((2.0,0.9),(2.0,8.9)),((2.0,8.9),(-2.0,8.9)),((-2.0,8.9),(-2.0,0.9))]:
     s+='    (fp_line (start %g %g) (end %g %g) (stroke (width 0.1) (type solid)) (layer "F.SilkS") (tstamp %s))\n'%(a[0],a[1],b[0],b[1],T())
 s+='  )\n'
-lbl("+",55.9,26.25,0.5); lbl("-",57.9,26.25,0.5)
+lbl("+",56.1,26.25,0.5); lbl("-",58.1,26.25,0.5)
 
 # ---------------- J1 CN-WLAN 1.27mm (as fabbed) ----------------
 J1Y=[36.445,35.175,33.905,32.635,31.365,30.095,28.825,27.555]; J1N={1:3,2:7,3:8,8:1}
@@ -125,7 +125,8 @@ s+='  )\n'
 # ---------------- J2 top header (3V3 side) / J3 bottom header (5V side) ----
 def hdr(ref,tag,cx,cy,nets,labels,laby):
     o='  (footprint "local:%s" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-0000000000%02d) (at %g %g) (attr through_hole)\n'%(ref,tag,cx,cy)
-    o+='    (fp_text reference "%s" (at -5.3 0) (layer "F.SilkS") (effects (font (size 0.5 0.5) (thickness 0.09))) (tstamp %s))\n'%(ref,T())
+    refdx,refdy=((-0.1,1.8) if ref=="J1" else (-5.3,1.05))
+    o+='    (fp_text reference "%s" (at %g %g) (layer "F.SilkS") (effects (font (size 0.5 0.5) (thickness 0.09))) (tstamp %s))\n'%(ref,refdx,refdy,T())
     o+='    (fp_text value "1x4" (at 0 0) (layer "F.Fab") (effects (font (size 0.45 0.45) (thickness 0.09))) (tstamp %s))\n'%T()
     for i,(n,l) in enumerate(zip(nets,labels)):
         px=-3.81+2.54*i
@@ -145,17 +146,17 @@ for ref,tag,x,y in [("H1",13,66.3,25.6),("H2",14,66.3,38.4)]:
     s+='    (pad "" np_thru_hole circle (at 0 0) (size 2.5 2.5) (drill 2.5) (layers "F&B.Cu" "*.Mask") (tstamp %s))\n  )\n'%T()
 
 
-for _t,_x,_y,_s in [("PANASONIC AC INTERFACE  rev G",31.5,25.4,0.8),
-                    ("MCU: ESP32-C3 SuperMini",31.5,27.3,0.65),
-                    ("LLC: BSS138 2-ch module (10.16mm rows)",31.5,28.9,0.65),
-                    ("D1: 1N5819   C1: 100uF/16V radial",31.5,30.5,0.65),
-                    ("J11: CN-WLAN (DNSK-P11) 1.27mm",31.5,32.1,0.65),
-                    ("CNT: CN-CNT 5-pin  PIN4=12V NO CONNECT",31.5,33.7,0.65),
-                    ("J1: IO1 IO0 GND 3V3 (direct)",31.5,35.3,0.65),
-                    ("J2: IO10 IO7 GND 5V (input only)",31.5,36.9,0.65),
-                    ("UART 9600 8E1  TX=IO3 RX=IO4",31.5,38.5,0.65),
-                    ("github.com/bl0ckstat/esphome-panasonic-ac",33.5,40.1,0.6)]:
-    SILK.append('  (gr_text "%s" (at %g %g 0) (layer "B.SilkS") (tstamp %s) (effects (font (size %g %g) (thickness 0.13)) (justify mirror)))\n'%(_t,_x,_y,T(),_s,_s))
+for _t,_x,_y,_s in [("PANASONIC AC INTERFACE  rev G",31.2,26.0,0.65),
+                    ("MCU: ESP32-C3 SuperMini",31.2,27.35,0.6),
+                    ("LLC: BSS138 2-ch module 10.16mm",31.2,28.7,0.6),
+                    ("D1: 1N5819  C1: 100uF/16V",31.2,30.05,0.6),
+                    ("J11: CN-WLAN (DNSK-P11) 1.27mm",31.2,31.4,0.6),
+                    ("CNT: CN-CNT 5p PIN4=12V NO CONN",31.2,32.75,0.6),
+                    ("J1: IO1 IO0 GND 3V3 (direct)",31.2,34.1,0.6),
+                    ("J2: IO10 IO7 GND 5V (in only)",31.2,35.45,0.6),
+                    ("UART 9600 8E1 TX=IO3 RX=IO4",31.2,36.8,0.6),
+                    ("github.com/bl0ckstat/esphome-panasonic-ac",31.2,38.15,0.55)]:
+    SILK.append('  (gr_text "%s" (at %g %g 0) (layer "B.SilkS") (tstamp %s) (effects (font (size %g %g) (thickness 0.11)) (justify mirror)))\n'%(_t,_x,_y,T(),_s,_s))
 s+=''.join(SILK)
 s+='''  (zone (net 1) (net_name "GND") (layers "B.Cu") (name "gnd_pour") (hatch edge 0.5) (tstamp 535fb199-6ba4-492e-a39b-b3523e7e0169)
     (connect_pads (clearance 0.3)) (min_thickness 0.25) (filled_areas_thickness no)

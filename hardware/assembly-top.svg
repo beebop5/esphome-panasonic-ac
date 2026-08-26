@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1166" height="671" viewBox="0 0 1166 671">
+<rect width="100%" height="100%" fill="#f4f2ec"/>
+<polygon points="77.0,121.0 1078.0,121.0 1111.0,154.0 1111.0,253.0 1045.0,253.0 1045.0,385.0 1111.0,385.0 1111.0,484.0 1078.0,517.0 77.0,517.0 44.0,484.0 44.0,154.0" fill="#1b7a3d" stroke="#0e5228" stroke-width="2"/>
+<circle cx="1062.6" cy="178.2" r="27.5" fill="#f4f2ec" stroke="#b8a24a" stroke-width="3"/>
+<circle cx="1062.6" cy="459.8" r="27.5" fill="#f4f2ec" stroke="#b8a24a" stroke-width="3"/>
+<rect x="44.0" y="123.2" width="495.0" height="391.6" rx="6" fill="#16213e" stroke="#0b1226" stroke-width="2"/>
+<rect x="30.8" y="244.2" width="96.8" height="149.6" rx="8" fill="#aeb6bf" stroke="#7d8791"/>
+<rect x="167.2" y="195.8" width="237.6" height="246.4" rx="4" fill="#c7ccd4" stroke="#8d949e" stroke-width="2"/>
+<text x="286.0" y="325.6" text-anchor="middle" font-family="monospace" font-size="12" fill="#555">ESP32-C3</text>
+<rect x="466.4" y="187.0" width="66.0" height="264.0" fill="#e8ddc8" stroke="#b9ab8b"/>
+<path d="M 477.4 209.0 H 521.4 M 477.4 246.4 H 521.4 M 477.4 283.8 H 521.4 M 477.4 321.2 H 521.4 M 477.4 358.6 H 521.4 M 477.4 396.0 H 521.4 M 477.4 433.4 H 521.4 " stroke="#c19a2e" stroke-width="5" fill="none"/>
+<rect x="83.8" y="139.3" width="24.2" height="24.2" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="95.9" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="151.8" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="151.8" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="207.7" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="207.7" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="263.6" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="263.6" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="319.4" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="319.4" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="375.3" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="375.3" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="431.2" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="431.2" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="487.1" cy="151.4" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="487.1" cy="486.6" r="12.1" fill="#d4af37" stroke="#8a6d1a"/>
+<rect x="547.8" y="136.4" width="268.4" height="316.8" rx="5" fill="#b8322a" stroke="#7c1f1a" stroke-width="2"/>
+<circle cx="570.2" cy="151.4" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="793.8" cy="151.4" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="570.2" cy="207.2" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="793.8" cy="207.2" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="570.2" cy="263.1" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="793.8" cy="263.1" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="570.2" cy="319.0" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="793.8" cy="319.0" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="570.2" cy="374.9" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="793.8" cy="374.9" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="570.2" cy="430.8" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="793.8" cy="430.8" r="11.0" fill="#d4af37" stroke="#8a6d1a"/>
+<rect x="627.0" y="200.2" width="30.8" height="26.4" fill="#222" rx="2"/>
+<rect x="706.2" y="360.8" width="30.8" height="26.4" fill="#222" rx="2"/>
+<rect x="636.9" y="282.7" width="19.8" height="11.0" fill="#111" rx="1"/>
+<rect x="707.3" y="282.7" width="19.8" height="11.0" fill="#111" rx="1"/>
+<rect x="636.9" y="311.3" width="19.8" height="11.0" fill="#111" rx="1"/>
+<rect x="707.3" y="311.3" width="19.8" height="11.0" fill="#111" rx="1"/>
+<text x="682.0" y="189.2" text-anchor="middle" font-family="monospace" font-size="11" fill="#f0d9d7">BSS138</text>
+<line x1="659.1" y1="486.2" x2="770.9" y2="486.2" stroke="#9aa2ab" stroke-width="5"/>
+<rect x="667.7" y="463.1" width="94.6" height="46.2" rx="6" fill="#1a1a1a" stroke="#000"/>
+<rect x="676.5" y="463.1" width="15.4" height="46.2" fill="#d8d8d8"/>
+<rect x="649.2" y="476.3" width="19.8" height="19.8" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="770.9" cy="486.2" r="9.9" fill="#d4af37" stroke="#8a6d1a"/>
+<rect x="828.3" y="212.3" width="19.8" height="19.8" fill="#d4af37" stroke="#8a6d1a"/>
+<circle cx="882.2" cy="222.2" r="9.9" fill="#d4af37" stroke="#8a6d1a"/>
+<path d="M 838.2 228.8 V 244.2 M 882.2 228.8 V 244.2" stroke="#9aa2ab" stroke-width="4" fill="none"/>
+<rect x="810.7" y="244.2" width="99.0" height="173.8" rx="44.0" fill="#20304c" stroke="#101827" stroke-width="2"/>
+<rect x="810.7" y="391.6" width="99.0" height="26.4" fill="#8f98a3" rx="4"/>
+<rect x="873.4" y="250.8" width="19.8" height="136.4" fill="#dfe4ea"/>
+<text x="853.6" y="316.8" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#eee" transform="rotate(90 853.6 316.8)">100uF</text>
+<rect x="812.2" y="121.7" width="223.5" height="55.9" fill="#161616" stroke="#000"/>
+<rect x="833.1" y="142.6" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="889.0" y="142.6" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="944.9" y="142.6" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="1000.8" y="142.6" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="812.2" y="460.5" width="223.5" height="55.9" fill="#161616" stroke="#000"/>
+<rect x="833.1" y="481.4" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="889.0" y="481.4" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="944.9" y="481.4" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="1000.8" y="481.4" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="922.5" y="179.3" width="55.9" height="279.4" fill="#161616" stroke="#000"/>
+<rect x="943.4" y="200.2" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="943.4" y="256.1" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="943.4" y="312.0" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="943.4" y="367.8" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="943.4" y="423.7" width="14.1" height="14.1" fill="#e6c649" stroke="#8a6d1a"/>
+<rect x="1009.8" y="206.8" width="30.8" height="224.4" fill="#161616" stroke="#000"/>
+<line x1="1040.6" y1="221.2" x2="1104.4" y2="221.2" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="221.2" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="249.1" x2="1104.4" y2="249.1" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="249.1" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="277.1" x2="1104.4" y2="277.1" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="277.1" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="305.0" x2="1104.4" y2="305.0" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="305.0" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="333.0" x2="1104.4" y2="333.0" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="333.0" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="360.9" x2="1104.4" y2="360.9" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="360.9" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="388.8" x2="1104.4" y2="388.8" stroke="#e6c649" stroke-width="4"/>
+<circle cx="1023.0" cy="388.8" r="6.6" fill="#d4af37" stroke="#8a6d1a"/>
+<line x1="1040.6" y1="416.8" x2="1104.4" y2="416.8" stroke="#e6c649" stroke-width="4"/>
+<rect x="1016.4" y="410.2" width="13.2" height="13.2" fill="#d4af37" stroke="#8a6d1a"/>
+<text x="242.0" y="68.2" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333" font-weight="bold">ESP32-C3 SuperMini (USB-C at edge)</text>
+<line x1="242.0" y1="77.0" x2="242.0" y2="125.4" stroke="#666" stroke-width="1.2"/>
+<text x="682.0" y="37.4" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333" font-weight="bold">BSS138 level shifter</text>
+<line x1="682.0" y1="46.2" x2="682.0" y2="138.6" stroke="#666" stroke-width="1.2"/>
+<text x="924.0" y="81.4" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333" font-weight="bold">J1: IO1 IO0 G 3V3</text>
+<line x1="924.0" y1="90.2" x2="924.0" y2="123.2" stroke="#666" stroke-width="1.2"/>
+<text x="737.0" y="596.2" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333" font-weight="bold">C1 100uF lies flat</text>
+<line x1="787.6" y1="587.4" x2="831.6" y2="341.0" stroke="#666" stroke-width="1.2"/>
+<text x="572.0" y="565.4" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333" font-weight="bold">D1 1N5819 (band = K)</text>
+<line x1="627.0" y1="556.6" x2="693.0" y2="512.6" stroke="#666" stroke-width="1.2"/>
+<text x="902.0" y="580.8" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333" font-weight="bold">J2: IO10 IO7 G 5V</text>
+<line x1="913.0" y1="572.0" x2="919.6" y2="519.2" stroke="#666" stroke-width="1.2"/>
+<text x="1029.6" y="68.2" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#333" font-weight="bold">CNT (CN-CNT)</text>
+<line x1="996.6" y1="77.0" x2="959.2" y2="176.0" stroke="#666" stroke-width="1.2"/>
+<text x="1106.6" y="587.4" text-anchor="end" font-family="sans-serif" font-size="13" fill="#333" font-weight="bold">J11 -> P11 port</text>
+<line x1="1069.2" y1="578.6" x2="1040.6" y2="437.8" stroke="#666" stroke-width="1.2"/>
+<text x="1111.0" y="37.4" text-anchor="end" font-family="sans-serif" font-size="12" fill="#a33">fit J11 OR CNT, not both</text>
+</svg>

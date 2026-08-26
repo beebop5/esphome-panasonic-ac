@@ -4,6 +4,7 @@ Carrier PCB for this ESPHome component: an ESP32-C3 SuperMini plus a BSS138
 level-converter module, connecting to a Panasonic AC through **either** the
 CN-WLAN (DNSK-P11) port or the CN-CNT (CZ-TACG1) port.
 
+![assembled](assembly-top.svg)
 ![front](board-front.svg)
 ![back](board-back.svg)
 
@@ -62,6 +63,21 @@ flags the notch and chamfers as intentional so CAM does not query them.
 - `generate_placement.py` — regenerates the pre-route placement from code
 - `check_silkscreen.py` — verifies silk text is on-board, non-overlapping, off-pad
 - `board-front.svg` / `board-back.svg` — renders
+
+## Shopping list (AliExpress)
+
+Search links — many equivalent listings exist; check each against the notes.
+
+| Part | Link | Notes |
+|---|---|---|
+| ESP32-C3 SuperMini | [search](https://www.aliexpress.com/w/wholesale-esp32-c3-supermini.html) | 22.5 × 18 mm board with USB-C |
+| BSS138 level shifter, 2-ch | [search](https://www.aliexpress.com/w/wholesale-2-channel-logic-level-converter-bss138.html) | 2 rows of 6 pins, **10.16 mm row spacing**. Avoid variants with an onboard 3.3 V LDO (see Assembly notes) |
+| 1N5819 diode, DO-41 | [search](https://www.aliexpress.com/w/wholesale-1n5819-do-41.html) | 1N4001 also works (more voltage drop) |
+| 100 µF / 16 V radial cap | [search](https://www.aliexpress.com/w/wholesale-100uf-16v-electrolytic-capacitor-5mm.html) | 5 mm dia, 2.0 mm lead pitch; body lies flat on the board |
+| 1.27 mm right-angle header (J11) | [search](https://www.aliexpress.com/w/wholesale-1.27mm-pitch-right-angle-pin-header.html) | Single row of 8; sold as 2×8 breakaway strips |
+| 2.54 mm pin headers (J1/J2/CNT) | [search](https://www.aliexpress.com/w/wholesale-2.54mm-pin-header-single-row.html) | Standard 0.1″ strips |
+| JST PA 5-pin pigtail (CNT cable) | [search](https://www.aliexpress.com/w/wholesale-jst-pa-2.0mm-5-pin-cable.html) | Only for the CN-CNT variant; leave the +12 V wire unconnected |
+| 30 mm 2:1 heat shrink | [search](https://www.aliexpress.com/w/wholesale-30mm-heat-shrink-tubing.html) | ~70 mm per board, if sealing the assembly |
 
 ## Assembly notes
 
