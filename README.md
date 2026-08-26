@@ -105,6 +105,10 @@ external_components:
 
 ### Hardware Wiring
 
+> **Purpose-built PCB:** a carrier board for the ESP32-C3 SuperMini that plugs
+> into either the CN-WLAN or CN-CNT port lives in [`hardware/`](hardware/) —
+> KiCad source, ready-to-order Gerbers, and assembly notes.
+
 Connect your ESP to the AC unit's CN-WLAN port using a logic level converter:
 
 ```
