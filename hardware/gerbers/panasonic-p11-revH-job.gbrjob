@@ -5,16 +5,16 @@
       "Application": "Pcbnew",
       "Version": "9.0.8+dfsg-1"
     },
-    "CreationDate": "2026-08-26T15:26:16+00:00"
+    "CreationDate": "2026-09-01T13:42:38+00:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
-      "Name": "panasonic-p11-revG",
+      "Name": "panasonic-p11-revH",
       "GUID": "70616e61-736f-46e6-9963-2d7031312d72",
       "Revision": "rev?"
     },
     "Size": {
-      "X": 48.6,
+      "X": 50.6,
       "Y": 18.1
     },
     "LayerNumber": 2,
@@ -34,37 +34,37 @@
   ],
   "FilesAttributes": [
     {
-      "Path": "panasonic-p11-revG-F_Cu.gtl",
+      "Path": "panasonic-p11-revH-F_Cu.gtl",
       "FileFunction": "Copper,L1,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "panasonic-p11-revG-B_Cu.gbl",
+      "Path": "panasonic-p11-revH-B_Cu.gbl",
       "FileFunction": "Copper,L2,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "panasonic-p11-revG-F_Silkscreen.gto",
+      "Path": "panasonic-p11-revH-F_Silkscreen.gto",
       "FileFunction": "Legend,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "panasonic-p11-revG-B_Silkscreen.gbo",
+      "Path": "panasonic-p11-revH-B_Silkscreen.gbo",
       "FileFunction": "Legend,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "panasonic-p11-revG-F_Mask.gts",
+      "Path": "panasonic-p11-revH-F_Mask.gts",
       "FileFunction": "SolderMask,Top",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "panasonic-p11-revG-B_Mask.gbs",
+      "Path": "panasonic-p11-revH-B_Mask.gbs",
       "FileFunction": "SolderMask,Bot",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "panasonic-p11-revG-Edge_Cuts.gm1",
+      "Path": "panasonic-p11-revH-Edge_Cuts.gm1",
       "FileFunction": "Profile",
       "FilePolarity": "Positive"
     }

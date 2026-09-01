@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate panasonic-p11 rev G placement (geometry from the fabbed gerbers)."""
+"""Generate panasonic-p11 rev H placement (geometry from the fabbed gerbers)."""
 sc=[0]
 def T(): sc[0]+=1; return "bb000000-0000-0000-0000-%012d"%sc[0]
 
@@ -54,9 +54,9 @@ s+=LAYSTR+'\n  (setup (pad_to_mask_clearance 0.05)\n    (pcbplotparams (usegerbe
 s+='(creategerberjobfile true) (svgprecision 6) (mode 1) (drillshape 1) (scaleselection 1) (outputdirectory "gerbers/")))\n'
 for i in sorted(NN): s+='  (net %d "%s")\n'%(i,NN[i])
 s+='\n'
-for x1,y1,x2,y2 in [(21.5,23,67,23),(67,23,68.5,24.5),(68.5,24.5,68.5,29),(68.5,29,65.5,29),
-    (65.5,29,65.5,35),(65.5,35,68.5,35),(68.5,35,68.5,39.5),(68.5,39.5,67,41),
-    (67,41,21.5,41),(21.5,41,20,39.5),(20,39.5,20,24.5),(20,24.5,21.5,23)]:
+for x1,y1,x2,y2 in [(21.5,23,69,23),(69,23,70.5,24.5),(70.5,24.5,70.5,29),(70.5,29,67.5,29),
+    (67.5,29,67.5,35),(67.5,35,70.5,35),(70.5,35,70.5,39.5),(70.5,39.5,69,41),
+    (69,41,21.5,41),(21.5,41,20,39.5),(20,39.5,20,24.5),(20,24.5,21.5,23)]:
     s+='  (gr_line (start %g %g) (end %g %g) (layer "Edge.Cuts") (width 0.1) (tstamp %s))\n'%(x1,y1,x2,y2,T())
 
 # ---------------- U1 ESP32-C3 SuperMini ----------------
@@ -75,25 +75,25 @@ for i in range(8):
 U2Y=[24.38+2.54*i for i in range(6)]; cy=(U2Y[0]+U2Y[5])/2.0
 LVN=[5,15,4,1,16,6];  LVL=["TXI","RXO","LV","G","RXO","TXI"]
 HVN=[8,17,2,1,18,7];  HVL=["TXO","RXI","HV","G","RXI","TXO"]
-s+='  (footprint "local:U2" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000002) (at 49.0 %g) (attr through_hole)\n'%cy
+s+='  (footprint "local:U2" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000002) (at 51.0 %g) (attr through_hole)\n'%cy
 s+=ft("reference","BSS138",0,0,0.9)+ft("value","BSS138-2ch-module",0,1.25,0.6,"F.Fab")
-for i in range(6): s+=th("L%d"%(i+1),43.92-49.0,U2Y[i]-cy,LVN[i],shape=("rect" if i==0 else "circle"))
-for i in range(6): s+=th("H%d"%(i+1),54.08-49.0,U2Y[i]-cy,HVN[i])
+for i in range(6): s+=th("L%d"%(i+1),45.92-51.0,U2Y[i]-cy,LVN[i],shape=("rect" if i==0 else "circle"))
+for i in range(6): s+=th("H%d"%(i+1),56.08-51.0,U2Y[i]-cy,HVN[i])
 s+=box(6.3,7.2)+'  )\n'
-for i in range(6): lbl(LVL[i],45.6,U2Y[i],0.38); lbl(HVL[i],52.5,U2Y[i],0.38)
+for i in range(6): lbl(LVL[i],47.6,U2Y[i],0.38); lbl(HVL[i],54.5,U2Y[i],0.38)
 
 # ---------------- D1 (bottom strip) ----------------
-s+='  (footprint "local:D1" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000004) (at 50.5 39.6) (attr through_hole)\n'
+s+='  (footprint "local:D1" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000004) (at 51.7 39.6) (attr through_hole)\n'
 s+=ft("reference","D1",0,-1.75,0.55)+ft("value","1N5819_DO41",0,1.75,0.5,"F.Fab")
-s+=th("1",-2.54,0,2,shape="rect",size=1.6,drill=0.9)+th("2",2.54,0,3,size=1.6,drill=0.9)
+s+=th("1",-4.445,0,2,shape="rect",size=1.6,drill=0.9)+th("2",4.445,0,3,size=1.6,drill=0.9)
 for a,b in [((-2.35,-1.35),(2.35,-1.35)),((2.35,-1.35),(2.35,1.35)),((2.35,1.35),(-2.35,1.35)),((-2.35,1.35),(-2.35,-1.35))]:
     s+='    (fp_line (start %g %g) (end %g %g) (stroke (width 0.12) (type solid)) (layer "F.SilkS") (tstamp %s))\n'%(a[0],a[1],b[0],b[1],T())
 s+='    (fp_line (start -1.5 -1.35) (end -1.5 1.35) (stroke (width 0.15) (type solid)) (layer "F.SilkS") (tstamp %s))\n'%T()
 s+='  )\n'
-lbl("K",46.3,39.6,0.4); lbl("A",54.4,39.6,0.4)
+lbl("K",45.7,38.3,0.4); lbl("A",57.4,38.3,0.4)
 
 # ---------------- C1 between converter and AC headers, body lies flat vertically -----
-CX,CY=57.1,27.6
+CX,CY=59.1,27.6
 s+='  (footprint "local:C1" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000005) (at %g %g) (attr through_hole)\n'%(CX,CY)
 s+=ft("reference","C1",1.9,-1.3,0.55)+ft("value","100uF_16V",0,-2.4,0.5,"F.Fab")
 s+=th("1",-1.0,0,2,shape="rect",size=1.6,drill=0.9)+th("2",1.0,0,1,size=1.6,drill=0.9)
@@ -101,25 +101,25 @@ s+=th("1",-1.0,0,2,shape="rect",size=1.6,drill=0.9)+th("2",1.0,0,1,size=1.6,dril
 for a,b in [((-2.0,0.9),(2.0,0.9)),((2.0,0.9),(2.0,8.9)),((2.0,8.9),(-2.0,8.9)),((-2.0,8.9),(-2.0,0.9))]:
     s+='    (fp_line (start %g %g) (end %g %g) (stroke (width 0.1) (type solid)) (layer "F.SilkS") (tstamp %s))\n'%(a[0],a[1],b[0],b[1],T())
 s+='  )\n'
-lbl("+",56.1,26.25,0.5); lbl("-",58.1,26.25,0.5)
+lbl("+",58.1,26.25,0.5); lbl("-",60.1,26.25,0.5)
 
 # ---------------- J1 CN-WLAN 1.27mm (as fabbed) ----------------
 J1Y=[36.445,35.175,33.905,32.635,31.365,30.095,28.825,27.555]; J1N={1:3,2:7,3:8,8:1}
-s+='  (footprint "local:J11" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000003) (at 64.5 32) (attr through_hole)\n'
+s+='  (footprint "local:J11" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000003) (at 66.5 32) (attr through_hole)\n'
 s+=ft("reference","J11",-0.6,-5.7,0.55)+ft("value","1.27_RA_8way",0,5.7,0.5,"F.Fab")
 for i in range(8):
     s+=('    (pad "%d" thru_hole %s (at 0 %g) (size 1.2 1.0) (drill 0.65) (layers "*.Cu" "*.Mask")%s (tstamp %s))\n'
         )%(i+1,("rect" if i==0 else "oval"),J1Y[i]-32,nr(J1N.get(i+1)),T())
 s+='  )\n'
-for i,t in enumerate(["1","2","3","4","5","6","7","8"]): lbl(t,62.95,J1Y[i],0.34)
+for i,t in enumerate(["1","2","3","4","5","6","7","8"]): lbl(t,64.95,J1Y[i],0.34)
 
 # ---------------- J4 CN-CNT 5p JST-PA 2.0mm (pin4 = +12V, isolated) -------
 J4N=[3,7,8,None,1]; J4L=["5V","TX","RX","NC","G"]
-s+='  (footprint "local:CNT" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000015) (at 61.2 32) (attr through_hole)\n'
+s+='  (footprint "local:CNT" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-000000000015) (at 63.2 32) (attr through_hole)\n'
 s+=ft("reference","CNT",-1.3,0,0.5,rot=90)+ft("value","CN-CNT_5p_2.54",0,6.9,0.5,"F.Fab")
 for i in range(5):
     s+=th(str(i+1),0,-5.08+2.54*i,J4N[i],shape=("rect" if i==0 else "circle"),size=1.7,drill=1.0)
-    lbl(J4L[i],59.35,32-5.08+2.54*i,0.32)
+    lbl(J4L[i],61.35,32-5.08+2.54*i,0.32)
 s+='  )\n'
 
 # ---------------- J2 top header (3V3 side) / J3 bottom header (5V side) ----
@@ -134,11 +134,11 @@ def hdr(ref,tag,cx,cy,nets,labels,laby):
             )%(i+1,("rect" if i==0 else "circle"),px,nr(n),T())
         lbl(l,cx+px,laby,0.36)
     o+='  )\n'; return o
-s+=hdr("J1",11,60.0,24.3,[13,14,1,4],["IO1","IO0","G","3V3"],25.65)
-s+=hdr("J2",12,60.0,39.7,[17,18,1,2],["IO10","IO7","G","5V"],38.35)
+s+=hdr("J1",11,62.0,24.3,[13,14,1,4],["IO1","IO0","G","3V3"],25.65)
+s+=hdr("J2",12,62.0,39.7,[17,18,1,2],["IO10","IO7","G","5V"],38.35)
 
 # ---------------- cable-tie holes ----------------
-for ref,tag,x,y in [("H1",13,66.3,25.6),("H2",14,66.3,38.4)]:
+for ref,tag,x,y in [("H1",13,68.3,25.6),("H2",14,68.3,38.4)]:
     s+='  (footprint "local:%s" (layer "F.Cu") (tstamp bb000000-1111-0000-0000-0000000000%02d) (at %g %g) (attr through_hole)\n'%(ref,tag,x,y)
     # reference/value kept but hidden - no silk clutter on the tie holes
     s+='    (fp_text reference "%s" (at 0 0) (layer "F.Fab") hide (effects (font (size 0.5 0.5) (thickness 0.09))) (tstamp %s))\n'%(ref,T())
@@ -146,7 +146,7 @@ for ref,tag,x,y in [("H1",13,66.3,25.6),("H2",14,66.3,38.4)]:
     s+='    (pad "" np_thru_hole circle (at 0 0) (size 2.5 2.5) (drill 2.5) (layers "F&B.Cu" "*.Mask") (tstamp %s))\n  )\n'%T()
 
 
-for _t,_x,_y,_s in [("PANASONIC AC INTERFACE  rev G",31.2,26.0,0.65),
+for _t,_x,_y,_s in [("PANASONIC AC INTERFACE  rev H",31.2,26.0,0.65),
                     ("MCU: ESP32-C3 SuperMini",31.2,27.35,0.6),
                     ("LLC: BSS138 2-ch module 10.16mm",31.2,28.7,0.6),
                     ("D1: 1N5819  C1: 100uF/16V",31.2,30.05,0.6),
@@ -161,10 +161,14 @@ s+=''.join(SILK)
 s+='''  (zone (net 1) (net_name "GND") (layers "B.Cu") (name "gnd_pour") (hatch edge 0.5) (tstamp 535fb199-6ba4-492e-a39b-b3523e7e0169)
     (connect_pads (clearance 0.3)) (min_thickness 0.25) (filled_areas_thickness no)
     (fill yes (thermal_gap 0.35) (thermal_bridge_width 0.6))
-    (polygon (pts (xy 19 22) (xy 69.5 22) (xy 69.5 42) (xy 19 42))))
+    (polygon (pts (xy 19 22) (xy 71.5 22) (xy 71.5 42) (xy 19 42))))
+  (zone (net 0) (net_name "") (layers "F.Cu" "B.Cu") (name "antenna_keepout") (hatch edge 0.5) (tstamp 8d6939db-2ceb-4ed6-99d0-f7b9e3291b5a)
+    (connect_pads (clearance 0.3)) (min_thickness 0.25) (filled_areas_thickness no)
+    (keepout (tracks allowed) (vias not_allowed) (pads allowed) (copperpour not_allowed) (footprints allowed))
+    (polygon (pts (xy 40.7 23) (xy 41.9 23) (xy 41.9 41) (xy 40.7 41))))
 )
 '''
 open("panasonic-p11-revG.kicad_pcb","w").write(s)
-print("rev G placement written")
+print("rev H placement written")
 
 # NOTE: J2 reference is nudged +1.05mm Y in the final board to clear D1's 'A' label.

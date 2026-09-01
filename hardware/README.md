@@ -1,4 +1,4 @@
-# Panasonic AC Interface Board (rev G)
+# Panasonic AC Interface Board (rev H)
 
 Carrier PCB for this ESPHome component: an ESP32-C3 SuperMini plus a BSS138
 level-converter module, connecting to a Panasonic AC through **either** the
@@ -12,7 +12,7 @@ CN-WLAN (DNSK-P11) port or the CN-CNT (CZ-TACG1) port.
 
 | | |
 |---|---|
-| Size | 48.5 × 18.0 mm, 1.0 mm FR-4, 2 layers |
+| Size | 50.5 × 18.0 mm, 1.0 mm FR-4, 2 layers |
 | MCU | ESP32-C3 SuperMini (soldered, USB-C at the board edge) |
 | Level shifter | BSS138 2-channel module, 10.16 mm row spacing |
 | D1 | 1N5819 Schottky (reverse protection + blocks USB 5 V back-feed into the AC) |
@@ -50,16 +50,16 @@ setting selects the protocol.
 
 ## Ordering
 
-Upload `panasonic-p11-revG-gerbers-pcbway.zip` to PCBWay. Parameters:
-2 layers, 48.5 × 18 mm, **1.0 mm** FR-4 TG150, 1 oz, lead-free HASL (or ENIG),
+Upload `panasonic-p11-revH-gerbers-pcbway.zip` to PCBWay. Parameters:
+2 layers, 50.5 × 18 mm, **1.0 mm** FR-4 TG150, 1 oz, lead-free HASL (or ENIG),
 green mask, white silk both sides. `gerbers/README.txt` (included in the zip)
 flags the notch and chamfers as intentional so CAM does not query them.
 
 ## Files
 
-- `panasonic-p11-revG.kicad_pcb` / `.kicad_pro` — KiCad 9 source (routed, DRC-clean)
+- `panasonic-p11-revH.kicad_pcb` / `.kicad_pro` — KiCad 9 source (routed, DRC-clean)
 - `gerbers/` — plotted fab outputs + fab notes
-- `panasonic-p11-revG-gerbers-pcbway.zip` — ready-to-upload fab package
+- `panasonic-p11-revH-gerbers-pcbway.zip` — ready-to-upload fab package
 - `generate_placement.py` — regenerates the pre-route placement from code
 - `check_silkscreen.py` — verifies silk text is on-board, non-overlapping, off-pad
 - `board-front.svg` / `board-back.svg` — renders

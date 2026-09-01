@@ -7,12 +7,12 @@ S = 1e6
 b = pcbnew.LoadBoard(BRD)
 
 def on_board(x, y):
-    if not (20 <= x <= 68.5 and 23 <= y <= 41): return False
+    if not (20 <= x <= 70.5 and 23 <= y <= 41): return False
     if x < 21.5 and y < 24.5 and (21.5 - x) + (24.5 - y) > 1.5: return False
-    if x > 67.0 and y < 24.5 and (x - 67.0) + (24.5 - y) > 1.5: return False
+    if x > 69.0 and y < 24.5 and (x - 69.0) + (24.5 - y) > 1.5: return False
     if x < 21.5 and y > 39.5 and (21.5 - x) + (y - 39.5) > 1.5: return False
-    if x > 67.0 and y > 39.5 and (x - 67.0) + (y - 39.5) > 1.5: return False
-    if x > 65.5 and 29 < y < 35: return False          # notch
+    if x > 69.0 and y > 39.5 and (x - 69.0) + (y - 39.5) > 1.5: return False
+    if x > 67.5 and 29 < y < 35: return False          # notch
     return True
 
 texts = []

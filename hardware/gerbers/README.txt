@@ -1,8 +1,8 @@
-PANASONIC AC INTERFACE rev G - FABRICATION NOTES
+PANASONIC AC INTERFACE rev H - FABRICATION NOTES
 =================================================
 
-Board name      : panasonic-p11-revG
-Size            : 48.5 x 18.0 mm
+Board name      : panasonic-p11-revH
+Size            : 50.5 x 18.0 mm
 Layers          : 2
 Material        : FR-4, TG150
 Thickness       : 1.0 mm
@@ -41,13 +41,13 @@ Contact the buyer before making any change to the board outline.
 
 FILES
 -----
-panasonic-p11-revG-F_Cu.gtl          Top copper
-panasonic-p11-revG-B_Cu.gbl          Bottom copper
-panasonic-p11-revG-F_Mask.gts        Top solder mask
-panasonic-p11-revG-B_Mask.gbs        Bottom solder mask
-panasonic-p11-revG-F_Silkscreen.gto  Top silkscreen
-panasonic-p11-revG-B_Silkscreen.gbo  Bottom silkscreen
-panasonic-p11-revG-Edge_Cuts.gm1     Board outline
-panasonic-p11-revG-PTH.drl           Plated holes (Excellon)
-panasonic-p11-revG-NPTH.drl          Non-plated holes (Excellon)
-panasonic-p11-revG-job.gbrjob        Gerber job file
+panasonic-p11-revH-F_Cu.gtl          Top copper
+panasonic-p11-revH-B_Cu.gbl          Bottom copper
+panasonic-p11-revH-F_Mask.gts        Top solder mask
+panasonic-p11-revH-B_Mask.gbs        Bottom solder mask
+panasonic-p11-revH-F_Silkscreen.gto  Top silkscreen
+panasonic-p11-revH-B_Silkscreen.gbo  Bottom silkscreen
+panasonic-p11-revH-Edge_Cuts.gm1     Board outline
+panasonic-p11-revH-PTH.drl           Plated holes (Excellon)
+panasonic-p11-revH-NPTH.drl          Non-plated holes (Excellon)
+panasonic-p11-revH-job.gbrjob        Gerber job file
