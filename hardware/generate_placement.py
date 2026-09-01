@@ -146,17 +146,11 @@ for ref,tag,x,y in [("H1",13,68.3,25.6),("H2",14,68.3,38.4)]:
     s+='    (pad "" np_thru_hole circle (at 0 0) (size 2.5 2.5) (drill 2.5) (layers "F&B.Cu" "*.Mask") (tstamp %s))\n  )\n'%T()
 
 
-for _t,_x,_y,_s in [("PANASONIC AC INTERFACE  rev H",31.2,26.0,0.65),
-                    ("MCU: ESP32-C3 SuperMini",31.2,27.35,0.6),
-                    ("LLC: BSS138 2-ch module 10.16mm",31.2,28.7,0.6),
-                    ("D1: 1N5819  C1: 100uF/16V",31.2,30.05,0.6),
-                    ("J11: CN-WLAN (DNSK-P11) 1.27mm",31.2,31.4,0.6),
-                    ("CNT: CN-CNT 5p PIN4=12V NO CONN",31.2,32.75,0.6),
-                    ("J1: IO1 IO0 GND 3V3 (direct)",31.2,34.1,0.6),
-                    ("J2: IO10 IO7 GND 5V (in only)",31.2,35.45,0.6),
-                    ("UART 9600 8E1 TX=IO3 RX=IO4",31.2,36.8,0.6),
-                    ("github.com/bl0ckstat/esphome-panasonic-ac",31.2,38.15,0.55)]:
-    SILK.append('  (gr_text "%s" (at %g %g 0) (layer "B.SilkS") (tstamp %s) (effects (font (size %g %g) (thickness 0.11)) (justify mirror)))\n'%(_t,_x,_y,T(),_s,_s))
+for _t,_x,_y,_s in [("PANASONIC AC IF  rev H",31.8,27.3,1.1),
+                    ("CNT PIN4=12V NO CONNECT",31.8,30.2,1.0),
+                    ("github.com/bl0ckstat/",31.8,33.1,1.0),
+                    ("esphome-panasonic-ac",31.8,35.7,1.0)]:
+    SILK.append('  (gr_text "%s" (at %g %g 0) (layer "B.SilkS") (tstamp %s) (effects (font (size %g %g) (thickness 0.18)) (justify mirror)))\n'%(_t,_x,_y,T(),_s,_s))
 s+=''.join(SILK)
 s+='''  (zone (net 1) (net_name "GND") (layers "B.Cu") (name "gnd_pour") (hatch edge 0.5) (tstamp 535fb199-6ba4-492e-a39b-b3523e7e0169)
     (connect_pads (clearance 0.3)) (min_thickness 0.25) (filled_areas_thickness no)
