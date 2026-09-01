@@ -5,7 +5,7 @@ Board name      : panasonic-p11-revH
 Size            : 50.5 x 18.0 mm
 Layers          : 2
 Material        : FR-4, TG150
-Thickness       : 1.0 mm
+Thickness       : 1.6 mm
 Copper weight   : 1 oz outer
 Surface finish  : Lead-free HASL (ENIG acceptable)
 Solder mask     : Green

@@ -12,7 +12,7 @@ CN-WLAN (DNSK-P11) port or the CN-CNT (CZ-TACG1) port.
 
 | | |
 |---|---|
-| Size | 50.5 × 18.0 mm, 1.0 mm FR-4, 2 layers |
+| Size | 50.5 × 18.0 mm, 1.6 mm FR-4, 2 layers |
 | MCU | ESP32-C3 SuperMini (soldered, USB-C at the board edge) |
 | Level shifter | BSS138 2-channel module, 10.16 mm row spacing |
 | D1 | 1N5819 Schottky (reverse protection + blocks USB 5 V back-feed into the AC) |
@@ -51,7 +51,7 @@ setting selects the protocol.
 ## Ordering
 
 Upload `panasonic-p11-revH-gerbers-pcbway.zip` to PCBWay. Parameters:
-2 layers, 50.5 × 18 mm, **1.0 mm** FR-4 TG150, 1 oz, lead-free HASL (or ENIG),
+2 layers, 50.5 × 18 mm, **1.6 mm** FR-4 TG150, 1 oz, lead-free HASL (or ENIG),
 green mask, white silk both sides. `gerbers/README.txt` (included in the zip)
 flags the notch and chamfers as intentional so CAM does not query them.
 

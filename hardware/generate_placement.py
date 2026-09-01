@@ -49,7 +49,7 @@ def lbl(t,x,y,sz=0.42,rot=0):
     SILK.append('  (gr_text "%s" (at %g %g %g) (layer "F.SilkS") (tstamp %s) '
                 '(effects (font (size %g %g) (thickness 0.09))))\n'%(t,x,y,rot,T(),sz,sz))
 
-s='(kicad_pcb (version 20221018) (generator pcbnew)\n  (general (thickness 1.0))\n  (paper "A4")\n'
+s='(kicad_pcb (version 20221018) (generator pcbnew)\n  (general (thickness 1.6))\n  (paper "A4")\n'
 s+=LAYSTR+'\n  (setup (pad_to_mask_clearance 0.05)\n    (pcbplotparams (usegerberattributes true) '
 s+='(creategerberjobfile true) (svgprecision 6) (mode 1) (drillshape 1) (scaleselection 1) (outputdirectory "gerbers/")))\n'
 for i in sorted(NN): s+='  (net %d "%s")\n'%(i,NN[i])
